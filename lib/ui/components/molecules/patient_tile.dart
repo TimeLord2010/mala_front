@@ -6,9 +6,11 @@ class PatientTile extends StatelessWidget {
   const PatientTile({
     super.key,
     required this.patient,
+    this.onPressed,
   });
 
   final Patient patient;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class PatientTile extends StatelessWidget {
           size: 20,
         ),
       ),
-      onPressed: () {},
+      onPressed: onPressed,
       subtitle: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

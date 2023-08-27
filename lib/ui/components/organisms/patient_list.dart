@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/ui/components/molecules/patient_tile.dart';
+import 'package:mala_front/ui/components/organisms/patient_registration.dart';
 
 class PatientList extends StatelessWidget {
   const PatientList({
@@ -17,7 +19,14 @@ class PatientList extends StatelessWidget {
         children: patients.map((x) {
           return SizedBox(
             width: 350,
-            child: PatientTile(patient: x),
+            child: PatientTile(
+              patient: x,
+              onPressed: () {
+                context.navigator.pushMaterial(PatientRegistration(
+                  patient: x,
+                ));
+              },
+            ),
           );
         }).toList(),
       ),

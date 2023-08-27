@@ -48,6 +48,13 @@ class MainApp extends StatelessWidget {
               body: const PatientExplorer(),
             ),
           ],
+          footerItems: [
+            PaneItem(
+              icon: const Icon(FluentIcons.info),
+              title: const Text('Info'),
+              body: const SizedBox.shrink(),
+            ),
+          ],
         ),
       ),
     );
