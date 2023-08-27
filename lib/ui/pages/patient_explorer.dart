@@ -16,9 +16,25 @@ class PatientExplorer extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+          child: CommandBar(
+            mainAxisAlignment: MainAxisAlignment.end,
+            overflowBehavior: CommandBarOverflowBehavior.noWrap,
+            primaryItems: [
+              CommandBarButton(
+                icon: const Icon(FluentIcons.add),
+                label: const Text('Cadastrar'),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        Padding(
           padding: const EdgeInsets.all(8.0),
           child: Expander(
             header: const Text('Filtros'),
+            animationCurve: Curves.easeOut,
+            animationDuration: const Duration(milliseconds: 300),
             content: Column(
               children: [
                 Row(
@@ -42,59 +58,9 @@ class PatientExplorer extends StatelessWidget {
                       .separatedBy(const SizedBox(width: 5)),
                 ),
                 const SizedBox(height: 15),
-                Row(
-                  children: [
-                    Expanded(
-                      child: InfoLabel(
-                        label: 'Idade',
-                        child: Row(
-                          children: [
-                            const TextBox(),
-                            const TextBox(),
-                          ]
-                              .map((x) {
-                                return Expanded(child: x);
-                              })
-                              .toList()
-                              .separatedBy(const SizedBox(width: 5)),
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Center(
-                        child: MalaCheckBox(
-                          label: 'Aniversariantes do mês',
-                          checked: false,
-                        ),
-                      ),
-                    ),
-                  ].separatedBy(const SizedBox(width: 10)),
-                ),
+                _dateFilter(),
                 const SizedBox(height: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Atividades'),
-                    Wrap(
-                      children: Activities.values.map((x) {
-                        return Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: SizedBox(
-                            width: 135,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: MalaCheckBox(
-                                label: x.toString(),
-                                checked: false,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
+                _activityFilter(),
               ],
             ),
           ),
@@ -111,6 +77,75 @@ class PatientExplorer extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Column _activityFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Atividades'),
+        Wrap(
+          children: Activities.values.map((x) {
+            return Padding(
+              padding: const EdgeInsets.all(4),
+              child: SizedBox(
+                width: 135,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: MalaCheckBox(
+                    label: x.toString(),
+                    checked: false,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Row _dateFilter() {
+    int? minAge, maxAge;
+    return Row(
+      children: [
+        Expanded(
+          child: InfoLabel(
+            label: 'Idade',
+            child: Row(
+              children: [
+                NumberBox(
+                  onChanged: (value) {},
+                  value: minAge,
+                  min: 0,
+                  mode: SpinButtonPlacementMode.none,
+                ),
+                NumberBox(
+                  onChanged: (value) {},
+                  value: maxAge,
+                  min: 0,
+                  mode: SpinButtonPlacementMode.none,
+                ),
+              ]
+                  .map((x) {
+                    return Expanded(child: x);
+                  })
+                  .toList()
+                  .separatedBy(const SizedBox(width: 5)),
+            ),
+          ),
+        ),
+        const Expanded(
+          child: Center(
+            child: MalaCheckBox(
+              label: 'Aniversariantes do mês',
+              checked: false,
+            ),
+          ),
+        ),
+      ].separatedBy(const SizedBox(width: 10)),
     );
   }
 }
