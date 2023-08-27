@@ -12,13 +12,15 @@ class PatientList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: patients.map((x) {
-        return SizedBox(
-          width: 350,
-          child: PatientTile(patient: x),
-        );
-      }).toList(),
+    return SingleChildScrollView(
+      child: Wrap(
+        children: patients.map((x) {
+          return SizedBox(
+            width: 350,
+            child: PatientTile(patient: x),
+          );
+        }).toList(),
+      ),
     );
   }
 }

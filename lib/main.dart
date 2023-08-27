@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
 
@@ -14,6 +15,16 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
+      scrollBehavior: const FluentScrollBehavior().copyWith(
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+          PointerDeviceKind.trackpad,
+        },
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+      ),
       home: NavigationView(
         appBar: NavigationAppBar(
           title: const Text('Mala'),
