@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart';
 
+import 'ui/pages/patient_explorer.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -32,7 +34,7 @@ class MainApp extends StatelessWidget {
             PaneItem(
               icon: const Icon(FluentIcons.user_window),
               title: const Text('Pacientes'),
-              body: const Text('Settings2'),
+              body: const PatientExplorer(),
             ),
           ],
         ),
