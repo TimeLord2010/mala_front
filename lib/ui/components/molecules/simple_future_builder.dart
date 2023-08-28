@@ -11,7 +11,7 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
   });
 
   final Future<T> future;
-  final Widget Function(T value) builder;
+  final Widget Function(T? value) builder;
 
   /// This is used to display the error message.
   ///
@@ -23,17 +23,22 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
     return FutureBuilder(
       future: future,
       builder: (context, snap) {
-        if (snap.hasData) {
-          var data = snap.requireData;
-          return builder(data);
+        switch (snap.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+            return const LoadProgressIndicator();
+          case ConnectionState.done:
+            if (snap.hasError) {
+              return ErrorMessage(
+                message: snap.error.toString(),
+                title: contextMessage,
+              );
+            }
+            var data = snap.data;
+            return builder(data);
+          default:
+            return const Text('Invalid state');
         }
-        if (snap.hasError) {
-          return ErrorMessage(
-            message: snap.error.toString(),
-            title: contextMessage,
-          );
-        }
-        return const LoadProgressIndicator();
       },
     );
   }

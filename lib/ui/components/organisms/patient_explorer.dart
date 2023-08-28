@@ -105,7 +105,10 @@ class _PatientExplorerState extends State<PatientExplorer> {
             future: patientsFuture,
             builder: (patients) {
               return PatientList(
-                patients: patients,
+                patients: patients ?? [],
+                onEdit: (patient) {
+                  patientsFuture = listPatients();
+                },
               );
             },
             contextMessage: 'Falha na listagem de pacientes',

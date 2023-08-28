@@ -2,6 +2,8 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
+import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
+import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
 
 class PatientTile extends StatelessWidget {
   const PatientTile({
@@ -26,7 +28,15 @@ class PatientTile extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
       ),
-      leading: const MalaProfilePicker(),
+      leading: SimpleFutureBuilder(
+        future: loadProfilePicture(patient.id),
+        builder: (value) {
+          return MalaProfilePicker(
+            bytes: value,
+          );
+        },
+        contextMessage: 'Imagem de perfil',
+      ),
       onPressed: onPressed,
       subtitle: Column(
         mainAxisSize: MainAxisSize.min,

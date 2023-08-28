@@ -5,8 +5,21 @@ import 'package:fluent_ui/fluent_ui.dart';
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
+  set selectedIndex(int value) {
+    setState(() {
+      _selectedIndex = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +39,10 @@ class MainPage extends StatelessWidget {
           size: const NavigationPaneSize(
             openMaxWidth: 200,
           ),
-          selected: 0,
+          selected: selectedIndex,
+          onChanged: (index) {
+            selectedIndex = index;
+          },
           items: [
             PaneItem(
               icon: const Icon(FluentIcons.user_window),

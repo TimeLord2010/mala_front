@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -9,8 +11,9 @@ import 'package:mala_front/ui/components/atoms/mala_title.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
 import 'package:mala_front/usecase/address/search_address.dart';
-import 'package:mala_front/usecase/patient/insert_patient.dart';
-import 'package:vit/vit.dart';
+import 'package:mala_front/usecase/patient/delete_patient.dart';
+import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
+import 'package:mala_front/usecase/patient/upsert_patient.dart';
 
 import '../components/atoms/mala_app.dart';
 
@@ -81,14 +84,31 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
   Set<Activities> selectedActivities = {};
 
+  Uint8List? _pictureData;
+  Uint8List? get pictureData => _pictureData;
+  set pictureData(Uint8List? value) {
+    setState(() {
+      _pictureData = value;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    selectedBirth = widget.patient?.birthDate;
-    selectedActivities = widget.patient?.activitiesId?.map((x) {
+    var patient = widget.patient;
+    if (patient == null) return;
+    selectedBirth = patient.birthDate;
+    selectedActivities = patient.activitiesId?.map((x) {
           return Activities.values[x];
         }).toSet() ??
         {};
+    _loadPic();
+  }
+
+  void _loadPic() async {
+    var patient = widget.patient;
+    if (patient == null) return;
+    pictureData = await loadProfilePicture(patient.id);
   }
 
   @override
@@ -114,7 +134,10 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       FluentIcons.delete,
                       size: 20,
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      await deletePatient(widget.patient!.id);
+                      context.navigator.pop();
+                    },
                   ),
                 IconButton(
                   icon: const Icon(
@@ -141,10 +164,29 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                 Row(
                   children: [
                     SizedBox(
-                      width: 120,
-                      child: MalaProfilePicker(
-                        size: 20,
-                        onPick: (path) {},
+                      width: 150,
+                      height: 150,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: MalaProfilePicker(
+                              bytes: pictureData,
+                              onPick: (data) {
+                                pictureData = data;
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Button(
+                            onPressed: pictureData == null
+                                ? null
+                                : () {
+                                    pictureData = null;
+                                  },
+                            child: const Text('Remover'),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -296,33 +338,34 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   }
 
   void save() async {
-    var patient = widget.patient;
     var phones = widget.phonesController.text.split(',').map((x) => x.trim());
-    if (patient == null) {
-      patient = Patient(
-        name: widget.nameController.text,
-        cpf: widget.cpfController.text,
-        motherName: widget.motherController.text,
-        yearOfBirth: selectedBirth?.year,
-        monthOfBirth: selectedBirth?.month,
-        dayOfBirth: selectedBirth?.day,
-        phones: phones.toList(),
-        observation: widget.observationController.text,
-        activitiesId: selectedActivities.map((x) => x.index).toList(),
-      );
-      patient.address.value = Address(
-        zipCode: widget.zipCodeController.text,
-        state: widget.stateController.text,
-        city: widget.cityController.text,
-        district: widget.districtController.text,
-        street: widget.streetController.text,
-        number: widget.numberController.text,
-        complement: widget.complementController.text,
-      );
-      await insertPatient(patient);
-      context.navigator.pop();
-      return;
+    var patient = Patient(
+      name: widget.nameController.text,
+      cpf: widget.cpfController.text,
+      motherName: widget.motherController.text,
+      yearOfBirth: selectedBirth?.year,
+      monthOfBirth: selectedBirth?.month,
+      dayOfBirth: selectedBirth?.day,
+      phones: phones.toList(),
+      observation: widget.observationController.text,
+      activitiesId: selectedActivities.map((x) => x.index).toList(),
+    );
+    patient.address.value = Address(
+      zipCode: widget.zipCodeController.text,
+      state: widget.stateController.text,
+      city: widget.cityController.text,
+      district: widget.districtController.text,
+      street: widget.streetController.text,
+      number: widget.numberController.text,
+      complement: widget.complementController.text,
+    );
+    if (widget.patient != null) {
+      patient.id = widget.patient!.id;
     }
-    throw NotImplemented();
+    await upsertPatient(
+      patient,
+      pictureData: pictureData,
+    );
+    context.navigator.pop();
   }
 }
