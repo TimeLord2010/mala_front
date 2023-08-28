@@ -3,6 +3,7 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/atoms/mala_title.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
@@ -93,14 +94,36 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         ),
         content: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const MalaTitle('Informações pessoais'),
-                LabeledTextBox(
-                  label: 'Nome',
-                  controller: widget.nameController,
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      child: MalaProfilePicker(
+                        size: 20,
+                        onPick: (path) {},
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          LabeledTextBox(
+                            label: 'Nome',
+                            controller: widget.nameController,
+                          ),
+                          LabeledTextBox(
+                            label: 'Nome da mãe',
+                            controller: widget.motherController,
+                          ),
+                        ].separatedBy(const SizedBox(height: 20)),
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -128,10 +151,6 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       ),
                     ),
                   ].separatedBy(const SizedBox(width: 20)),
-                ),
-                LabeledTextBox(
-                  label: 'Nome da mãe',
-                  controller: widget.motherController,
                 ),
                 const Divider(),
                 const MalaTitle('Endereço'),

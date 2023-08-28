@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  image_compression_flutter
+  isar_flutter_libs
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

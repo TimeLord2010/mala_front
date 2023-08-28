@@ -2,7 +2,6 @@ import 'package:mala_front/models/address.dart';
 import 'package:search_cep/search_cep.dart';
 
 Future<Address?> searchAddress(String cep) async {
-  print('searching: $cep');
   final postmonSearchCep = PostmonSearchCep();
   final infoCepJSON = await postmonSearchCep.searchInfoByCep(
     cep: cep,
@@ -15,11 +14,9 @@ Future<Address?> searchAddress(String cep) async {
   // );
   var infos = infoCepJSON.toIterable();
   if (infos.isEmpty) {
-    print('no items');
     return null;
   }
   var info = infos.first;
-  print(info);
   return Address(
     zipCode: info.cep,
     city: info.cidade,
