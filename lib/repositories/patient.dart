@@ -16,22 +16,37 @@ class PatientRepository {
       ),
       Patient(
         name: 'João Victor de Sousa Silva',
-        cpf: '07209680381',
+        cpf: '04219680381',
         motherName: 'Maria',
         phones: [
-          '85 9 9663-9598',
+          '85 9 9663-8594',
         ],
         birthDate: DateTime(1997, 8, 2),
       ),
       Patient(
         name: 'Felipe Cerqueira',
         phones: [
-          '85 9 9133-7646',
+          '85 9 9233-4646',
         ],
       ),
       Patient(
         name: 'Stefano Vacis',
-        birthDate: DateTime(1980, 8, 27),
+        birthDate: DateTime(1980, 8, 28),
+      ),
+      Patient(
+        name: 'Maria Gabriela',
+      ),
+      Patient(
+        name: 'Michel Amazonas Cotta',
+        phones: [
+          '85 9 9999-9999',
+        ],
+      ),
+      Patient(
+        name: 'Luiza Oliveira',
+        phones: [
+          '85 9 9999-9999',
+        ],
       ),
     ];
   }

@@ -5,6 +5,7 @@ import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
+import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 
 class PatientExplorer extends StatelessWidget {
@@ -24,7 +25,11 @@ class PatientExplorer extends StatelessWidget {
               CommandBarButton(
                 icon: const Icon(FluentIcons.add),
                 label: const Text('Cadastrar'),
-                onPressed: () {},
+                onPressed: () {
+                  context.navigator.pushMaterial(PatientRegistration(
+                    patient: null,
+                  ));
+                },
               ),
             ],
           ),
@@ -61,6 +66,20 @@ class PatientExplorer extends StatelessWidget {
                 _dateFilter(),
                 const SizedBox(height: 15),
                 _activityFilter(),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Spacer(),
+                    Button(
+                      child: const Text('Limpar'),
+                      onPressed: () {},
+                    ),
+                    FilledButton(
+                      child: const Text('Pesquisar'),
+                      onPressed: () {},
+                    ),
+                  ].separatedBy(const SizedBox(width: 20)),
+                ),
               ],
             ),
           ),

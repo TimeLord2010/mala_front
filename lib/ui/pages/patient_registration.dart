@@ -118,6 +118,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       child: LabeledTextBox(
                         label: 'CPF',
                         controller: widget.cpfController,
+                        placeholder: '999.999.999-99',
                       ),
                     ),
                     InfoLabel(
@@ -203,6 +204,15 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                 const MalaTitle('Atividades'),
                 ActivitiesSelector(
                   selected: selectedActivities,
+                ),
+                const Divider(),
+                const MalaTitle('Observações'),
+                TextBox(
+                  maxLines: 6,
+                  placeholder: 'Observações',
+                  placeholderStyle: TextStyle(
+                    color: Colors.grey[80],
+                  ),
                 ),
               ].separatedBy(const SizedBox(height: 20)),
             ),
