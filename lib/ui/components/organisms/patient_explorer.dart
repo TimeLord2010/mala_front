@@ -1,10 +1,10 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/ui/components/atoms/mala_check_box.dart';
+import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
+import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
-import 'package:mala_front/ui/components/organisms/patient_list.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 
 class PatientExplorer extends StatelessWidget {
@@ -81,27 +81,13 @@ class PatientExplorer extends StatelessWidget {
   }
 
   Column _activityFilter() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text('Atividades'),
-        Wrap(
-          children: Activities.values.map((x) {
-            return Padding(
-              padding: const EdgeInsets.all(4),
-              child: SizedBox(
-                width: 135,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: MalaCheckBox(
-                    label: x.toString(),
-                    checked: false,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
+        Text('Atividades'),
+        ActivitiesSelector(
+          selected: {},
         ),
       ],
     );
@@ -137,11 +123,12 @@ class PatientExplorer extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: Center(
             child: MalaCheckBox(
               label: 'Aniversariantes do mês',
               checked: false,
+              onCheck: (checked) {},
             ),
           ),
         ),

@@ -5,10 +5,12 @@ class MalaCheckBox extends StatelessWidget {
     super.key,
     required this.label,
     required this.checked,
+    required this.onCheck,
   });
 
   final String label;
   final bool checked;
+  final void Function(bool checked) onCheck;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,9 @@ class MalaCheckBox extends StatelessWidget {
       children: [
         Checkbox(
           checked: checked,
-          onChanged: (value) {},
+          onChanged: (value) {
+            onCheck(value ?? false);
+          },
         ),
         const SizedBox(width: 5),
         Text(label),
