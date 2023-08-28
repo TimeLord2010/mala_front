@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:mala_front/ui/components/atoms/mouse_hover.dart';
 
 class LabeledTextBox extends StatefulWidget {
@@ -6,12 +7,16 @@ class LabeledTextBox extends StatefulWidget {
     super.key,
     required this.label,
     this.canClear = true,
+    this.formaters = const [],
+    this.placeholder,
     TextEditingController? controller,
   }) : controller = controller ?? TextEditingController();
 
   final String label;
+  final String? placeholder;
   final bool canClear;
   final TextEditingController controller;
+  final List<TextInputFormatter> formaters;
 
   @override
   State<StatefulWidget> createState() {
@@ -38,6 +43,11 @@ class LabeledTextBoxState extends State<LabeledTextBox> {
         onChanged: (value) {
           isEmpty = value.isEmpty;
         },
+        inputFormatters: widget.formaters,
+        placeholder: widget.placeholder,
+        placeholderStyle: TextStyle(
+          color: Colors.grey[80],
+        ),
       ),
     );
     if (!widget.canClear) {
@@ -45,6 +55,7 @@ class LabeledTextBoxState extends State<LabeledTextBox> {
     }
     return LimitedBox(
       maxHeight: 50,
+      maxWidth: 200,
       child: MouseHover(
         builder: (isMouseOver) {
           return Stack(
