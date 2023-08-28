@@ -1,6 +1,7 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 
 class PatientTile extends StatelessWidget {
   const PatientTile({
@@ -25,12 +26,7 @@ class PatientTile extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
       ),
-      leading: const CircleAvatar(
-        child: Icon(
-          FluentIcons.contact,
-          size: 20,
-        ),
-      ),
+      leading: const MalaProfilePicker(),
       onPressed: onPressed,
       subtitle: Column(
         mainAxisSize: MainAxisSize.min,

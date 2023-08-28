@@ -2,12 +2,15 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/activities.dart';
+import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/atoms/mala_title.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
 import 'package:mala_front/usecase/address/search_address.dart';
+import 'package:mala_front/usecase/patient/insert_patient.dart';
+import 'package:vit/vit.dart';
 
 import '../components/atoms/mala_app.dart';
 
@@ -23,7 +26,26 @@ class PatientRegistration extends StatefulWidget {
     nameController.text = p.name ?? '';
     phonesController.text = p.phones?.join(', ') ?? '';
     motherController.text = p.motherName ?? '';
-    cpfController.text = UtilBrasilFields.obterCpf(p.cpf ?? '');
+    observationController.text = p.observation ?? '';
+    var cpf = p.cpf ?? '';
+    var isValid = UtilBrasilFields.isCPFValido(cpf);
+    if (isValid) {
+      cpfController.text = UtilBrasilFields.obterCpf(p.cpf ?? '');
+    } else {
+      cpfController.text = p.cpf ?? '';
+    }
+    var address = p.address.value;
+    if (address == null) {
+      debugPrint('Address was null');
+      return;
+    }
+    zipCodeController.text = address.zipCode ?? '';
+    stateController.text = address.state ?? '';
+    cityController.text = address.city ?? '';
+    districtController.text = address.district ?? '';
+    streetController.text = address.street ?? '';
+    numberController.text = address.number ?? '';
+    complementController.text = address.complement ?? '';
   }
 
   final Patient? patient;
@@ -31,28 +53,42 @@ class PatientRegistration extends StatefulWidget {
   final phonesController = TextEditingController();
   final motherController = TextEditingController();
   final cpfController = TextEditingController();
-  final cityController = TextEditingController(
-    text: 'Fortaleza',
-  );
+  final zipCodeController = TextEditingController();
   final stateController = TextEditingController(
     text: 'Ceará',
   );
-  final zipCodeController = TextEditingController();
-  final streetController = TextEditingController();
+  final cityController = TextEditingController(
+    text: 'Fortaleza',
+  );
   final districtController = TextEditingController();
+  final streetController = TextEditingController();
+  final numberController = TextEditingController();
+  final complementController = TextEditingController();
+  final observationController = TextEditingController();
 
   @override
   State<PatientRegistration> createState() => _PatientRegistrationState();
 }
 
 class _PatientRegistrationState extends State<PatientRegistration> {
-  DateTime? selectedBirth;
+  DateTime? _selectedBirth;
+  DateTime? get selectedBirth => _selectedBirth;
+  set selectedBirth(DateTime? value) {
+    setState(() {
+      _selectedBirth = value;
+    });
+  }
+
   Set<Activities> selectedActivities = {};
 
   @override
   void initState() {
     super.initState();
     selectedBirth = widget.patient?.birthDate;
+    selectedActivities = widget.patient?.activitiesId?.map((x) {
+          return Activities.values[x];
+        }).toSet() ??
+        {};
   }
 
   @override
@@ -72,19 +108,22 @@ class _PatientRegistrationState extends State<PatientRegistration> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Spacer(),
-                IconButton(
-                  icon: const Icon(
-                    FluentIcons.delete,
-                    size: 20,
+                if (widget.patient != null)
+                  IconButton(
+                    icon: const Icon(
+                      FluentIcons.delete,
+                      size: 20,
+                    ),
+                    onPressed: () {},
                   ),
-                  onPressed: () {},
-                ),
                 IconButton(
                   icon: const Icon(
                     FluentIcons.save,
                     size: 20,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    save();
+                  },
                 ),
                 const SizedBox(width: 5),
               ].separatedBy(const SizedBox(width: 10)),
@@ -148,6 +187,9 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       label: 'Data de nascimento',
                       child: DatePicker(
                         selected: selectedBirth,
+                        onChanged: (v) {
+                          selectedBirth = v;
+                        },
                       ),
                     ),
                   ].separatedBy(const SizedBox(width: 20)),
@@ -208,6 +250,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       child: LabeledTextBox(
                         label: 'Número',
                         placeholder: '17B',
+                        controller: widget.numberController,
                       ),
                     ),
                     SizedBox(
@@ -215,6 +258,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       child: LabeledTextBox(
                         label: 'Complemento',
                         placeholder: 'apto 201',
+                        controller: widget.complementController,
                       ),
                     ),
                   ].separatedBy(const SizedBox(width: 20)),
@@ -229,6 +273,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                 TextBox(
                   maxLines: 6,
                   placeholder: 'Observações',
+                  controller: widget.observationController,
                   placeholderStyle: TextStyle(
                     color: Colors.grey[80],
                   ),
@@ -248,5 +293,36 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     widget.cityController.text = found.city ?? '';
     widget.districtController.text = found.district ?? '';
     widget.streetController.text = found.street ?? '';
+  }
+
+  void save() async {
+    var patient = widget.patient;
+    var phones = widget.phonesController.text.split(',').map((x) => x.trim());
+    if (patient == null) {
+      patient = Patient(
+        name: widget.nameController.text,
+        cpf: widget.cpfController.text,
+        motherName: widget.motherController.text,
+        yearOfBirth: selectedBirth?.year,
+        monthOfBirth: selectedBirth?.month,
+        dayOfBirth: selectedBirth?.day,
+        phones: phones.toList(),
+        observation: widget.observationController.text,
+        activitiesId: selectedActivities.map((x) => x.index).toList(),
+      );
+      patient.address.value = Address(
+        zipCode: widget.zipCodeController.text,
+        state: widget.stateController.text,
+        city: widget.cityController.text,
+        district: widget.districtController.text,
+        street: widget.streetController.text,
+        number: widget.numberController.text,
+        complement: widget.complementController.text,
+      );
+      await insertPatient(patient);
+      context.navigator.pop();
+      return;
+    }
+    throw NotImplemented();
   }
 }

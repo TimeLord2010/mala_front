@@ -9,7 +9,6 @@ environment:
 dependencies:
   awesome_flutter_extensions: ^1.1.1
   brasil_fields: ^1.14.0
-  cpf_cnpj_validator: ^2.0.0
   file_picker: ^5.3.4
   fluent_ui: ^4.7.3
   flutter:

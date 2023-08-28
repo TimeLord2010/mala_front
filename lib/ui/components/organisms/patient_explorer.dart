@@ -8,8 +8,23 @@ import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 
-class PatientExplorer extends StatelessWidget {
+import '../../../models/patient.dart';
+
+class PatientExplorer extends StatefulWidget {
   const PatientExplorer({super.key});
+
+  @override
+  State<PatientExplorer> createState() => _PatientExplorerState();
+}
+
+class _PatientExplorerState extends State<PatientExplorer> {
+  Future<List<Patient>> _patientsFuture = listPatients();
+  Future<List<Patient>> get patientsFuture => _patientsFuture;
+  set patientsFuture(Future<List<Patient>> value) {
+    setState(() {
+      _patientsFuture = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +40,11 @@ class PatientExplorer extends StatelessWidget {
               CommandBarButton(
                 icon: const Icon(FluentIcons.add),
                 label: const Text('Cadastrar'),
-                onPressed: () {
-                  context.navigator.pushMaterial(PatientRegistration(
+                onPressed: () async {
+                  await context.navigator.pushMaterial(PatientRegistration(
                     patient: null,
                   ));
+                  patientsFuture = listPatients();
                 },
               ),
             ],
@@ -86,7 +102,7 @@ class PatientExplorer extends StatelessWidget {
         ),
         Expanded(
           child: SimpleFutureBuilder(
-            future: listPatients(),
+            future: patientsFuture,
             builder: (patients) {
               return PatientList(
                 patients: patients,

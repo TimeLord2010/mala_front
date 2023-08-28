@@ -1,5 +1,9 @@
+import 'package:mala_front/factories/database_client.dart';
 import 'package:mala_front/repositories/patient.dart';
 
-PatientRepository createPatientRepository() {
-  return PatientRepository();
+Future<PatientRepository> createPatientRepository() async {
+  var db = await createDatabaseClient();
+  return PatientRepository(
+    isar: db,
+  );
 }
