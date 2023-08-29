@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/atoms/mala_check_box.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
+import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
@@ -104,11 +105,22 @@ class _PatientExplorerState extends State<PatientExplorer> {
           child: SimpleFutureBuilder(
             future: patientsFuture,
             builder: (patients) {
-              return PatientList(
-                patients: patients ?? [],
-                onEdit: (patient) {
-                  patientsFuture = listPatients();
-                },
+              return Column(
+                children: [
+                  Expanded(
+                    child: PatientList(
+                      patients: patients ?? [],
+                      onEdit: (patient) {
+                        patientsFuture = listPatients();
+                      },
+                    ),
+                  ),
+                  PageSelector(
+                    index: 0,
+                    pages: 100,
+                    onSelected: (index) {},
+                  ),
+                ],
               );
             },
             contextMessage: 'Falha na listagem de pacientes',
