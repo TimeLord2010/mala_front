@@ -1,5 +1,6 @@
 import 'package:mala_front/factories/patient_repository.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/models/patient_query.dart';
 import 'package:vit/vit.dart';
 
 Future<List<Patient>> listPatients({
@@ -11,7 +12,9 @@ Future<List<Patient>> listPatients({
   var rep = await createPatientRepository();
   stopWatch.lap(tag: 'connect');
   var patients = await rep.list(
-    name: name,
+    PatientQuery(
+      name: name,
+    ),
     skip: skip,
     limit: limit,
   );

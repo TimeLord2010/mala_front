@@ -46,7 +46,7 @@ class PageButton extends StatelessWidget {
   }
 
   BoxDecoration? _decoration(BuildContext context) {
-    Color color = const Color.fromARGB(255, 2, 74, 134);
+    //Color color = const Color.fromARGB(255, 2, 74, 134);
     if (!selected) {
       return const BoxDecoration(
         // border: Border.all(

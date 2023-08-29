@@ -1,5 +1,6 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/ui/components/atoms/mala_check_box.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
@@ -7,24 +8,44 @@ import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
+import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 
 import '../../../models/patient.dart';
 
 class PatientExplorer extends StatefulWidget {
-  const PatientExplorer({super.key});
+  PatientExplorer({super.key});
+
+  final nameController = TextEditingController();
 
   @override
   State<PatientExplorer> createState() => _PatientExplorerState();
 }
 
 class _PatientExplorerState extends State<PatientExplorer> {
-  Future<List<Patient>> _patientsFuture = listPatients();
+  Future<List<Patient>> _patientsFuture = Future.value([]);
   Future<List<Patient>> get patientsFuture => _patientsFuture;
   set patientsFuture(Future<List<Patient>> value) {
     setState(() {
       _patientsFuture = value;
     });
+  }
+
+  int _currentPage = 0;
+  int get currentPage => _currentPage;
+  set currentPage(int value) {
+    setState(() {
+      _currentPage = value;
+    });
+  }
+
+  int pages = 1;
+  int pageSize = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    _search(currentPage, true);
   }
 
   @override
@@ -45,7 +66,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
                   await context.navigator.pushMaterial(PatientRegistration(
                     patient: null,
                   ));
-                  patientsFuture = listPatients();
+                  _search(currentPage, true);
                 },
               ),
             ],
@@ -111,14 +132,16 @@ class _PatientExplorerState extends State<PatientExplorer> {
                     child: PatientList(
                       patients: patients ?? [],
                       onEdit: (patient) {
-                        patientsFuture = listPatients();
+                        _search(currentPage, true);
                       },
                     ),
                   ),
                   PageSelector(
-                    index: 0,
-                    pages: 100,
-                    onSelected: (index) {},
+                    index: currentPage,
+                    pages: pages,
+                    onSelected: (index) {
+                      _search(index, false);
+                    },
                   ),
                 ],
               );
@@ -183,6 +206,18 @@ class _PatientExplorerState extends State<PatientExplorer> {
           ),
         ),
       ].separatedBy(const SizedBox(width: 10)),
+    );
+  }
+
+  void _search(int page, bool shouldCount) async {
+    currentPage = page;
+    if (shouldCount) {
+      var count = await countPatients(PatientQuery());
+      pages = count ~/ pageSize;
+    }
+    patientsFuture = listPatients(
+      skip: currentPage * pageSize,
+      limit: pageSize,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/models/patient_query.dart';
 import 'package:vit/vit.dart';
 
 class PatientRepository {
@@ -10,14 +11,18 @@ class PatientRepository {
     required this.isar,
   });
 
-  Future<List<Patient>> list({
-    String? name,
+  Future<List<Patient>> list(
+    PatientQuery query, {
     int? skip,
     int? limit,
   }) async {
-    var where = isar.patients.where();
-    var docs = await where.nameStartsWith(name ?? '').sortByName().offset(skip ?? 0).limit(limit ?? 60).findAll();
+    var docs = await query.buildWhere(isar).sortByName().offset(skip ?? 0).limit(limit ?? 60).findAll();
     return docs;
+  }
+
+  Future<int> count(PatientQuery query) async {
+    var count = await query.buildWhere(isar).count();
+    return count;
   }
 
   Future<Patient> insert(Patient patient) async {
