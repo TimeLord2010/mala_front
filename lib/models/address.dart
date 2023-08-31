@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:mala_front/models/patient.dart';
 
 part 'address.g.dart';
 
@@ -10,14 +11,21 @@ class Address {
   String? state;
   String? city;
 
-  @Index()
+  @Index(
+    type: IndexType.value,
+  )
   String? district;
 
-  @Index()
+  @Index(
+    type: IndexType.value,
+  )
   String? street;
 
   String? number;
   String? complement;
+
+  @Backlink(to: 'address')
+  final patient = IsarLink<Patient>();
 
   Address({
     this.city,

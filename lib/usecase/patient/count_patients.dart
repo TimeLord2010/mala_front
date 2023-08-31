@@ -1,7 +1,11 @@
 import 'package:mala_front/factories/patient_repository.dart';
 import 'package:mala_front/models/patient_query.dart';
+import 'package:vit/vit.dart';
 
 Future<int> countPatients(PatientQuery query) async {
+  var stopWatch = StopWatch('countPatients');
   var rep = await createPatientRepository();
-  return rep.count(query);
+  var count = rep.count(query);
+  stopWatch.stop();
+  return count;
 }

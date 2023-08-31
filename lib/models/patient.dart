@@ -48,6 +48,7 @@ class Patient {
     this.yearOfBirth,
   });
 
+  @ignore
   DateTime? get birthDate {
     if (yearOfBirth == null || monthOfBirth == null || dayOfBirth == null) {
       return null;
@@ -55,12 +56,14 @@ class Patient {
     return DateTime(yearOfBirth!, monthOfBirth!, dayOfBirth!);
   }
 
+  @ignore
   int? get years {
     if (birthDate == null) return null;
     var dif = DateTime.now().difference(birthDate!);
     return (dif.inDays / 365).floor();
   }
 
+  @ignore
   bool get hasBirthDayThisMonth {
     var birth = birthDate;
     if (birth == null) return false;
@@ -68,10 +71,18 @@ class Patient {
     return nowMonth == birth.month;
   }
 
+  @ignore
   bool get isBirthdayToday {
     var birth = birthDate;
     if (birth == null) return false;
     var now = DateTime.now();
     return now.month == birth.month && now.day == birth.day;
   }
+
+  @override
+  @ignore
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is Patient && id == other.id;
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
@@ -14,6 +15,10 @@ Future<Isar> createDatabaseClient() async {
       [PatientSchema, AddressSchema],
       directory: dir.path,
       maxSizeMiB: 5,
+      inspector: kDebugMode,
+      compactOnLaunch: const CompactCondition(
+        minRatio: 1.5,
+      ),
     );
   }
   return _isar!;

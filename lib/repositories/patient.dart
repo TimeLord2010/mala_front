@@ -16,12 +16,12 @@ class PatientRepository {
     int? skip,
     int? limit,
   }) async {
-    var docs = await query.buildWhere(isar).sortByName().offset(skip ?? 0).limit(limit ?? 60).findAll();
+    var docs = await query.buildQuery(isar).offset(skip ?? 0).limit(limit ?? 60).findAll();
     return docs;
   }
 
   Future<int> count(PatientQuery query) async {
-    var count = await query.buildWhere(isar).count();
+    var count = await query.buildQuery(isar).count();
     return count;
   }
 

@@ -15,6 +15,9 @@ Future<void> saveProfilePicture({
     await file.create(recursive: true);
     await file.writeAsBytes(data);
   } else {
-    await file.delete();
+    var exists = await file.exists();
+    if (exists) {
+      await file.delete();
+    }
   }
 }

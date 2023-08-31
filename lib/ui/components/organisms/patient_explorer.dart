@@ -1,5 +1,6 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/ui/components/atoms/mala_check_box.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
@@ -17,6 +18,8 @@ class PatientExplorer extends StatefulWidget {
   PatientExplorer({super.key});
 
   final nameController = TextEditingController();
+  final districtController = TextEditingController();
+  final streetController = TextEditingController();
 
   @override
   State<PatientExplorer> createState() => _PatientExplorerState();
@@ -31,6 +34,30 @@ class _PatientExplorerState extends State<PatientExplorer> {
     });
   }
 
+  int? _minAge;
+  int? get minAge => _minAge;
+  set minAge(int? value) {
+    setState(() {
+      _minAge = value;
+    });
+  }
+
+  int? _maxAge;
+  int? get maxAge => _maxAge;
+  set maxAge(int? value) {
+    setState(() {
+      _maxAge = value;
+    });
+  }
+
+  bool _monthBirthDay = false;
+  bool get monthBirthDay => _monthBirthDay;
+  set monthBirthDay(bool value) {
+    setState(() {
+      _monthBirthDay = value;
+    });
+  }
+
   int _currentPage = 0;
   int get currentPage => _currentPage;
   set currentPage(int value) {
@@ -38,6 +65,8 @@ class _PatientExplorerState extends State<PatientExplorer> {
       _currentPage = value;
     });
   }
+
+  Set<Activities> activities = {};
 
   int pages = 1;
   int pageSize = 60;
@@ -84,12 +113,15 @@ class _PatientExplorerState extends State<PatientExplorer> {
                   children: [
                     LabeledTextBox(
                       label: 'Nome',
+                      controller: widget.nameController,
                     ),
                     LabeledTextBox(
                       label: 'Endereço',
+                      controller: widget.streetController,
                     ),
                     LabeledTextBox(
                       label: 'Bairro',
+                      controller: widget.districtController,
                     ),
                   ]
                       .map((x) {
@@ -110,11 +142,15 @@ class _PatientExplorerState extends State<PatientExplorer> {
                     const Spacer(),
                     Button(
                       child: const Text('Limpar'),
-                      onPressed: () {},
+                      onPressed: () {
+                        _clearSearch();
+                      },
                     ),
                     FilledButton(
                       child: const Text('Pesquisar'),
-                      onPressed: () {},
+                      onPressed: () {
+                        _search(0, true);
+                      },
                     ),
                   ].separatedBy(const SizedBox(width: 20)),
                 ),
@@ -154,20 +190,19 @@ class _PatientExplorerState extends State<PatientExplorer> {
   }
 
   Column _activityFilter() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Atividades'),
+        const Text('Atividades'),
         ActivitiesSelector(
-          selected: {},
+          selected: activities,
         ),
       ],
     );
   }
 
   Row _dateFilter() {
-    int? minAge, maxAge;
     return Row(
       children: [
         Expanded(
@@ -176,13 +211,17 @@ class _PatientExplorerState extends State<PatientExplorer> {
             child: Row(
               children: [
                 NumberBox(
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    minAge = value;
+                  },
                   value: minAge,
                   min: 0,
                   mode: SpinButtonPlacementMode.none,
                 ),
                 NumberBox(
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    maxAge = value;
+                  },
                   value: maxAge,
                   min: 0,
                   mode: SpinButtonPlacementMode.none,
@@ -200,8 +239,10 @@ class _PatientExplorerState extends State<PatientExplorer> {
           child: Center(
             child: MalaCheckBox(
               label: 'Aniversariantes do mês',
-              checked: false,
-              onCheck: (checked) {},
+              checked: monthBirthDay,
+              onCheck: (checked) {
+                monthBirthDay = checked;
+              },
             ),
           ),
         ),
@@ -211,13 +252,34 @@ class _PatientExplorerState extends State<PatientExplorer> {
 
   void _search(int page, bool shouldCount) async {
     currentPage = page;
+    var patientQuery = PatientQuery(
+      name: widget.nameController.text,
+      district: widget.districtController.text,
+      street: widget.streetController.text,
+      minAge: minAge,
+      maxAge: maxAge,
+      monthBirthday: monthBirthDay,
+      activies: activities,
+    );
     if (shouldCount) {
-      var count = await countPatients(PatientQuery());
+      var count = await countPatients(patientQuery);
       pages = count ~/ pageSize;
     }
     patientsFuture = listPatients(
+      patientQuery: patientQuery,
       skip: currentPage * pageSize,
       limit: pageSize,
     );
+  }
+
+  void _clearSearch() {
+    widget.nameController.clear();
+    widget.districtController.clear();
+    widget.streetController.clear();
+    _minAge = null;
+    _maxAge = null;
+    _monthBirthDay = false;
+    activities.clear();
+    _search(0, false);
   }
 }
