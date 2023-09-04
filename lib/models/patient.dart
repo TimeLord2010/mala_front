@@ -48,6 +48,27 @@ class Patient {
     this.yearOfBirth,
   });
 
+  factory Patient.fromMap(Map<String, dynamic> map) {
+    List phones = map['phones'];
+    var p = Patient(
+      name: map['name'],
+      phones: phones.map((x) => x as String).toList(),
+      motherName: map['motherName'],
+      cpf: map['cpf'],
+      observation: map['observation'],
+      yearOfBirth: map['yearOfBirth'],
+      monthOfBirth: map['monthOfBirth'],
+      dayOfBirth: map['dayOfBirth'],
+      activitiesId: map['activitiesId'],
+    );
+    var address = map['address'];
+    if (address != null) {
+      p.address.value = Address.fromMap(address);
+    }
+    p.id = map['id'];
+    return p;
+  }
+
   @ignore
   DateTime? get birthDate {
     if (yearOfBirth == null || monthOfBirth == null || dayOfBirth == null) {

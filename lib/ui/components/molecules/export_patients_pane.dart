@@ -37,6 +37,10 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
     });
   }
 
+  bool get isSaving {
+    return progress != 0 && progress != 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -77,18 +81,22 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(
+            onPressed: isSaving
+                ? null
+                : () async {
+                    if (path.isEmpty) return;
+                    progress = 0.0001;
+                    await exportPatients(
+                      query: widget.query,
+                      filename: path,
+                      onProgress: ((total, processed) {
+                        debugPrint('$processed/$total');
+                        progress = processed / total;
+                      }),
+                    );
+                    progress = 1;
+                  },
             child: const Text('Exportar'),
-            onPressed: () async {
-              if (path.isEmpty) return;
-              await exportPatients(
-                query: widget.query,
-                filename: path,
-                onProgress: ((total, processed) {
-                  debugPrint('$processed/$total');
-                  progress = processed / total;
-                }),
-              );
-            },
           ),
         ),
       ],

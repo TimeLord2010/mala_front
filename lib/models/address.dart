@@ -37,6 +37,20 @@ class Address {
     this.complement,
   });
 
+  factory Address.fromMap(Map<String, dynamic> map) {
+    var a = Address(
+      zipCode: map['zipCode'],
+      state: map['state'],
+      city: map['city'],
+      district: map['district'],
+      street: map['street'],
+      number: map['number'],
+      complement: map['complement'],
+    );
+    map['id'] = map['id'];
+    return a;
+  }
+
   @ignore
   Map<String, dynamic> get toMap {
     return {
