@@ -2,10 +2,9 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
-import 'package:mala_front/ui/components/atoms/mala_check_box.dart';
-import 'package:mala_front/ui/components/molecules/activities_selector.dart';
-import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
+import 'package:mala_front/ui/components/molecules/export_patients_pane.dart';
 import 'package:mala_front/ui/components/molecules/page_selector.dart';
+import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
@@ -37,39 +36,43 @@ class _PatientExplorerState extends State<PatientExplorer> {
   int? _minAge;
   int? get minAge => _minAge;
   set minAge(int? value) {
-    setState(() {
-      _minAge = value;
-    });
+    setState(() => _minAge = value);
   }
 
   int? _maxAge;
   int? get maxAge => _maxAge;
   set maxAge(int? value) {
-    setState(() {
-      _maxAge = value;
-    });
+    setState(() => _maxAge = value);
   }
 
   bool _monthBirthDay = false;
   bool get monthBirthDay => _monthBirthDay;
   set monthBirthDay(bool value) {
-    setState(() {
-      _monthBirthDay = value;
-    });
+    setState(() => _monthBirthDay = value);
   }
 
   int _currentPage = 0;
   int get currentPage => _currentPage;
   set currentPage(int value) {
-    setState(() {
-      _currentPage = value;
-    });
+    setState(() => _currentPage = value);
   }
 
   Set<Activities> activities = {};
 
   int pages = 1;
   int pageSize = 60;
+
+  PatientQuery get query {
+    return PatientQuery(
+      name: widget.nameController.text,
+      district: widget.districtController.text,
+      street: widget.streetController.text,
+      minAge: minAge,
+      maxAge: maxAge,
+      monthBirthday: monthBirthDay,
+      activies: activities,
+    );
+  }
 
   @override
   void initState() {
@@ -98,6 +101,36 @@ class _PatientExplorerState extends State<PatientExplorer> {
                   _search(currentPage, true);
                 },
               ),
+              CommandBarButton(
+                icon: const Icon(FluentIcons.save),
+                label: const Text('Salvar'),
+                onPressed: () async {
+                  await showDialog<String>(
+                    context: context,
+                    builder: (context) {
+                      return ContentDialog(
+                        title: const Text('Exportar pacientes'),
+                        constraints: const BoxConstraints(minWidth: 200),
+                        content: ExportPatientsPane(
+                          close: () {
+                            Navigator.pop(context);
+                          },
+                          query: query,
+                        ),
+                        actions: [
+                          Button(
+                            child: const Text('Cancelar'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const Spacer(),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -107,54 +140,21 @@ class _PatientExplorerState extends State<PatientExplorer> {
             header: const Text('Filtros'),
             animationCurve: Curves.easeOut,
             animationDuration: const Duration(milliseconds: 300),
-            content: Column(
-              children: [
-                Row(
-                  children: [
-                    LabeledTextBox(
-                      label: 'Nome',
-                      controller: widget.nameController,
-                    ),
-                    LabeledTextBox(
-                      label: 'Endereço',
-                      controller: widget.streetController,
-                    ),
-                    LabeledTextBox(
-                      label: 'Bairro',
-                      controller: widget.districtController,
-                    ),
-                  ]
-                      .map((x) {
-                        return Expanded(
-                          child: x,
-                        );
-                      })
-                      .toList()
-                      .separatedBy(const SizedBox(width: 5)),
-                ),
-                const SizedBox(height: 15),
-                _dateFilter(),
-                const SizedBox(height: 15),
-                _activityFilter(),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Spacer(),
-                    Button(
-                      child: const Text('Limpar'),
-                      onPressed: () {
-                        _clearSearch();
-                      },
-                    ),
-                    FilledButton(
-                      child: const Text('Pesquisar'),
-                      onPressed: () {
-                        _search(0, true);
-                      },
-                    ),
-                  ].separatedBy(const SizedBox(width: 20)),
-                ),
-              ],
+            content: PatientFilterPane(
+              nameController: widget.nameController,
+              streetController: widget.streetController,
+              districtController: widget.districtController,
+              activities: activities,
+              minAge: minAge,
+              maxAge: maxAge,
+              monthBirthDay: monthBirthDay,
+              onMinAgeChange: (value) => minAge = value,
+              onMaxAgeChange: (value) => maxAge = value,
+              onMonthBirthDayChange: (value) => monthBirthDay = value,
+              clear: _clearSearch,
+              search: () {
+                _search(0, true);
+              },
             ),
           ),
         ),
@@ -163,6 +163,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
             future: patientsFuture,
             builder: (patients) {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
                     child: PatientList(
@@ -189,78 +190,9 @@ class _PatientExplorerState extends State<PatientExplorer> {
     );
   }
 
-  Column _activityFilter() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text('Atividades'),
-        ActivitiesSelector(
-          selected: activities,
-        ),
-      ],
-    );
-  }
-
-  Row _dateFilter() {
-    return Row(
-      children: [
-        Expanded(
-          child: InfoLabel(
-            label: 'Idade',
-            child: Row(
-              children: [
-                NumberBox(
-                  onChanged: (value) {
-                    minAge = value;
-                  },
-                  value: minAge,
-                  min: 0,
-                  mode: SpinButtonPlacementMode.none,
-                ),
-                NumberBox(
-                  onChanged: (value) {
-                    maxAge = value;
-                  },
-                  value: maxAge,
-                  min: 0,
-                  mode: SpinButtonPlacementMode.none,
-                ),
-              ]
-                  .map((x) {
-                    return Expanded(child: x);
-                  })
-                  .toList()
-                  .separatedBy(const SizedBox(width: 5)),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Center(
-            child: MalaCheckBox(
-              label: 'Aniversariantes do mês',
-              checked: monthBirthDay,
-              onCheck: (checked) {
-                monthBirthDay = checked;
-              },
-            ),
-          ),
-        ),
-      ].separatedBy(const SizedBox(width: 10)),
-    );
-  }
-
   void _search(int page, bool shouldCount) async {
     currentPage = page;
-    var patientQuery = PatientQuery(
-      name: widget.nameController.text,
-      district: widget.districtController.text,
-      street: widget.streetController.text,
-      minAge: minAge,
-      maxAge: maxAge,
-      monthBirthday: monthBirthDay,
-      activies: activities,
-    );
+    var patientQuery = query;
     if (shouldCount) {
       var count = await countPatients(patientQuery);
       pages = count ~/ pageSize;

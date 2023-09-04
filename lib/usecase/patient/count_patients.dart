@@ -5,7 +5,8 @@ import 'package:vit/vit.dart';
 Future<int> countPatients(PatientQuery query) async {
   var stopWatch = StopWatch('countPatients');
   var rep = await createPatientRepository();
-  var count = rep.count(query);
+  var count = await rep.count(query);
+  stopWatch.lap(tag: '$count items');
   stopWatch.stop();
   return count;
 }

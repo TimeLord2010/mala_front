@@ -1,16 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/pages/main_page.dart';
 
-void main() async {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MainPage();
-  }
+  runApp(const MainPage());
 }

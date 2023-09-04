@@ -36,4 +36,32 @@ class Address {
     this.zipCode,
     this.complement,
   });
+
+  @ignore
+  Map<String, dynamic> get toMap {
+    return {
+      'id': id,
+      if (zipCode != null) ...{
+        'zipCode': zipCode,
+      },
+      if (state != null) ...{
+        'state': state,
+      },
+      if (city != null) ...{
+        'city': city,
+      },
+      if (district != null) ...{
+        'district': district,
+      },
+      if (street != null) ...{
+        'street': street,
+      },
+      if (number != null) ...{
+        'number': number,
+      },
+      if (complement != null) ...{
+        'complement': complement,
+      },
+    };
+  }
 }

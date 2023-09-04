@@ -79,6 +79,43 @@ class Patient {
     return now.month == birth.month && now.day == birth.day;
   }
 
+  @ignore
+  Map<String, dynamic> get toMap {
+    return {
+      'id': id,
+      if (name != null) ...{
+        'name': name,
+      },
+      if (phones != null) ...{
+        'phones': phones,
+      },
+      if (motherName != null) ...{
+        'montherName': motherName,
+      },
+      if (cpf != null) ...{
+        'cpf': cpf,
+      },
+      if (observation != null) ...{
+        'observation': observation,
+      },
+      if (yearOfBirth != null) ...{
+        'yearOfBirth': yearOfBirth,
+      },
+      if (monthOfBirth != null) ...{
+        'monthOfBirth': monthOfBirth,
+      },
+      if (dayOfBirth != null) ...{
+        'dayOfBirth': dayOfBirth,
+      },
+      if (activitiesId != null) ...{
+        'activitiesId': activitiesId,
+      },
+      if (address.value != null) ...{
+        'address': address.value?.toMap,
+      },
+    };
+  }
+
   @override
   @ignore
   int get hashCode => id.hashCode;

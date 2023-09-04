@@ -49,6 +49,11 @@ class _MainPageState extends State<MainPage> {
               title: const Text('Lista de pacientes'),
               body: PatientExplorer(),
             ),
+            PaneItem(
+              icon: const Icon(FluentIcons.download),
+              title: const Text('Importar pacientes'),
+              body: const SizedBox.shrink(),
+            ),
           ],
           footerItems: [
             PaneItem(

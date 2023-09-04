@@ -135,8 +135,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       size: 20,
                     ),
                     onPressed: () async {
-                      await deletePatient(widget.patient!.id);
-                      context.navigator.pop();
+                      await _delete(context);
                     },
                   ),
                 IconButton(
@@ -367,5 +366,33 @@ class _PatientRegistrationState extends State<PatientRegistration> {
       pictureData: pictureData,
     );
     context.navigator.pop();
+  }
+
+  Future<void> _delete(BuildContext context) async {
+    var result = await showDialog<String>(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: const Text('Deletar paciente?'),
+        content: const Text(
+          'Essa ação não pode ser revertida',
+        ),
+        actions: [
+          Button(
+            child: const Text('Deletar'),
+            onPressed: () async {
+              await deletePatient(widget.patient!.id);
+              Navigator.pop(context, "DEL");
+            },
+          ),
+          FilledButton(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+    if (result == 'DEL') {
+      context.navigator.pop();
+    }
   }
 }

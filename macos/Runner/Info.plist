@@ -28,5 +28,7 @@
 		<string>MainMenu</string>
 		<key>NSPrincipalClass</key>
 		<string>NSApplication</string>
+		<key>NSDocumentsFolderUsageDescription</key>
+		<string>Necessary to save patient records</string>
 	</dict>
 </plist>
