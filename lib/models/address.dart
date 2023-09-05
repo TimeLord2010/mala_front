@@ -55,25 +55,25 @@ class Address {
   Map<String, dynamic> get toMap {
     return {
       'id': id,
-      if (zipCode != null) ...{
+      if (zipCode?.isNotEmpty ?? false) ...{
         'zipCode': zipCode,
       },
-      if (state != null) ...{
+      if (state?.isNotEmpty ?? false) ...{
         'state': state,
       },
-      if (city != null) ...{
+      if (city?.isNotEmpty ?? false) ...{
         'city': city,
       },
-      if (district != null) ...{
+      if (district?.isNotEmpty ?? false) ...{
         'district': district,
       },
-      if (street != null) ...{
+      if (street?.isNotEmpty ?? false) ...{
         'street': street,
       },
-      if (number != null) ...{
+      if (number?.isNotEmpty ?? false) ...{
         'number': number,
       },
-      if (complement != null) ...{
+      if (complement?.isNotEmpty ?? false) ...{
         'complement': complement,
       },
     };

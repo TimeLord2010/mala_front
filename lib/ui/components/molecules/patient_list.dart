@@ -8,11 +8,11 @@ class PatientList extends StatelessWidget {
   const PatientList({
     super.key,
     required this.patients,
-    required this.onEdit,
+    this.onEdit,
   });
 
   final List<Patient> patients;
-  final void Function(Patient patient) onEdit;
+  final void Function(Patient patient)? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,14 @@ class PatientList extends StatelessWidget {
             width: 350,
             child: PatientTile(
               patient: x,
-              onPressed: () async {
-                await context.navigator.pushMaterial(PatientRegistration(
-                  patient: x,
-                ));
-                onEdit(x);
-              },
+              onPressed: onEdit != null
+                  ? () async {
+                      await context.navigator.pushMaterial(PatientRegistration(
+                        patient: x,
+                      ));
+                      onEdit!(x);
+                    }
+                  : null,
             ),
           );
         }).toList(),

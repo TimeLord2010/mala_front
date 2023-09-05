@@ -30,19 +30,21 @@ class FileSystemPicker extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 20),
-        FilledButton(
-          onPressed: () async {
-            if (isFolder) {
-              var picked = await pickFolder();
-              onPick(picked);
-            } else {
-              var picked = await pickFile();
-              onPick(picked);
-            }
-          },
+        Button(
+          onPressed: _onPress,
           child: const Text('Escolher'),
         ),
       ],
     );
+  }
+
+  void _onPress() async {
+    if (isFolder) {
+      var picked = await pickFolder();
+      onPick(picked);
+    } else {
+      var picked = await pickFile();
+      onPick(picked);
+    }
   }
 }

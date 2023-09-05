@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/ui/components/atoms/file_system_picker.dart';
-import 'package:mala_front/usecase/file/get_export_patients_file_name.dart';
 import 'package:mala_front/usecase/patient/export_patients.dart';
 
 class ExportPatientsPane extends StatefulWidget {
@@ -69,10 +66,9 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
                 : () async {
                     if (path.isEmpty) return;
                     progress = 0.0001;
-                    var filename = path + Platform.pathSeparator + getExportPatientsFileName();
                     await exportPatients(
                       query: widget.query,
-                      filename: filename,
+                      outputDir: path,
                       onProgress: ((total, processed) {
                         debugPrint('$processed/$total');
                         progress = processed / total;

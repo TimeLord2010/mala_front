@@ -20,6 +20,17 @@ class PatientRepository {
     return docs;
   }
 
+  Future<Iterable<Patient>> listUsingCreatedAts({
+    required Iterable<DateTime> createdAts,
+  }) async {
+    var where = isar.patients.where();
+    var query = where.createdAtIsNotNull();
+    for (var dt in createdAts) {
+      query = query.or().createdAtEqualTo(dt);
+    }
+    return query.findAll();
+  }
+
   Future<int> count(PatientQuery query) async {
     var count = await query.buildQuery(isar).count();
     return count;

@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/address.dart';
+import 'package:vit/vit.dart';
 
 part 'patient.g.dart';
 
@@ -34,6 +35,9 @@ class Patient {
   @Index(type: IndexType.value)
   List<short>? activitiesId;
 
+  @Index()
+  DateTime? createdAt;
+
   final address = IsarLink<Address>();
 
   Patient({
@@ -46,20 +50,23 @@ class Patient {
     this.dayOfBirth,
     this.monthOfBirth,
     this.yearOfBirth,
+    this.createdAt,
   });
 
   factory Patient.fromMap(Map<String, dynamic> map) {
-    List phones = map['phones'];
+    List? phones = map['phones'];
+    List? activities = map['activitiesId'];
     var p = Patient(
       name: map['name'],
-      phones: phones.map((x) => x as String).toList(),
+      phones: phones?.map((x) => x as String).toList(),
       motherName: map['motherName'],
       cpf: map['cpf'],
       observation: map['observation'],
       yearOfBirth: map['yearOfBirth'],
       monthOfBirth: map['monthOfBirth'],
       dayOfBirth: map['dayOfBirth'],
-      activitiesId: map['activitiesId'],
+      activitiesId: activities?.map((x) => x as int).toList(),
+      createdAt: map.getMaybeDateTime('createdAt'),
     );
     var address = map['address'];
     if (address != null) {
@@ -107,16 +114,16 @@ class Patient {
       if (name != null) ...{
         'name': name,
       },
-      if (phones != null) ...{
+      if (phones?.isNotEmpty ?? false) ...{
         'phones': phones,
       },
       if (motherName != null) ...{
         'montherName': motherName,
       },
-      if (cpf != null) ...{
+      if (cpf?.isNotEmpty ?? false) ...{
         'cpf': cpf,
       },
-      if (observation != null) ...{
+      if (observation?.isNotEmpty ?? false) ...{
         'observation': observation,
       },
       if (yearOfBirth != null) ...{
@@ -128,12 +135,15 @@ class Patient {
       if (dayOfBirth != null) ...{
         'dayOfBirth': dayOfBirth,
       },
-      if (activitiesId != null) ...{
+      if (activitiesId?.isNotEmpty ?? false) ...{
         'activitiesId': activitiesId,
       },
       if (address.value != null) ...{
         'address': address.value?.toMap,
       },
+      if (createdAt != null) ...{
+        'createdAt': createdAt!.toIso8601String(),
+      }
     };
   }
 

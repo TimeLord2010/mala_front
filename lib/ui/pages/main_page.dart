@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/ui/components/molecules/import_patients.dart';
+import 'package:mala_front/ui/components/organisms/import_patients.dart';
 
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';

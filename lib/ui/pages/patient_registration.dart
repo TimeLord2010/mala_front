@@ -172,7 +172,9 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             child: MalaProfilePicker(
                               bytes: pictureData,
                               onPick: (data) {
-                                pictureData = data;
+                                if (data != null) {
+                                  pictureData = data;
+                                }
                               },
                             ),
                           ),
@@ -337,7 +339,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   }
 
   void save() async {
-    var phones = widget.phonesController.text.split(',').map((x) => x.trim());
+    var phones = widget.phonesController.text.split(',').map((x) => x.trim()).where((x) => x != '');
     var patient = Patient(
       name: widget.nameController.text,
       cpf: widget.cpfController.text,
@@ -348,6 +350,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
       phones: phones.toList(),
       observation: widget.observationController.text,
       activitiesId: selectedActivities.map((x) => x.index).toList(),
+      createdAt: widget.patient?.createdAt ?? DateTime.now(),
     );
     patient.address.value = Address(
       zipCode: widget.zipCodeController.text,

@@ -6,8 +6,9 @@ import 'package:path_provider/path_provider.dart';
 Future<void> saveProfilePicture({
   required int patientId,
   required Uint8List? data,
+  Directory? dir,
 }) async {
-  var dir = await getApplicationDocumentsDirectory();
+  dir ??= await getApplicationDocumentsDirectory();
   var path = '${dir.path}/profilePictures/$patientId.jpg';
   debugPrint('Patient save path: $path');
   var file = File(path);

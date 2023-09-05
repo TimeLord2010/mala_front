@@ -29,10 +29,14 @@ class PatientQuery {
   bool get hasActivities => activies?.isNotEmpty ?? false;
 
   bool get hasAddress => hasDistrict || hasStreet;
+  bool get isEmptyQuery {
+    if (minAge != null || maxAge != null) return false;
+    return !hasAddress && !monthBirthday && !hasActivities;
+  }
 
   QueryBuilder<Patient, Patient, QAfterSortBy> buildQuery(Isar isar) {
     var r = isar.patients.where().nameStartsWith(name ?? '');
-    if (!hasAddress && minAge == null && maxAge == null && !monthBirthday && !hasActivities) {
+    if (isEmptyQuery) {
       logInfo('Contains only name');
       return r.sortByName();
     }
