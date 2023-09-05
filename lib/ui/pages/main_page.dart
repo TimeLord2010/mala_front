@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/ui/components/molecules/import_patients.dart';
 
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';
@@ -52,7 +53,7 @@ class _MainPageState extends State<MainPage> {
             PaneItem(
               icon: const Icon(FluentIcons.download),
               title: const Text('Importar pacientes'),
-              body: const SizedBox.shrink(),
+              body: const ImportPatients(),
             ),
           ],
           footerItems: [

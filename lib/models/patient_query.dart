@@ -28,7 +28,7 @@ class PatientQuery {
   bool get hasStreet => street?.isNotEmpty ?? false;
   bool get hasActivities => activies?.isNotEmpty ?? false;
 
-  bool get hasAddress => hasDistrict && hasDistrict;
+  bool get hasAddress => hasDistrict || hasStreet;
 
   QueryBuilder<Patient, Patient, QAfterSortBy> buildQuery(Isar isar) {
     var r = isar.patients.where().nameStartsWith(name ?? '');
@@ -71,7 +71,7 @@ class PatientQuery {
         return q.districtContains(district!);
       } else {
         logInfo('Contains street');
-        return q.stateContains(street!);
+        return q.streetContains(street!);
       }
     }).sortByName();
   }
