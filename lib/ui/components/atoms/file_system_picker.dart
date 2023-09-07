@@ -8,10 +8,11 @@ class FileSystemPicker extends StatelessWidget {
     required this.onPick,
     required String? path,
     this.isFolder = false,
-    this.label = 'Escolha a pasta',
-  }) : controller = TextEditingController(
+    String? label,
+  })  : controller = TextEditingController(
           text: path,
-        );
+        ),
+        label = label ?? (isFolder ? 'Escolha a pasta' : 'Escolha o arquivo');
 
   final TextEditingController controller;
   final void Function(String? path) onPick;

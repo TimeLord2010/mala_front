@@ -19,6 +19,9 @@ class ExportPatientsPane extends StatefulWidget {
 }
 
 class _ExportPatientsPaneState extends State<ExportPatientsPane> {
+  String event = '';
+  String eventMessage = '';
+
   double? _progress = 0;
   double? get progress => _progress;
   set progress(double? value) {
@@ -57,6 +60,13 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
           ProgressBar(
             value: (progress! * 100),
           ),
+        Text(event),
+        Text(
+          eventMessage,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 124, 124, 124),
+          ),
+        ),
         const SizedBox(height: 20),
         Align(
           alignment: Alignment.centerRight,
@@ -69,10 +79,19 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
                     await exportPatients(
                       query: widget.query,
                       outputDir: path,
-                      onProgress: ((total, processed) {
-                        debugPrint('$processed/$total');
-                        progress = processed / total;
-                      }),
+                      onProgress: ({
+                        required String event,
+                        required double progress,
+                        String? message,
+                      }) {
+                        this.event = event;
+                        eventMessage = message ?? '';
+                        this.progress = progress;
+                      },
+                      // (total, processed) {
+                      //   debugPrint('$processed/$total');
+                      //   progress = processed / total;
+                      // },
                     );
                     progress = 1;
                     context.navigator.pop();

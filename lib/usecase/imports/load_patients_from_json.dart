@@ -3,7 +3,7 @@ import 'dart:io';
 
 import '../../models/patient.dart';
 
-Future<List<Patient>> importPatients({
+Future<List<Patient>> loadPatientsFromJson({
   required String filename,
 }) async {
   var file = File(filename);

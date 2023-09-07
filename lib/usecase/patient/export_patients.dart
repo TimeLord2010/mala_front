@@ -14,7 +14,11 @@ import '../file/get_export_patients_file_name.dart';
 Future<void> exportPatients({
   required PatientQuery query,
   required String outputDir,
-  required void Function(int total, int processed) onProgress,
+  required void Function({
+    required String event,
+    required double progress,
+    String? message,
+  }) onProgress,
   int step = 200,
 }) async {
   var sep = Platform.pathSeparator;
@@ -51,7 +55,12 @@ Future<void> exportPatients({
       );
     }
     processed += items.length;
-    onProgress(total, processed);
+    var progress = processed / total;
+    onProgress(
+      event: 'Escrevendo dados',
+      progress: progress,
+      message: '$processed registros processados',
+    );
     await Future.delayed(const Duration(milliseconds: 10));
   }
   logInfo('Exported $processed patients');
@@ -60,7 +69,15 @@ Future<void> exportPatients({
   await stream.close();
   var encoder = ZipFileEncoder();
   encoder.create('$outputDir${sep}Mala backup.zip');
-  await encoder.addDirectory(dir);
+  await encoder.addDirectory(
+    dir,
+    onProgress: (progress) {
+      onProgress(
+        event: 'Compactando',
+        progress: progress,
+      );
+    },
+  );
   encoder.close();
   await dir.delete(
     recursive: true,

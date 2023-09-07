@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/atoms/file_system_picker.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
-import 'package:mala_front/usecase/patient/import_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients_by_creation_dates.dart';
+import 'package:mala_front/usecase/imports/load_patients_from_json.dart';
 import 'package:vit/vit.dart';
 
 import '../../../models/patient.dart';
@@ -74,7 +74,7 @@ class _ImportPatientsState extends State<ImportPatients> {
 
   void _loadPatients() async {
     toAddPatients.clear();
-    var patients = await importPatients(
+    var patients = await loadPatientsFromJson(
       filename: path!,
     );
     _scanForConflictingPatients(patients);

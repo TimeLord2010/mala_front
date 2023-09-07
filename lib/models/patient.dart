@@ -38,6 +38,9 @@ class Patient {
   @Index()
   DateTime? createdAt;
 
+  @Index()
+  DateTime? updatedAt;
+
   final address = IsarLink<Address>();
 
   Patient({
@@ -51,6 +54,7 @@ class Patient {
     this.monthOfBirth,
     this.yearOfBirth,
     this.createdAt,
+    this.updatedAt,
   });
 
   factory Patient.fromMap(Map<String, dynamic> map) {
@@ -67,6 +71,7 @@ class Patient {
       dayOfBirth: map['dayOfBirth'],
       activitiesId: activities?.map((x) => x as int).toList(),
       createdAt: map.getMaybeDateTime('createdAt'),
+      updatedAt: map.getMaybeDateTime('updatedAt'),
     );
     var address = map['address'];
     if (address != null) {
@@ -143,6 +148,9 @@ class Patient {
       },
       if (createdAt != null) ...{
         'createdAt': createdAt!.toIso8601String(),
+      },
+      if (updatedAt != null) ...{
+        'updatedAt': updatedAt!.toIso8601String(),
       }
     };
   }

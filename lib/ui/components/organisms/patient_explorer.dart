@@ -2,7 +2,6 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
-import 'package:mala_front/ui/components/molecules/export_patients_pane.dart';
 import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
@@ -10,8 +9,10 @@ import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
+import 'package:mala_front/usecase/ui/modal/export_patients_modal.dart';
 
 import '../../../models/patient.dart';
+import '../molecules/export_patients_pane.dart';
 
 class PatientExplorer extends StatefulWidget {
   PatientExplorer({super.key});
@@ -105,30 +106,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
                 icon: const Icon(FluentIcons.save),
                 label: const Text('Salvar'),
                 onPressed: () async {
-                  await showDialog<String>(
-                    context: context,
-                    builder: (context) {
-                      return ContentDialog(
-                        title: const Text('Exportar pacientes'),
-                        constraints: const BoxConstraints(minWidth: 200),
-                        content: ExportPatientsPane(
-                          close: () {
-                            Navigator.pop(context);
-                          },
-                          query: query,
-                        ),
-                        actions: [
-                          Button(
-                            child: const Text('Cancelar'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          const Spacer(),
-                        ],
-                      );
-                    },
-                  );
+                  await exportPatientsModal(context, query);
                 },
               ),
             ],

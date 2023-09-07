@@ -351,6 +351,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
       observation: widget.observationController.text,
       activitiesId: selectedActivities.map((x) => x.index).toList(),
       createdAt: widget.patient?.createdAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
     );
     patient.address.value = Address(
       zipCode: widget.zipCodeController.text,
