@@ -1,9 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/atoms/file_system_picker.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
-import 'package:mala_front/usecase/patient/list_patients_by_creation_dates.dart';
-import 'package:mala_front/usecase/imports/load_patients_from_json.dart';
-import 'package:vit/vit.dart';
+import 'package:mala_front/usecase/imports/import_patients.dart';
 
 import '../../../models/patient.dart';
 
@@ -23,7 +21,7 @@ class _ImportPatientsState extends State<ImportPatients> {
     });
   }
 
-  List<Patient> toAddPatients = [];
+  List<Patient> addedPatients = [];
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +40,7 @@ class _ImportPatientsState extends State<ImportPatients> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('${toAddPatients.length} Registros'),
+              Text('${addedPatients.length} Registros adicionados'),
               const Spacer(),
               FilledButton(
                 onPressed: path == null ? null : _loadPatients,
@@ -56,7 +54,7 @@ class _ImportPatientsState extends State<ImportPatients> {
           ),
           Expanded(
             child: PatientList(
-              patients: toAddPatients,
+              patients: addedPatients,
               onEdit: null,
             ),
           ),
@@ -73,33 +71,12 @@ class _ImportPatientsState extends State<ImportPatients> {
   }
 
   void _loadPatients() async {
-    toAddPatients.clear();
-    var patients = await loadPatientsFromJson(
-      filename: path!,
+    addedPatients.clear();
+    var added = await importPatients(
+      zipFileName: path!,
     );
-    _scanForConflictingPatients(patients);
-  }
-
-  void _scanForConflictingPatients(List<Patient> patients) async {
-    logInfo('Loaded patients: ${patients.length}');
-    var count = 100;
-    while (patients.isNotEmpty) {
-      var items = patients.take(count).toList();
-      patients.removeRange(0, items.length);
-      var dates = items.map((x) => x.createdAt).whereType<DateTime>().toList();
-      if (dates.isEmpty) continue;
-      var foundPatients = await listPatientsByCreation(
-        createdAts: dates,
-      );
-      logInfo('Found patients: ${foundPatients.length}');
-      if (foundPatients.isEmpty) continue;
-      toAddPatients.addAll(items.where((x) {
-        return !foundPatients.any((patient) => patient.createdAt == x.createdAt);
-      }));
-    }
-    logInfo('To add patients ${toAddPatients.length}');
     setState(() {
-      toAddPatients = [...toAddPatients];
+      addedPatients = added;
     });
   }
 }

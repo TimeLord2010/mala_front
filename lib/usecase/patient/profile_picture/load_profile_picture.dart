@@ -1,12 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:path_provider/path_provider.dart';
+import 'package:mala_front/usecase/patient/profile_picture/get_picture_file.dart';
 
 Future<Uint8List?> loadProfilePicture(int patientId) async {
-  var dir = await getApplicationDocumentsDirectory();
-  var path = '${dir.path}/profilePictures/$patientId.jpg';
-  var file = File(path);
+  var file = await getPictureFile(patientId);
   var exists = await file.exists();
   if (exists) {
     return file.readAsBytes();

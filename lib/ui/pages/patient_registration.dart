@@ -151,7 +151,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
               ].separatedBy(const SizedBox(width: 10)),
             ),
           ),
-          title: const Text('Cadastrar novo paciente'),
+          title: Text(widget.patient == null ? 'Cadastrar novo paciente' : 'Editar cadastro'),
         ),
         content: SingleChildScrollView(
           child: Padding(

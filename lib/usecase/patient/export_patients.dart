@@ -22,7 +22,16 @@ Future<void> exportPatients({
   int step = 200,
 }) async {
   var sep = Platform.pathSeparator;
-  var dir = Directory('$outputDir${sep}Mala backup');
+  var date = DateTime.now();
+  var values = [
+    date.year,
+    date.month,
+    date.day,
+    date.hour,
+    date.minute,
+    date.second,
+  ].map((x) => x.toString().padLeft(2, '0')).join();
+  var dir = Directory('$outputDir${sep}Mala backup [$values]');
   var filename = dir.path + sep + getExportPatientsFileName();
   var file = File(filename);
   await file.create(recursive: true);

@@ -12,7 +12,6 @@ import 'package:mala_front/usecase/patient/list_patients.dart';
 import 'package:mala_front/usecase/ui/modal/export_patients_modal.dart';
 
 import '../../../models/patient.dart';
-import '../molecules/export_patients_pane.dart';
 
 class PatientExplorer extends StatefulWidget {
   PatientExplorer({super.key});
