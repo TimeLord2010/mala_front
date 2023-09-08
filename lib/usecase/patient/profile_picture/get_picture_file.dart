@@ -7,8 +7,13 @@ Future<File> getPictureFile(
   String? basePath,
 }) async {
   if (basePath == null) {
-    var dir = await getApplicationDocumentsDirectory();
-    basePath = dir.path;
+    if (Platform.isWindows) {
+      var dir = await getApplicationSupportDirectory();
+      basePath = dir.path;
+    } else {
+      var dir = await getApplicationDocumentsDirectory();
+      basePath = dir.path;
+    }
   }
   return File('$basePath/profilePictures/$patientId.jpg');
 }

@@ -25,7 +25,6 @@ Future<void> exportPatientsModal(BuildContext context, PatientQuery query) async
               Navigator.pop(context);
             },
           ),
-          const Spacer(),
         ],
       );
     },
