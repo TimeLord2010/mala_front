@@ -44,7 +44,7 @@ class _ImportPatientsState extends State<ImportPatients> {
               const Spacer(),
               FilledButton(
                 onPressed: path == null ? null : _loadPatients,
-                child: const Text('Carregar'),
+                child: const Text('Importar'),
               ),
             ],
           ),
@@ -56,13 +56,6 @@ class _ImportPatientsState extends State<ImportPatients> {
             child: PatientList(
               patients: addedPatients,
               onEdit: null,
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton(
-              child: const Text('Importar'),
-              onPressed: () {},
             ),
           ),
         ],
