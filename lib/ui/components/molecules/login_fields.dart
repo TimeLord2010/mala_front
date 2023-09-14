@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
+import 'package:mala_front/usecase/error/get_error_message.dart';
+import 'package:vit/vit.dart';
 
 import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
@@ -51,6 +53,8 @@ class _LoginFieldsState extends State<LoginFields> {
     });
   }
 
+  String? errorMessage;
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -61,6 +65,10 @@ class _LoginFieldsState extends State<LoginFields> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const MalaLogo(),
+            if (errorMessage != null) ...[
+              const SizedBox(height: 10),
+              Text(errorMessage!),
+            ],
             const SizedBox(height: 20),
             _email(),
             const SizedBox(height: 10),
@@ -82,7 +90,7 @@ class _LoginFieldsState extends State<LoginFields> {
     return LabeledTextBox(
       label: 'Email',
       controller: widget.emailController,
-      onChange: (value) {
+      onChanged: (value) {
         enteredEmail = value.contains('@');
       },
     );
@@ -96,8 +104,11 @@ class _LoginFieldsState extends State<LoginFields> {
         label: 'Senha',
         controller: widget.passwordController,
         isPassword: true,
-        onChange: (value) {
+        onChanged: (value) {
           enteredPassword = value.isNotEmpty;
+        },
+        onSubmitted: (value) {
+          _login();
         },
       ),
       secondChild: const SizedBox.shrink(),
@@ -126,9 +137,13 @@ class _LoginFieldsState extends State<LoginFields> {
   void _login() async {
     var email = widget.emailController.text;
     var password = widget.passwordController.text;
+    errorMessage = null;
     isLoading = true;
     try {
       await widget.onLogin(email, password);
+    } catch (e) {
+      logInfo('errored at login: ${e.toString()}');
+      errorMessage = getErrorMessage(e);
     } finally {
       isLoading = false;
     }

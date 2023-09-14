@@ -7,7 +7,8 @@ class LabeledTextBox extends StatelessWidget {
     required this.label,
     this.formaters = const [],
     this.placeholder,
-    this.onChange,
+    this.onChanged,
+    this.onSubmitted,
     this.isPassword = false,
     TextEditingController? controller,
   }) : controller = controller ?? TextEditingController();
@@ -17,7 +18,8 @@ class LabeledTextBox extends StatelessWidget {
   final TextEditingController controller;
   final List<TextInputFormatter> formaters;
   final bool isPassword;
-  final void Function(String value)? onChange;
+  final void Function(String value)? onChanged;
+  final void Function(String value)? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +27,14 @@ class LabeledTextBox extends StatelessWidget {
       label: label,
       child: TextBox(
         controller: controller,
-        onChanged: onChange,
+        onChanged: onChanged,
         inputFormatters: formaters,
         placeholder: placeholder,
         placeholderStyle: TextStyle(
           color: Colors.grey[80],
         ),
         obscureText: isPassword,
+        onSubmitted: onSubmitted,
       ),
     );
     return LimitedBox(
