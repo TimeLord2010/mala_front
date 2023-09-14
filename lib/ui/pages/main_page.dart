@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
 
 import '../components/atoms/mala_app.dart';
@@ -28,10 +27,10 @@ class _MainPageState extends State<MainPage> {
       child: NavigationView(
         appBar: NavigationAppBar(
           title: const Text('Mala'),
-          leading: Transform.rotate(
-            angle: pi * 1.75,
-            child: const Center(
-              child: Text('Logo'),
+          leading: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Center(
+              child: Image.asset('assets/logo-icon.png'),
             ),
           ),
         ),
@@ -60,7 +59,7 @@ class _MainPageState extends State<MainPage> {
             PaneItem(
               icon: const Icon(FluentIcons.info),
               title: const Text('Info'),
-              body: const SizedBox.shrink(),
+              body: const MalaInfo(),
             ),
           ],
         ),
