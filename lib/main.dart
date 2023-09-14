@@ -4,6 +4,7 @@ import 'package:vit/vit.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Vit().registerSharedPreferencesFactory();
   runApp(Opacity(
     opacity: _getOpacity(),
     child: const LoginPage(),

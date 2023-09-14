@@ -4,13 +4,13 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/patient.dart';
-import 'package:mala_front/usecase/array/chunck_array.dart';
 import 'package:mala_front/usecase/file/get_export_patients_file_name.dart';
 import 'package:mala_front/usecase/imports/load_patients_from_json.dart';
 import 'package:mala_front/usecase/patient/list_patients_by_creation_dates.dart';
 import 'package:mala_front/usecase/patient/profile_picture/get_picture_file.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:vit/extensions/iterable.dart';
 import 'package:vit/vit.dart';
 
 Future<List<Patient>> importPatients({
@@ -53,7 +53,7 @@ Future<List<Patient>> importPatients({
     var patients = await loadPatientsFromJson(
       filename: filename,
     );
-    var chuncks = chunckArray(patients, 50);
+    var chuncks = patients.chunck(50);
     var added = <Patient>[];
     for (var chunck in chuncks) {
       var creationDates = chunck.map((x) => x.createdAt).whereType<DateTime>();
