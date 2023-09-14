@@ -1,0 +1,62 @@
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/ui/components/molecules/login_fields.dart';
+import 'package:wave/config.dart';
+import 'package:wave/wave.dart';
+
+import '../components/atoms/mala_app.dart';
+
+const _backgroundColor = Color.fromARGB(255, 253, 253, 253);
+
+const _colors = [
+  Color.fromARGB(255, 222, 248, 255),
+  Color.fromARGB(255, 148, 176, 185),
+  Color.fromARGB(255, 123, 166, 197),
+];
+
+var _durations = [
+  25,
+  20,
+  15,
+].map((x) => x * 1000).toList();
+
+const _heightPercentages = [
+  0.15,
+  0.45,
+  0.75,
+];
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MalaApp(
+      child: NavigationView(
+        content: Stack(
+          children: [
+            Positioned.fill(
+              child: WaveWidget(
+                config: CustomConfig(
+                  colors: _colors,
+                  durations: _durations,
+                  heightPercentages: _heightPercentages,
+                  blur: const MaskFilter.blur(BlurStyle.normal, 10),
+                ),
+                backgroundColor: _backgroundColor,
+                size: const Size(double.infinity, double.infinity),
+                waveAmplitude: 50,
+              ),
+            ),
+            Positioned.fill(
+              child: LoginFields(
+                onLogin: (email, password) async {
+                  await Future.delayed(const Duration(seconds: 2));
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

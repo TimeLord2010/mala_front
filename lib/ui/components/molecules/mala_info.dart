@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mala_front/ui/components/atoms/mala_logo.dart';
 
 class MalaInfo extends StatelessWidget {
   const MalaInfo({super.key});
@@ -15,8 +16,8 @@ class MalaInfo extends StatelessWidget {
           } else {
             return Row(
               children: [
-                Expanded(
-                  child: _logo(),
+                const Expanded(
+                  child: MalaLogo(),
                 ),
                 _info(),
               ],
@@ -30,7 +31,7 @@ class MalaInfo extends StatelessWidget {
   Column _verticalLayout() {
     return Column(
       children: [
-        _logo(),
+        const MalaLogo(),
         Expanded(
           child: _info(),
         ),
@@ -38,7 +39,7 @@ class MalaInfo extends StatelessWidget {
     );
   }
 
-  Column _info() {
+  Widget _info() {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -64,13 +65,6 @@ class MalaInfo extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  LimitedBox _logo() {
-    return LimitedBox(
-      maxHeight: 300,
-      child: Image.asset('assets/logo.png'),
     );
   }
 }

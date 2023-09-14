@@ -1,12 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 
-class LabeledTextBox extends StatefulWidget {
+class LabeledTextBox extends StatelessWidget {
   LabeledTextBox({
     super.key,
     required this.label,
     this.formaters = const [],
     this.placeholder,
+    this.onChange,
+    this.isPassword = false,
     TextEditingController? controller,
   }) : controller = controller ?? TextEditingController();
 
@@ -14,37 +16,22 @@ class LabeledTextBox extends StatefulWidget {
   final String? placeholder;
   final TextEditingController controller;
   final List<TextInputFormatter> formaters;
-
-  @override
-  State<StatefulWidget> createState() {
-    return LabeledTextBoxState();
-  }
-}
-
-class LabeledTextBoxState extends State<LabeledTextBox> {
-  bool _isEmpty = true;
-  bool get isEmpty => _isEmpty;
-  set isEmpty(bool value) {
-    if (value == _isEmpty) return;
-    setState(() {
-      _isEmpty = value;
-    });
-  }
+  final bool isPassword;
+  final void Function(String value)? onChange;
 
   @override
   Widget build(BuildContext context) {
     var infoLabel = InfoLabel(
-      label: widget.label,
+      label: label,
       child: TextBox(
-        controller: widget.controller,
-        onChanged: (value) {
-          isEmpty = value.isEmpty;
-        },
-        inputFormatters: widget.formaters,
-        placeholder: widget.placeholder,
+        controller: controller,
+        onChanged: onChange,
+        inputFormatters: formaters,
+        placeholder: placeholder,
         placeholderStyle: TextStyle(
           color: Colors.grey[80],
         ),
+        obscureText: isPassword,
       ),
     );
     return LimitedBox(

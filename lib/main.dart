@@ -1,12 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/ui/pages/main_page.dart';
+import 'package:mala_front/ui/pages/login_page.dart';
 import 'package:vit/vit.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(Opacity(
     opacity: _getOpacity(),
-    child: const MainPage(),
+    child: const LoginPage(),
   ));
 }
 
