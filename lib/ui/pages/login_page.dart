@@ -2,6 +2,7 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/molecules/login_fields.dart';
 import 'package:mala_front/ui/pages/main_page.dart';
+import 'package:mala_front/usecase/user/is_authenticated.dart';
 import 'package:mala_front/usecase/user/login_user.dart';
 import 'package:vit/vit.dart';
 import 'package:wave/config.dart';
@@ -29,8 +30,26 @@ const _heightPercentages = [
   0.75,
 ];
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool hasCheckedLogin = false;
+
+  void _checkAuthentication(BuildContext context) {
+    if (hasCheckedLogin) return;
+    hasCheckedLogin = true;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      var authed = isAuthenticated();
+      if (authed) {
+        context.navigator.pushMaterial(const MainPage());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +57,7 @@ class LoginPage extends StatelessWidget {
       child: NavigationView(
         content: Builder(
           builder: (context) {
+            _checkAuthentication(context);
             return Stack(
               children: [
                 Positioned.fill(
