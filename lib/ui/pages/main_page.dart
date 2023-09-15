@@ -2,7 +2,10 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
+import 'package:mala_front/usecase/error/get_error_message.dart';
+import 'package:mala_front/usecase/user/refresh_jwt.dart';
 import 'package:mala_front/usecase/user/sign_out.dart';
+import 'package:vit/vit.dart';
 
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';
@@ -23,8 +26,28 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  DateTime? lastAuthCheck;
+
+  void _refreshAuthentication(BuildContext context) {
+    if (lastAuthCheck != null) {
+      var now = DateTime.now();
+      var diff = now.difference(lastAuthCheck!);
+      if (diff.inDays < 5) return;
+    }
+    lastAuthCheck = DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      try {
+        await refreshJwt();
+      } catch (e) {
+        logInfo('Failed to refresh jwt: ${getErrorMessage(e)}');
+        context.navigator.pop();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _refreshAuthentication(context);
     return MalaApp(
       child: NavigationView(
         appBar: NavigationAppBar(

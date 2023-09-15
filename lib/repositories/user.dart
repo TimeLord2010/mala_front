@@ -20,4 +20,11 @@ class UserRepository {
       jwt: jwt,
     );
   }
+
+  Future<String> generateNewJwt() async {
+    var response = await dio.get('/user/self');
+    String? jwt = response.headers.value('jwt');
+    if (jwt == null) throw Exception('JWT not found at response headers');
+    return jwt;
+  }
 }
