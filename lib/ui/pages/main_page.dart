@@ -1,6 +1,8 @@
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
+import 'package:mala_front/usecase/user/sign_out.dart';
 
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';
@@ -56,6 +58,14 @@ class _MainPageState extends State<MainPage> {
             ),
           ],
           footerItems: [
+            PaneItemAction(
+              icon: const Icon(FluentIcons.sign_out),
+              title: const Text('Sair'),
+              onTap: () async {
+                await signout();
+                context.navigator.pop();
+              },
+            ),
             PaneItem(
               icon: const Icon(FluentIcons.info),
               title: const Text('Info'),

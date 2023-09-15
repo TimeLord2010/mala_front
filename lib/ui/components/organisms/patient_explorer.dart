@@ -7,9 +7,9 @@ import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
+import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
-import 'package:mala_front/usecase/ui/modal/export_patients_modal.dart';
 
 import '../../../models/patient.dart';
 

@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/patient_query.dart';
 
-import '../../../ui/components/molecules/export_patients_pane.dart';
+import '../../components/molecules/export_patients_pane.dart';
 
 Future<void> exportPatientsModal(BuildContext context, PatientQuery query) async {
   await showDialog(
