@@ -177,14 +177,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
-  cross_file:
-    dependency: transitive
-    description:
-      name: cross_file
-      sha256: fd832b5384d0d6da4f6df60b854d33accaaeb63aa9e10e736a87381f08dee2cb
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.3+5"
   crypto:
     dependency: transitive
     description:
@@ -278,14 +270,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_image_compress:
-    dependency: transitive
-    description:
-      name: flutter_image_compress
-      sha256: "37f1b26399098e5f97b74c1483f534855e7dff68ead6ddaccf747029fb03f29f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.3"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -325,14 +309,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
-  get_it:
-    dependency: transitive
-    description:
-      name: get_it
-      sha256: f79870884de16d689cf9a7d15eedf31ed61d750e813c538a6efb92660fea83c3
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.6.4"
   glob:
     dependency: transitive
     description:
@@ -373,31 +349,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  image:
-    dependency: transitive
-    description:
-      name: image
-      sha256: a72242c9a0ffb65d03de1b7113bc4e189686fc07c7147b8b41811d0dd0e0d9bf
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.17"
-  image_compression:
-    dependency: transitive
-    description:
-      name: image_compression
-      sha256: c381639e3d4e6328d91939a2ab3c53f3231bf543d7ea061202c215eccfde6ba3
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.4"
-  image_compression_flutter:
-    dependency: transitive
-    description:
-      path: "."
-      ref: "6ec0e86"
-      resolved-ref: "6ec0e86d0ba35dd57aa0da49d4ee712d7a7396a4"
-      url: "https://github.com/alann-maulana/image_compression_flutter.git"
-    source: git
-    version: "1.0.3"
   intl:
     dependency: transitive
     description:
