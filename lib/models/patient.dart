@@ -8,6 +8,11 @@ part 'patient.g.dart';
 class Patient {
   Id id = Isar.autoIncrement;
 
+  String? remoteId;
+
+  @ignore
+  DateTime? uploadedAt;
+
   @Index(
     type: IndexType.value,
   )
@@ -44,6 +49,8 @@ class Patient {
   final address = IsarLink<Address>();
 
   Patient({
+    this.remoteId,
+    this.uploadedAt,
     this.name,
     this.cpf,
     this.motherName,
@@ -72,12 +79,19 @@ class Patient {
       activitiesId: activities?.map((x) => x as int).toList(),
       createdAt: map.getMaybeDateTime('createdAt'),
       updatedAt: map.getMaybeDateTime('updatedAt'),
+      uploadedAt: map.getMaybeDateTime('uploadedAt'),
+      remoteId: map['remoteId'],
     );
     var address = map['address'];
     if (address != null) {
       p.address.value = Address.fromMap(address);
     }
-    p.id = map['id'];
+    dynamic id = map['id'];
+    if (id is int) {
+      p.id = id;
+    } else if (id is String) {
+      p.remoteId = id;
+    }
     return p;
   }
 
@@ -116,6 +130,12 @@ class Patient {
   Map<String, dynamic> get toMap {
     return {
       'id': id,
+      if (remoteId != null) ...{
+        'remoteId': remoteId,
+      },
+      if (uploadedAt != null) ...{
+        'uploadedAt': uploadedAt,
+      },
       if (name != null) ...{
         'name': name,
       },
@@ -153,6 +173,16 @@ class Patient {
         'updatedAt': updatedAt!.toIso8601String(),
       }
     };
+  }
+
+  Map<String, dynamic> get toApiMap {
+    var map = toMap;
+    map.remove('id');
+    var remoteId = map['remoteId'];
+    if (remoteId != null) {
+      map['id'] = remoteId;
+    }
+    return map;
   }
 
   @override

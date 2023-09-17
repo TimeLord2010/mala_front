@@ -27,4 +27,13 @@ class UserRepository {
     if (jwt == null) throw Exception('JWT not found at response headers');
     return jwt;
   }
+
+  Future<void> updateLastSync(DateTime date) async {
+    await dio.post(
+      '/user',
+      data: {
+        'lastSyncDate': date.toIso8601String(),
+      },
+    );
+  }
 }
