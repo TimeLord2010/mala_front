@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mala_front/usecase/patient/profile_picture/get_picture_file.dart';
 import 'package:vit/vit.dart';
 
-Future<void> saveProfilePicture({
+Future<void> saveOrRemoveProfilePicture({
   required int patientId,
   required Uint8List? data,
   Directory? dir,

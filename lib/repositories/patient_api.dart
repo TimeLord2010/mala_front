@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:mala_front/factories/http_client.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:vit/vit.dart';
 
 class PatientApiRepository {
   Future<List<Patient>> getNewPatients({
@@ -31,5 +35,54 @@ class PatientApiRepository {
         'delete': (deleted ?? []),
       },
     );
+  }
+
+  Future<void> updatePicture({
+    required String patientId,
+    required File file,
+  }) async {
+    String extension = file.fileExtension!;
+    var uploadUrl = await _getUploadUrl(patientId, extension);
+    await dio.put(
+      uploadUrl,
+      data: file.openRead(),
+    );
+  }
+
+  Future<void> savePicture(String patientId, String path) async {
+    var downloadUrl = await getDownloadUrl(patientId);
+    await dio.download(downloadUrl, path);
+  }
+
+  Future<Uint8List> getPicture(String patientId) async {
+    var downloadUrl = await getDownloadUrl(patientId);
+    var response = await dio.get(downloadUrl);
+    Uint8List data = response.data;
+    return data;
+  }
+
+  Future<String> getDownloadUrl(String patientId) async {
+    var url = '/patient/picture/download';
+    var response = await dio.get(
+      url,
+      queryParameters: {
+        'patientId': patientId,
+      },
+    );
+    String downloadUrl = response.data;
+    return downloadUrl;
+  }
+
+  Future<String> _getUploadUrl(String patientId, String extension) async {
+    var url = '/patient/picture/upload';
+    var response = await dio.get(
+      url,
+      queryParameters: {
+        'patientId': patientId,
+        'extension': extension,
+      },
+    );
+    String uploadUrl = response.data;
+    return uploadUrl;
   }
 }

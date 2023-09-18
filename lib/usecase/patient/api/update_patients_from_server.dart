@@ -4,7 +4,7 @@ import 'package:mala_front/usecase/user/update_last_sync.dart';
 
 import '../../../models/patient.dart';
 
-Future<void> updatePatientsFromServer() async {
+Stream<int> updatePatientsFromServer() async* {
   var patientsRep = PatientApiRepository();
   var pageSize = 200;
   var currentPage = 0;
@@ -22,10 +22,16 @@ Future<void> updatePatientsFromServer() async {
       break;
     }
     for (var patient in patients) {
-      await upsertPatient(patient);
+      var remoteId = patient.remoteId!;
+      var pictureData = await patientsRep.getPicture(remoteId);
+      await upsertPatient(
+        patient,
+        pictureData: pictureData,
+      );
     }
     var last = patients.last;
     var uploadedAt = last.uploadedAt!;
     await updateLastSync(uploadedAt);
+    yield patients.length;
   }
 }
