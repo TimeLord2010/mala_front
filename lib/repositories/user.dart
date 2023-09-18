@@ -1,5 +1,5 @@
 import 'package:mala_front/factories/http_client.dart';
-import 'package:mala_front/models/login_response.dart';
+import 'package:mala_front/models/api_responses/login_response.dart';
 
 import '../models/user.dart';
 

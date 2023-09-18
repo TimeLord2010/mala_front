@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:mala_front/factories/http_client.dart';
+import 'package:mala_front/models/api_responses/patient_changes_response.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:vit/vit.dart';
 
@@ -24,17 +25,18 @@ class PatientApiRepository {
     return patients.toList();
   }
 
-  Future<void> postChanges({
+  Future<PatientChangesResponse> postChanges({
     List<Patient>? changed,
     List<String>? deleted,
   }) async {
-    await dio.post(
+    var response = await dio.post(
       '/patient/sync',
       data: {
         'changed': (changed ?? []).map((x) => x.toApiMap).toList(),
         'delete': (deleted ?? []),
       },
     );
+    return PatientChangesResponse.fromMap(response.data);
   }
 
   Future<void> updatePicture({
@@ -84,5 +86,14 @@ class PatientApiRepository {
     );
     String uploadUrl = response.data;
     return uploadUrl;
+  }
+
+  Future<void> deletePicture({required String patientId}) async {
+    await dio.delete(
+      '/patient/picture',
+      queryParameters: {
+        'patientId': patientId,
+      },
+    );
   }
 }
