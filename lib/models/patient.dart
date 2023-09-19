@@ -76,7 +76,15 @@ class Patient {
       yearOfBirth: map['yearOfBirth'],
       monthOfBirth: map['monthOfBirth'],
       dayOfBirth: map['dayOfBirth'],
-      activitiesId: activities?.map((x) => x as int).toList(),
+      activitiesId: activities?.map((x) {
+        if (x is int) {
+          return x;
+        }
+        if (x is String) {
+          return int.parse(x);
+        }
+        throw Exception('Invalid activity index: $x');
+      }).toList(),
       createdAt: map.getMaybeDateTime('createdAt'),
       updatedAt: map.getMaybeDateTime('updatedAt'),
       uploadedAt: map.getMaybeDateTime('uploadedAt'),
@@ -134,7 +142,7 @@ class Patient {
         'remoteId': remoteId,
       },
       if (uploadedAt != null) ...{
-        'uploadedAt': uploadedAt,
+        'uploadedAt': uploadedAt!.toIso8601String(),
       },
       if (name != null) ...{
         'name': name,

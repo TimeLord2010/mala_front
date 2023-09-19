@@ -27,6 +27,7 @@ Stream<int> updatePatientsFromServer() async* {
       await upsertPatient(
         patient,
         pictureData: pictureData,
+        syncWithServer: false,
       );
     }
     var last = patients.last;

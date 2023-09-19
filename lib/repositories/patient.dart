@@ -20,6 +20,11 @@ class PatientRepository {
     return docs;
   }
 
+  Future<Patient?> findById(int id) async {
+    var patient = await isar.patients.get(id);
+    return patient;
+  }
+
   Future<Iterable<Patient>> listUsingCreatedAts({
     required Iterable<DateTime> createdAts,
   }) async {
@@ -38,10 +43,8 @@ class PatientRepository {
 
   Future<Patient> insert(Patient patient) async {
     await isar.writeTxn(() async {
-      logInfo('Saving patient: ${patient.name}');
       await isar.patients.put(patient);
     });
-    logInfo('completed patient upsert: ${patient.name}');
     var address = patient.address.value;
     if (address != null) {
       await isar.writeTxn(() async {
@@ -50,7 +53,6 @@ class PatientRepository {
         await patient.address.save();
       });
     }
-    logInfo('completed address upsert: ${patient.name}');
     return patient;
   }
 

@@ -1,5 +1,6 @@
 import 'package:mala_front/factories/http_client.dart';
 import 'package:mala_front/models/api_responses/login_response.dart';
+import 'package:vit/vit.dart';
 
 import '../models/user.dart';
 
@@ -22,18 +23,25 @@ class UserRepository {
   }
 
   Future<String> generateNewJwt() async {
-    var response = await dio.get('/user/self');
-    String? jwt = response.headers.value('jwt');
-    if (jwt == null) throw Exception('JWT not found at response headers');
-    return jwt;
+    var stopWatch = StopWatch('generateNewJWT');
+    try {
+      var response = await dio.get('/user/self');
+      String? jwt = response.headers.value('jwt');
+      if (jwt == null) throw Exception('JWT not found at response headers');
+      return jwt;
+    } finally {
+      stopWatch.stop();
+    }
   }
 
   Future<void> updateLastSync(DateTime date) async {
+    var stopWatch = StopWatch('updateLastSync');
     await dio.post(
       '/user',
       data: {
         'lastSyncDate': date.toIso8601String(),
       },
     );
+    stopWatch.stop();
   }
 }

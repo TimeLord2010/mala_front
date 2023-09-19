@@ -9,6 +9,7 @@ environment:
 dependencies:
   archive: ^3.3.8
   awesome_flutter_extensions: ^1.1.1
+  badges: ^3.1.2
   brasil_fields: ^1.14.0
   dio: ^5.3.2
   file_picker: ^5.5.0
