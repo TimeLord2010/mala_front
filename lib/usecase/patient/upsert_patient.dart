@@ -21,7 +21,7 @@ Future<Patient> upsertPatient(
   if (syncWithServer) {
     stopWatch.lap(tag: 'local done');
     var remoteId = patient.remoteId;
-    if (remoteId != null) {
+    if (remoteId == null) {
       await postPatientsChanges(
         changed: [patient],
       );

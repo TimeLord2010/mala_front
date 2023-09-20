@@ -11,7 +11,7 @@ class PatientApiRepository {
   Future<List<Patient>> getNewPatients({
     int? skip,
     int? limit,
-    bool? all,
+    DateTime? date,
   }) async {
     var stopWatch = StopWatch('api:getNewPatients');
     var response = await dio.get(
@@ -19,7 +19,7 @@ class PatientApiRepository {
       queryParameters: {
         ...(skip == null) ? {} : {'skip': skip},
         ...(limit == null) ? {} : {'limit': limit},
-        ...(all == null) ? {} : {'all': all},
+        ...(date == null) ? {} : {'date': date.toUtc().toIso8601String()},
       },
     );
     List rawPatients = response.data;
@@ -36,7 +36,10 @@ class PatientApiRepository {
     var response = await dio.post(
       '/patient/sync',
       data: {
-        'changed': (changed ?? []).map((x) => x.toApiMap).toList(),
+        'changed': (changed ?? []).map((x) {
+          var toApiMap = x.toApiMap;
+          return toApiMap;
+        }).toList(),
         'delete': (deleted ?? []),
       },
     );

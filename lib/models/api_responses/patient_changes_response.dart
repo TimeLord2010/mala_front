@@ -1,15 +1,16 @@
 import 'package:mala_front/models/patient.dart';
 
 class PatientChangesResponse {
-  ChangedPatients changed;
+  ChangedPatients? changed;
 
   PatientChangesResponse({
     required this.changed,
   });
 
   factory PatientChangesResponse.fromMap(Map<String, dynamic> map) {
+    var changed = map['changed'];
     return PatientChangesResponse(
-      changed: ChangedPatients.fromMap(map['changed']),
+      changed: changed != null ? ChangedPatients.fromMap(changed) : null,
     );
   }
 }

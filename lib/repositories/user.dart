@@ -35,11 +35,12 @@ class UserRepository {
   }
 
   Future<void> updateLastSync(DateTime date) async {
-    var stopWatch = StopWatch('updateLastSync');
+    var iso = date.toUtc().toIso8601String();
+    var stopWatch = StopWatch('updateLastSync ($iso)');
     await dio.post(
       '/user',
       data: {
-        'lastSyncDate': date.toIso8601String(),
+        'lastSyncDate': iso,
       },
     );
     stopWatch.stop();

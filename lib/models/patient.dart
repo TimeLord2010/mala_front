@@ -8,6 +8,9 @@ part 'patient.g.dart';
 class Patient {
   Id id = Isar.autoIncrement;
 
+  @Index(
+    type: IndexType.hash,
+  )
   String? remoteId;
 
   @ignore
@@ -151,7 +154,7 @@ class Patient {
         'phones': phones,
       },
       if (motherName != null) ...{
-        'montherName': motherName,
+        'motherName': motherName,
       },
       if (cpf?.isNotEmpty ?? false) ...{
         'cpf': cpf,
@@ -183,6 +186,7 @@ class Patient {
     };
   }
 
+  @ignore
   Map<String, dynamic> get toApiMap {
     var map = toMap;
     map.remove('id');

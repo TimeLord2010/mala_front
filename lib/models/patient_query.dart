@@ -37,7 +37,6 @@ class PatientQuery {
   QueryBuilder<Patient, Patient, QAfterSortBy> buildQuery(Isar isar) {
     var r = isar.patients.where().nameStartsWith(name ?? '');
     if (isEmptyQuery) {
-      logInfo('Contains only name');
       return r.sortByName();
     }
     var filter = r.filter();

@@ -9,6 +9,19 @@ Future<void> refreshJwt() async {
     throw Exception('No jwt saved found.');
   }
   var rep = UserRepository();
-  var newJwt = await rep.generateNewJwt();
-  updateJwt(newJwt);
+  int i = 0;
+  while (true) {
+    try {
+      var newJwt = await rep.generateNewJwt();
+      updateJwt(newJwt);
+      return;
+    } on Exception catch (e) {
+      logInfo('ERROR while refreshing JWT: ${e.toString()}');
+      if (i++ < 3) {
+        await Future.delayed(const Duration(seconds: 1));
+      } else {
+        rethrow;
+      }
+    }
+  }
 }

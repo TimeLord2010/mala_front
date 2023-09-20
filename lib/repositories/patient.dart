@@ -48,7 +48,6 @@ class PatientRepository {
     var address = patient.address.value;
     if (address != null) {
       await isar.writeTxn(() async {
-        logInfo('Saving address');
         await isar.address.put(address);
         await patient.address.save();
       });
@@ -60,5 +59,16 @@ class PatientRepository {
     await isar.writeTxn(() async {
       await isar.patients.delete(patientId);
     });
+  }
+
+  Future<List<Patient>> findLocalPatients({
+    required int skip,
+    required int limit,
+  }) {
+    var stopWatch = StopWatch('findLocalPatients');
+    var where = isar.patients.where();
+    var patients = where.remoteIdIsNull().offset(skip).limit(limit).findAll();
+    stopWatch.stop();
+    return patients;
   }
 }

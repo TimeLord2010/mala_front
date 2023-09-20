@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
+import 'package:mala_front/usecase/patient/api/send_local_patients_to_server.dart';
 import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 import 'package:mala_front/usecase/user/sign_out.dart';
@@ -39,10 +40,8 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       try {
         await refreshJwt();
-        var stream = updatePatientsFromServer();
-        stream.listen((event) {
-          logInfo('Patients processed: $event');
-        });
+        await updatePatientsFromServer();
+        await sendLocalPatientsToServer();
       } catch (e) {
         logInfo('Failed to refresh jwt: ${getErrorMessage(e)}');
         context.navigator.pop();
