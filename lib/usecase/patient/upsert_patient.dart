@@ -10,22 +10,22 @@ Future<Patient> upsertPatient(
   Patient patient, {
   Uint8List? pictureData,
   bool syncWithServer = true,
+  bool ignorePicture = false,
 }) async {
   var stopWatch = StopWatch('upsertPatient');
   var rep = await createPatientRepository();
   var result = await rep.insert(patient);
-  await saveOrRemoveProfilePicture(
-    patientId: result.id,
-    data: pictureData,
-  );
+  if (!ignorePicture) {
+    await saveOrRemoveProfilePicture(
+      patientId: result.id,
+      data: pictureData,
+    );
+  }
   if (syncWithServer) {
     stopWatch.lap(tag: 'local done');
-    var remoteId = patient.remoteId;
-    if (remoteId == null) {
-      await postPatientsChanges(
-        changed: [patient],
-      );
-    }
+    await postPatientsChanges(
+      changed: [patient],
+    );
   }
   stopWatch.stop();
   return result;

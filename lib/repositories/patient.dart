@@ -36,15 +36,39 @@ class PatientRepository {
     return query.findAll();
   }
 
+  Future<List<Patient>> findLocalPatients({
+    required int skip,
+    required int limit,
+  }) {
+    var stopWatch = StopWatch('findLocalPatients');
+    var where = isar.patients.where();
+    var patients = where.remoteIdIsNull().offset(skip).limit(limit).findAll();
+    stopWatch.stop();
+    return patients;
+  }
+
+  Future<Patient?> findByRemoteId(String id) async {
+    var where = isar.patients.where();
+    var patient = await where.remoteIdEqualTo(id).findFirst();
+    return patient;
+  }
+
   Future<int> count(PatientQuery query) async {
     var count = await query.buildQuery(isar).count();
     return count;
   }
 
   Future<Patient> insert(Patient patient) async {
+    var oldId = patient.id;
     await isar.writeTxn(() async {
       await isar.patients.put(patient);
     });
+    var inserted = oldId != patient.id;
+    if (inserted) {
+      logInfo('INSERTED PATIENT!!!');
+    } else {
+      logInfo('UPDATED PATIENT!!!');
+    }
     var address = patient.address.value;
     if (address != null) {
       await isar.writeTxn(() async {
@@ -59,16 +83,5 @@ class PatientRepository {
     await isar.writeTxn(() async {
       await isar.patients.delete(patientId);
     });
-  }
-
-  Future<List<Patient>> findLocalPatients({
-    required int skip,
-    required int limit,
-  }) {
-    var stopWatch = StopWatch('findLocalPatients');
-    var where = isar.patients.where();
-    var patients = where.remoteIdIsNull().offset(skip).limit(limit).findAll();
-    stopWatch.stop();
-    return patients;
   }
 }

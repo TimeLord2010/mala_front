@@ -197,6 +197,19 @@ class Patient {
     return map;
   }
 
+  @ignore
+  bool get isEmpty {
+    if (id != Isar.autoIncrement) return false;
+    if (name != null || cpf != null || motherName != null) return false;
+    if (dayOfBirth != null || monthOfBirth != null || yearOfBirth != null) {
+      return false;
+    }
+    if (remoteId != null || uploadedAt != null) return false;
+    if (observation != null) return false;
+    if (createdAt != null) return false;
+    return true;
+  }
+
   @override
   @ignore
   int get hashCode => id.hashCode;

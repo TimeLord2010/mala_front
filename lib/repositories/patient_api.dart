@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:mala_front/factories/http_client.dart';
 import 'package:mala_front/models/api_responses/patient_changes_response.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:vit/vit.dart';
 
 class PatientApiRepository {
@@ -37,6 +38,11 @@ class PatientApiRepository {
       '/patient/sync',
       data: {
         'changed': (changed ?? []).map((x) {
+          if (x.remoteId == null) {
+            logInfo('Uploading new patient: ${x.name}');
+          } else {
+            logInfo('Uploading changed to patient: ${x.name}');
+          }
           var toApiMap = x.toApiMap;
           return toApiMap;
         }).toList(),
@@ -54,10 +60,19 @@ class PatientApiRepository {
     var stopWatch = StopWatch('api:updatePicture');
     String extension = file.fileExtension!;
     var uploadUrl = await _getUploadUrl(patientId, extension);
-    await dio.put(
-      uploadUrl,
-      data: file.openRead(),
-    );
+    try {
+      await dio.put(
+        uploadUrl,
+        data: await file.readAsBytes(),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/octet-stream',
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      logError('Error uploading picture: ${getErrorMessage(e)}');
+    }
     stopWatch.stop();
   }
 
@@ -74,9 +89,21 @@ class PatientApiRepository {
     if (downloadUrl == null) {
       return null;
     }
-    var response = await dio.get(downloadUrl);
-    Uint8List data = response.data;
-    return data;
+    var response = await dio.get(
+      downloadUrl,
+      options: Options(
+        responseType: ResponseType.bytes,
+      ),
+    );
+    var data = response.data;
+    if (data is String) {
+      data = Uint8List.fromList(data.codeUnits);
+    }
+    if (data is Uint8List) {
+      Uint8List bytes = data;
+      return bytes;
+    }
+    throw Exception('Failed to load picture: Data was not a list of bytes: Type found=${data.runtimeType}');
   }
 
   Future<String?> getDownloadUrl(String patientId) async {

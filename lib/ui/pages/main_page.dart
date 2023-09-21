@@ -40,10 +40,13 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       try {
         await refreshJwt();
+        logInfo('Refreshed JWT');
         await updatePatientsFromServer();
+        logInfo('Updated patients from server');
         await sendLocalPatientsToServer();
+        logInfo('Sent local patients to server');
       } catch (e) {
-        logInfo('Failed to refresh jwt: ${getErrorMessage(e)}');
+        logError('Failed to refresh jwt: ${getErrorMessage(e)}');
         context.navigator.pop();
       }
     });

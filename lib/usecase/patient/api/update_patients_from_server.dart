@@ -1,4 +1,5 @@
 import 'package:mala_front/repositories/patient_api.dart';
+import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:mala_front/usecase/user/get_local_last_sync.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
@@ -28,6 +29,11 @@ Future<void> updatePatientsFromServer() async {
     }
     for (var patient in patients) {
       var remoteId = patient.remoteId!;
+      var savedPatient = await findPatientByRemoteId(remoteId);
+      if (savedPatient != null) {
+        logInfo('Local patient found with same remote id when syncing with server');
+        patient.id = savedPatient.id;
+      }
       var pictureData = await patientsRep.getPicture(remoteId);
       await upsertPatient(
         patient,

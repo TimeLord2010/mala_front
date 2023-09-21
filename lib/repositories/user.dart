@@ -6,6 +6,7 @@ import '../models/user.dart';
 
 class UserRepository {
   Future<LoginResponse> login(String email, String password) async {
+    var stopWatch = StopWatch('api:login');
     var response = await dio.get(
       '/user',
       queryParameters: {
@@ -16,6 +17,7 @@ class UserRepository {
     var user = User.fromMap(response.data);
     var jwt = response.headers.value('jwt');
     if (jwt == null) throw Exception('JWT not found at response headers');
+    stopWatch.stop();
     return LoginResponse(
       user: user,
       jwt: jwt,
@@ -23,7 +25,7 @@ class UserRepository {
   }
 
   Future<String> generateNewJwt() async {
-    var stopWatch = StopWatch('generateNewJWT');
+    var stopWatch = StopWatch('api:generateNewJWT');
     try {
       var response = await dio.get('/user/self');
       String? jwt = response.headers.value('jwt');
@@ -36,7 +38,7 @@ class UserRepository {
 
   Future<void> updateLastSync(DateTime date) async {
     var iso = date.toUtc().toIso8601String();
-    var stopWatch = StopWatch('updateLastSync ($iso)');
+    var stopWatch = StopWatch('api:updateLastSync ($iso)');
     await dio.post(
       '/user',
       data: {

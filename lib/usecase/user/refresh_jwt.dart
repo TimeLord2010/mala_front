@@ -13,10 +13,10 @@ Future<void> refreshJwt() async {
   while (true) {
     try {
       var newJwt = await rep.generateNewJwt();
-      updateJwt(newJwt);
+      await updateJwt(newJwt);
       return;
-    } on Exception catch (e) {
-      logInfo('ERROR while refreshing JWT: ${e.toString()}');
+    } catch (e) {
+      logError('ERROR while refreshing JWT: ${e.toString()}');
       if (i++ < 3) {
         await Future.delayed(const Duration(seconds: 1));
       } else {
