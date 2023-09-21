@@ -28,6 +28,8 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  void Function()? patientUpdater;
+
   DateTime? lastAuthCheck;
 
   void _refreshAuthentication(BuildContext context) {
@@ -45,6 +47,7 @@ class _MainPageState extends State<MainPage> {
         logInfo('Updated patients from server');
         await sendLocalPatientsToServer();
         logInfo('Sent local patients to server');
+        patientUpdater?.call();
       } catch (e) {
         logError('Failed to refresh jwt: ${getErrorMessage(e)}');
         context.navigator.pop();
@@ -54,6 +57,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    logInfo('Refreshed main page');
     _refreshAuthentication(context);
     return MalaApp(
       child: NavigationView(
@@ -79,7 +83,11 @@ class _MainPageState extends State<MainPage> {
             PaneItem(
               icon: const Icon(FluentIcons.user_window),
               title: const Text('Lista de pacientes'),
-              body: PatientExplorer(),
+              body: PatientExplorer(
+                updateExposer: (updater) {
+                  patientUpdater = updater;
+                },
+              ),
             ),
             PaneItem(
               icon: const Icon(FluentIcons.download),

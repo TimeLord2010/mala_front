@@ -12,7 +12,7 @@ Future<void> updatePatientsFromServer() async {
   var pageSize = 200;
   var currentPage = 0;
   Future<List<Patient>> fetch() async {
-    var lastSync = getLocalLastSync();
+    var lastSync = getLocalLastSync() ?? DateTime(2020);
     var newPatients = await patientsRep.getNewPatients(
       limit: pageSize,
       skip: (currentPage++) * pageSize,

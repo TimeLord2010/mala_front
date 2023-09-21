@@ -14,7 +14,10 @@ Future<void> signout() async {
     await deleteDatabaseFiles();
     await Vit().getSharedPreferences().clear();
     var dir = Directory(await getPatientsPicturesFolder());
-    await dir.delete(recursive: true);
+    var exists = dir.existsSync();
+    if (exists) {
+      await dir.delete(recursive: true);
+    }
   } else {
     await updateJwt(null);
   }

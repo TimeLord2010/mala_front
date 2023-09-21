@@ -14,11 +14,16 @@ import 'package:mala_front/usecase/patient/list_patients.dart';
 import '../../../models/patient.dart';
 
 class PatientExplorer extends StatefulWidget {
-  PatientExplorer({super.key});
+  PatientExplorer({
+    super.key,
+    required this.updateExposer,
+  });
 
   final nameController = TextEditingController();
   final districtController = TextEditingController();
   final streetController = TextEditingController();
+
+  final void Function(void Function() updater) updateExposer;
 
   @override
   State<PatientExplorer> createState() => _PatientExplorerState();
@@ -77,6 +82,9 @@ class _PatientExplorerState extends State<PatientExplorer> {
   @override
   void initState() {
     super.initState();
+    widget.updateExposer(() {
+      _search(0, true);
+    });
     _search(currentPage, true);
   }
 
