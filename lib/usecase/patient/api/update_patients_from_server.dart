@@ -31,7 +31,7 @@ Future<void> updatePatientsFromServer() async {
       var remoteId = patient.remoteId!;
       var savedPatient = await findPatientByRemoteId(remoteId);
       if (savedPatient != null) {
-        logInfo('Local patient found with same remote id when syncing with server');
+        logWarn('Local patient found with same remote id when syncing with server');
         patient.id = savedPatient.id;
       }
       var pictureData = await patientsRep.getPicture(remoteId);

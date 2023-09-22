@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:isolate';
 
 import 'package:mala_front/models/enums/local_keys.dart';
 import 'package:mala_front/models/patient.dart';
@@ -16,13 +15,12 @@ class ApiSynchronizer {
   ApiSynchronizer({
     required this.preferences,
     required this.errorReporter,
-  }) {
-    retryFailedSyncronizations();
-  }
+  });
 
-  void retryFailedSyncronizations() async {
+  Future<void> retryFailedSyncronizations() async {
     var pendingDeletion = preferences.getStringList(_deleteKey) ?? [];
     for (var patient in pendingDeletion) {
+      logInfo('Sending pending deletion: $patient');
       await deletePatient(patient);
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -30,6 +28,7 @@ class ApiSynchronizer {
     var pendingUpdate = preferences.getStringList(_updateKey) ?? [];
     for (var patientId in pendingUpdate) {
       var id = int.parse(patientId);
+      logInfo('Sending pending upsert: $id');
       var patient = await findPatientById(id);
       if (patient == null) continue;
       await upsertPatient(patient);
@@ -37,10 +36,11 @@ class ApiSynchronizer {
     }
   }
 
-  Future<void> upsertPatient(Patient patient) {
+  Future<void> upsertPatient(Patient patient) async {
+    var isLocal = patient.remoteId == null;
     return _sendChangeToServer(
       entityId: patient.id.toString(),
-      key: _updateKey,
+      key: isLocal ? null : _updateKey,
       function: () async {
         await postPatientsChanges(
           changed: [patient],
@@ -61,24 +61,27 @@ class ApiSynchronizer {
     );
   }
 
+  // TODO: Run in isolate
   Future<void> _sendChangeToServer({
     required String entityId,
-    required String key,
+    required String? key,
     required Future<void> Function() function,
   }) async {
-    return Isolate.run(() async {
-      await _insertKey(entityId: entityId, key: key);
+    if (key != null) await _insertKey(entityId: entityId, key: key);
+    try {
+      await function();
+      if (key != null) await _removeKey(entityId: entityId, key: key);
+    } catch (error) {
       try {
-        await function();
-        await _removeKey(entityId: entityId, key: key);
-      } catch (error) {
-        try {
+        if (key != null) {
           await errorReporter(key, error);
-        } catch (e) {
-          logError('Failed to report error from api sync: ${getErrorMessage(e)}');
+        } else {
+          await errorReporter(entityId.toString(), error);
         }
+      } catch (e) {
+        logError('Failed to report error from api sync: ${getErrorMessage(e)}');
       }
-    });
+    }
   }
 
   Future<void> _insertKey({

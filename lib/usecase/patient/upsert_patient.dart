@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:mala_front/factories/patient_repository.dart';
 import 'package:mala_front/models/patient.dart';
-import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
+import 'package:mala_front/usecase/patient/api/background/send_changes_in_background.dart';
 import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';
 import 'package:vit/vit.dart';
 
@@ -23,9 +23,10 @@ Future<Patient> upsertPatient(
   }
   if (syncWithServer) {
     stopWatch.lap(tag: 'local done');
-    await postPatientsChanges(
-      changed: [patient],
-    );
+    sendChangesInBackground(patient);
+    // await postPatientsChanges(
+    //   changed: [patient],
+    // );
   }
   stopWatch.stop();
   return result;

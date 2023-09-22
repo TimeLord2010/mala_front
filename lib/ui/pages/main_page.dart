@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
+import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
 import 'package:mala_front/usecase/patient/api/send_local_patients_to_server.dart';
 import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
@@ -45,6 +46,8 @@ class _MainPageState extends State<MainPage> {
         logInfo('Refreshed JWT');
         await updatePatientsFromServer();
         logInfo('Updated patients from server');
+        await sendFailedBackgroundOperations();
+        logInfo('Sent failed background operations');
         await sendLocalPatientsToServer();
         logInfo('Sent local patients to server');
         patientUpdater?.call();
@@ -59,58 +62,99 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     logInfo('Refreshed main page');
     _refreshAuthentication(context);
+    var explorer = PatientExplorer(
+      updateExposer: (updater) {
+        patientUpdater = updater;
+      },
+    );
     return MalaApp(
-      child: NavigationView(
-        appBar: NavigationAppBar(
-          title: const Text('Mala'),
-          leading: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Center(
-              child: Image.asset('assets/logo-icon.png'),
-            ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          var width = constraints.maxWidth;
+          logInfo('width: $width');
+          return _content(
+            context,
+            isHorizontal: width > 600,
+            explorer: explorer,
+          );
+        },
+      ),
+    );
+  }
+
+  NavigationView _content(
+    BuildContext context, {
+    required bool isHorizontal,
+    required PatientExplorer explorer,
+  }) {
+    return NavigationView(
+      appBar: NavigationAppBar(
+        title: const Text('Mala'),
+        leading: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Center(
+            child: Image.asset('assets/logo-icon.png'),
           ),
         ),
-        pane: NavigationPane(
-          displayMode: PaneDisplayMode.open,
-          size: const NavigationPaneSize(
-            openMaxWidth: 200,
+      ),
+      pane: NavigationPane(
+        displayMode: isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.compact,
+        size: const NavigationPaneSize(
+          openMaxWidth: 200,
+        ),
+        selected: selectedIndex,
+        onChanged: (index) {
+          selectedIndex = index;
+        },
+        items: [
+          PaneItem(
+            icon: const Icon(FluentIcons.user_window),
+            title: const Text('Lista de pacientes'),
+            body: explorer,
           ),
-          selected: selectedIndex,
-          onChanged: (index) {
-            selectedIndex = index;
-          },
-          items: [
-            PaneItem(
-              icon: const Icon(FluentIcons.user_window),
-              title: const Text('Lista de pacientes'),
-              body: PatientExplorer(
-                updateExposer: (updater) {
-                  patientUpdater = updater;
+          PaneItem(
+            icon: const Icon(FluentIcons.download),
+            title: const Text('Importar pacientes'),
+            body: const ImportPatients(),
+          ),
+        ],
+        footerItems: [
+          PaneItemAction(
+            icon: const Icon(FluentIcons.sign_out),
+            title: const Text('Sair'),
+            onTap: () async {
+              await showDialog<String>(
+                context: context,
+                builder: (con) {
+                  return ContentDialog(
+                    title: const Text('Sair?'),
+                    actions: [
+                      Button(
+                        child: const Text('Cancelar'),
+                        onPressed: () {
+                          Navigator.pop(con, 'User canceled dialog');
+                        },
+                      ),
+                      FilledButton(
+                        child: const Text('Sair'),
+                        onPressed: () async {
+                          Navigator.pop(con, 'User deleted file');
+                          await signout();
+                          context.navigator.pop();
+                        },
+                      ),
+                    ],
+                  );
                 },
-              ),
-            ),
-            PaneItem(
-              icon: const Icon(FluentIcons.download),
-              title: const Text('Importar pacientes'),
-              body: const ImportPatients(),
-            ),
-          ],
-          footerItems: [
-            PaneItemAction(
-              icon: const Icon(FluentIcons.sign_out),
-              title: const Text('Sair'),
-              onTap: () async {
-                await signout();
-                context.navigator.pop();
-              },
-            ),
-            PaneItem(
-              icon: const Icon(FluentIcons.info),
-              title: const Text('Info'),
-              body: const MalaInfo(),
-            ),
-          ],
-        ),
+              );
+            },
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.info),
+            title: const Text('Info'),
+            body: const MalaInfo(),
+          ),
+        ],
       ),
     );
   }
