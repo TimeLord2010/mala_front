@@ -5,6 +5,7 @@ import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
+import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';
 
 class PatientTile extends StatelessWidget {
   const PatientTile({
@@ -35,6 +36,9 @@ class PatientTile extends StatelessWidget {
           builder: (value) {
             return MalaProfilePicker(
               bytes: value,
+              onRenderError: () {
+                saveOrRemoveProfilePicture(patientId: patient.id, data: null);
+              },
             );
           },
           contextMessage: 'Imagem de perfil',

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/file/pick_image.dart';
 import 'package:vit/vit.dart';
 
@@ -12,11 +13,13 @@ class MalaProfilePicker extends StatelessWidget {
     this.bytes,
     this.onPick,
     this.size = 40,
+    this.onRenderError,
   });
 
   final String? letters;
   final Uint8List? bytes;
   final void Function(Uint8List? bytes)? onPick;
+  final void Function()? onRenderError;
   final double size;
 
   @override
@@ -60,10 +63,17 @@ class MalaProfilePicker extends StatelessWidget {
   }
 
   Widget _frame() {
+    var imageProvider2 = imageProvider;
     return FittedBox(
       child: CircleAvatar(
-        foregroundImage: imageProvider,
+        foregroundImage: imageProvider2,
         radius: size / 2,
+        onForegroundImageError: imageProvider2 == null
+            ? null
+            : (exception, stackTrace) {
+                logError('Failed to load image: ${getErrorMessage(exception)}');
+                onRenderError?.call();
+              },
         child: _child(),
       ),
     );
