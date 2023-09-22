@@ -25,6 +25,16 @@ class PatientRepository {
     return patient;
   }
 
+  Future<List<Patient>> findByIds(List<int> ids) {
+    var where = isar.patients.where();
+    var first = ids.pop()!;
+    var afterWhere = where.idEqualTo(first);
+    while (ids.isNotEmpty) {
+      afterWhere = afterWhere.or().idEqualTo(ids.pop()!);
+    }
+    return afterWhere.findAll();
+  }
+
   Future<Iterable<Patient>> listUsingCreatedAts({
     required Iterable<DateTime> createdAts,
   }) async {
