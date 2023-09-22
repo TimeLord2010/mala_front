@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:vit/vit.dart';
 
 String? getErrorMessage(Object obj) {
   if (obj is Exception) {
@@ -15,6 +16,10 @@ String? _getMessageFromException(Exception exception) {
       if (data is Map<String, dynamic>) {
         var msg = _getMessageFromMap(data);
         if (msg != null) return msg;
+        return data.prettyJSON;
+      }
+      if (data is String) {
+        return data;
       }
     }
     var error = exception.error;

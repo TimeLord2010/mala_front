@@ -1,14 +1,28 @@
+import 'package:mala_front/models/enums/local_keys.dart';
 import 'package:mala_front/repositories/user.dart';
 import 'package:mala_front/usecase/user/update_jwt.dart';
 import 'package:vit/vit.dart';
 
 Future<void> refreshJwt() async {
   var pref = Vit().getSharedPreferences();
-  var jwt = pref.getString('jwt');
+  var jwt = pref.getString(LocalKeys.jwt.name);
   if (jwt == null) {
     throw Exception('No jwt saved found.');
   }
   var rep = UserRepository();
-  var newJwt = await rep.generateNewJwt();
-  updateJwt(newJwt);
+  int i = 0;
+  while (true) {
+    try {
+      var newJwt = await rep.generateNewJwt();
+      await updateJwt(newJwt);
+      return;
+    } catch (e) {
+      logError('ERROR while refreshing JWT: ${e.toString()}');
+      if (i++ < 3) {
+        await Future.delayed(const Duration(seconds: 1));
+      } else {
+        rethrow;
+      }
+    }
+  }
 }

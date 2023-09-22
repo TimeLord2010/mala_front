@@ -1,8 +1,8 @@
-import 'dart:typed_data';
-
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show SelectionArea;
 import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
@@ -321,10 +321,27 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                     color: Colors.grey[80],
                   ),
                 ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _patientIds(),
+                ),
               ].separatedBy(const SizedBox(height: 20)),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  SelectionArea _patientIds() {
+    var style = const TextStyle(
+      fontSize: 12,
+      color: Color.fromARGB(255, 144, 144, 144),
+    );
+    return SelectionArea(
+      child: Text(
+        widget.patient?.remoteId ?? '',
+        style: style,
       ),
     );
   }
@@ -339,7 +356,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   }
 
   void save() async {
-    var phones = widget.phonesController.text.split(',').map((x) => x.trim()).where((x) => x != '');
+    var phonesStr = widget.phonesController.text;
+    var phones = phonesStr.split(',').map((x) => x.trim()).where((x) => x != '');
     var patient = Patient(
       name: widget.nameController.text,
       cpf: widget.cpfController.text,
@@ -352,6 +370,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
       activitiesId: selectedActivities.map((x) => x.index).toList(),
       createdAt: widget.patient?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
+      remoteId: widget.patient?.remoteId,
+      uploadedAt: widget.patient?.uploadedAt,
     );
     patient.address.value = Address(
       zipCode: widget.zipCodeController.text,

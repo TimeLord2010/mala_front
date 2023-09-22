@@ -9,6 +9,14 @@ class Patient {
   Id id = Isar.autoIncrement;
 
   @Index(
+    type: IndexType.hash,
+  )
+  String? remoteId;
+
+  @ignore
+  DateTime? uploadedAt;
+
+  @Index(
     type: IndexType.value,
   )
   String? name;
@@ -44,6 +52,8 @@ class Patient {
   final address = IsarLink<Address>();
 
   Patient({
+    this.remoteId,
+    this.uploadedAt,
     this.name,
     this.cpf,
     this.motherName,
@@ -69,15 +79,30 @@ class Patient {
       yearOfBirth: map['yearOfBirth'],
       monthOfBirth: map['monthOfBirth'],
       dayOfBirth: map['dayOfBirth'],
-      activitiesId: activities?.map((x) => x as int).toList(),
+      activitiesId: activities?.map((x) {
+        if (x is int) {
+          return x;
+        }
+        if (x is String) {
+          return int.parse(x);
+        }
+        throw Exception('Invalid activity index: $x');
+      }).toList(),
       createdAt: map.getMaybeDateTime('createdAt'),
       updatedAt: map.getMaybeDateTime('updatedAt'),
+      uploadedAt: map.getMaybeDateTime('uploadedAt'),
+      remoteId: map['remoteId'],
     );
     var address = map['address'];
     if (address != null) {
       p.address.value = Address.fromMap(address);
     }
-    p.id = map['id'];
+    dynamic id = map['id'];
+    if (id is int) {
+      p.id = id;
+    } else if (id is String) {
+      p.remoteId = id;
+    }
     return p;
   }
 
@@ -116,6 +141,12 @@ class Patient {
   Map<String, dynamic> get toMap {
     return {
       'id': id,
+      if (remoteId != null) ...{
+        'remoteId': remoteId,
+      },
+      if (uploadedAt != null) ...{
+        'uploadedAt': uploadedAt!.toIso8601String(),
+      },
       if (name != null) ...{
         'name': name,
       },
@@ -123,7 +154,7 @@ class Patient {
         'phones': phones,
       },
       if (motherName != null) ...{
-        'montherName': motherName,
+        'motherName': motherName,
       },
       if (cpf?.isNotEmpty ?? false) ...{
         'cpf': cpf,
@@ -153,6 +184,30 @@ class Patient {
         'updatedAt': updatedAt!.toIso8601String(),
       }
     };
+  }
+
+  @ignore
+  Map<String, dynamic> get toApiMap {
+    var map = toMap;
+    map.remove('id');
+    var remoteId = map['remoteId'];
+    if (remoteId != null) {
+      map['id'] = remoteId;
+    }
+    return map;
+  }
+
+  @ignore
+  bool get isEmpty {
+    if (id != Isar.autoIncrement) return false;
+    if (name != null || cpf != null || motherName != null) return false;
+    if (dayOfBirth != null || monthOfBirth != null || yearOfBirth != null) {
+      return false;
+    }
+    if (remoteId != null || uploadedAt != null) return false;
+    if (observation != null) return false;
+    if (createdAt != null) return false;
+    return true;
   }
 
   @override

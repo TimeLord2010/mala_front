@@ -11,3 +11,9 @@
 ```
 flutter pub run build_runner build
 ```
+
+## Generate icons
+
+```
+flutter pub run flutter_launcher_icons
+```

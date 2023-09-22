@@ -20,6 +20,21 @@ class PatientRepository {
     return docs;
   }
 
+  Future<Patient?> findById(int id) async {
+    var patient = await isar.patients.get(id);
+    return patient;
+  }
+
+  Future<List<Patient>> findByIds(List<int> ids) {
+    var where = isar.patients.where();
+    var first = ids.pop()!;
+    var afterWhere = where.idEqualTo(first);
+    while (ids.isNotEmpty) {
+      afterWhere = afterWhere.or().idEqualTo(ids.pop()!);
+    }
+    return afterWhere.findAll();
+  }
+
   Future<Iterable<Patient>> listUsingCreatedAts({
     required Iterable<DateTime> createdAts,
   }) async {
@@ -31,26 +46,46 @@ class PatientRepository {
     return query.findAll();
   }
 
+  Future<List<Patient>> findLocalPatients({
+    required int skip,
+    required int limit,
+  }) {
+    var stopWatch = StopWatch('findLocalPatients');
+    var where = isar.patients.where();
+    var patients = where.remoteIdIsNull().offset(skip).limit(limit).findAll();
+    stopWatch.stop();
+    return patients;
+  }
+
+  Future<Patient?> findByRemoteId(String id) async {
+    var where = isar.patients.where();
+    var patient = await where.remoteIdEqualTo(id).findFirst();
+    return patient;
+  }
+
   Future<int> count(PatientQuery query) async {
     var count = await query.buildQuery(isar).count();
     return count;
   }
 
   Future<Patient> insert(Patient patient) async {
+    var oldId = patient.id;
     await isar.writeTxn(() async {
-      logInfo('Saving patient: ${patient.name}');
       await isar.patients.put(patient);
     });
-    logInfo('completed patient upsert: ${patient.name}');
+    var inserted = oldId != patient.id;
+    if (inserted) {
+      logInfo('INSERTED PATIENT!!!');
+    } else {
+      logInfo('UPDATED PATIENT!!!');
+    }
     var address = patient.address.value;
     if (address != null) {
       await isar.writeTxn(() async {
-        logInfo('Saving address');
         await isar.address.put(address);
         await patient.address.save();
       });
     }
-    logInfo('completed address upsert: ${patient.name}');
     return patient;
   }
 

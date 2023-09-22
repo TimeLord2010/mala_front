@@ -6,7 +6,7 @@ import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
-import 'package:mala_front/usecase/patient/profile_picture/save_profile_picture.dart';
+import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';
 import 'package:vit/vit.dart';
 
 import '../file/get_export_patients_file_name.dart';
@@ -57,7 +57,7 @@ Future<void> exportPatients({
     for (var patient in items) {
       var pictureData = await loadProfilePicture(patient.id);
       if (pictureData == null) continue;
-      await saveProfilePicture(
+      await saveOrRemoveProfilePicture(
         patientId: patient.id,
         data: pictureData,
         dir: dir,
