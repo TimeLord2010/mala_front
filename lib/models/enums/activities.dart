@@ -19,7 +19,7 @@ enum Activities {
       case Activities.pilates:
         return 'Pilates';
       case Activities.psychologist:
-        return 'Psicologo';
+        return 'Psicólogo';
       case Activities.nutrition:
         return 'Nutrição';
       case Activities.massageTherapy:

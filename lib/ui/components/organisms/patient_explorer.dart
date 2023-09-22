@@ -1,6 +1,6 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/models/activities.dart';
+import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';

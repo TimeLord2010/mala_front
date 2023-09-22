@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
-import 'package:mala_front/models/activities.dart';
 import 'package:mala_front/models/address.dart';
+import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:vit/vit.dart';
 
