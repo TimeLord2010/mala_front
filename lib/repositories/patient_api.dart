@@ -3,18 +3,19 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:mala_front/factories/http_client.dart';
-import 'package:mala_front/models/api_responses/patient_changes_response.dart';
+import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
+import 'package:mala_front/models/api_responses/post_patient_changes_response.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:vit/vit.dart';
 
 class PatientApiRepository {
-  Future<List<Patient>> getNewPatients({
+  Future<GetPatientChangesResponse> getServerChanges({
     int? skip,
     int? limit,
     DateTime? date,
   }) async {
-    var stopWatch = StopWatch('api:getNewPatients');
+    var stopWatch = StopWatch('api:getServerChanges');
     var response = await dio.get(
       '/patient/sync',
       queryParameters: {
@@ -23,13 +24,12 @@ class PatientApiRepository {
         ...(date == null) ? {} : {'date': date.toUtc().toIso8601String()},
       },
     );
-    List rawPatients = response.data;
-    Iterable<Patient> patients = rawPatients.map((x) => Patient.fromMap(x));
+    Map<String, dynamic> body = response.data;
     stopWatch.stop();
-    return patients.toList();
+    return GetPatientChangesResponse.fromMap(body);
   }
 
-  Future<PatientChangesResponse> postChanges({
+  Future<PostPatientChangesResponse> postChanges({
     List<Patient>? changed,
     List<String>? deleted,
   }) async {
@@ -50,7 +50,7 @@ class PatientApiRepository {
       },
     );
     stopWatch.stop();
-    return PatientChangesResponse.fromMap(response.data);
+    return PostPatientChangesResponse.fromMap(response.data);
   }
 
   Future<void> updatePicture({

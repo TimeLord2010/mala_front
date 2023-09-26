@@ -1,15 +1,15 @@
 import 'package:mala_front/models/patient.dart';
 
-class PatientChangesResponse {
+class PostPatientChangesResponse {
   ChangedPatients? changed;
 
-  PatientChangesResponse({
+  PostPatientChangesResponse({
     required this.changed,
   });
 
-  factory PatientChangesResponse.fromMap(Map<String, dynamic> map) {
+  factory PostPatientChangesResponse.fromMap(Map<String, dynamic> map) {
     var changed = map['changed'];
-    return PatientChangesResponse(
+    return PostPatientChangesResponse(
       changed: changed != null ? ChangedPatients.fromMap(changed) : null,
     );
   }

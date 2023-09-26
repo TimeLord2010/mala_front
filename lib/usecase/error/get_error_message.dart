@@ -2,15 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:vit/vit.dart';
 
 String? getErrorMessage(Object obj) {
-  if (obj is Exception) {
-    return _getMessageFromException(obj);
-  }
-  return null;
-}
-
-String? _getMessageFromException(Exception exception) {
-  if (exception is DioException) {
-    var response = exception.response;
+  if (obj is DioException) {
+    var response = obj.response;
     if (response != null) {
       var data = response.data;
       if (data is Map<String, dynamic>) {
@@ -22,13 +15,22 @@ String? _getMessageFromException(Exception exception) {
         return data;
       }
     }
-    var error = exception.error;
+    var error = obj.error;
     if (error != null) {
       var msg = getErrorMessage(error);
       return 'Unable to connect to the server: $msg';
     }
   }
-  return exception.toString();
+  if (obj is Exception) {
+    return obj.toString();
+  }
+  if (obj is TypeError) {
+    return obj.toString();
+  }
+  if (obj is Error) {
+    return obj.toString();
+  }
+  return null;
 }
 
 String? _getMessageFromMap(Map<String, dynamic> map) {

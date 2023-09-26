@@ -1,19 +1,19 @@
+import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
+import 'package:mala_front/usecase/patient/delete_patient.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:mala_front/usecase/user/get_local_last_sync.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 import 'package:vit/vit.dart';
 
-import '../../../models/patient.dart';
-
 Future<void> updatePatientsFromServer() async {
   var patientsRep = PatientApiRepository();
   var pageSize = 200;
   var currentPage = 0;
-  Future<List<Patient>> fetch() async {
+  Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
-    var newPatients = await patientsRep.getNewPatients(
+    var newPatients = await patientsRep.getServerChanges(
       limit: pageSize,
       skip: (currentPage++) * pageSize,
       date: lastSync,
@@ -21,28 +21,57 @@ Future<void> updatePatientsFromServer() async {
     return newPatients;
   }
 
-  while (true) {
-    var patients = await fetch();
-    logInfo('Found ${patients.length} to sync from server');
-    if (patients.isEmpty) {
-      break;
+  DateTime? lastServerDate;
+  void setLastServerDate(DateTime dt) {
+    if (lastServerDate == null) {
+      lastServerDate = dt;
+      return;
     }
-    for (var patient in patients) {
-      var remoteId = patient.remoteId!;
-      var savedPatient = await findPatientByRemoteId(remoteId);
-      if (savedPatient != null) {
-        logWarn('Local patient found with same remote id when syncing with server');
-        patient.id = savedPatient.id;
+    if (dt.isAfter(lastServerDate!)) {
+      lastServerDate = dt;
+    }
+  }
+
+  try {
+    while (true) {
+      var response = await fetch();
+      logInfo('Found ${response.length} to sync from server');
+      if (response.isEmpty) {
+        break;
       }
-      var pictureData = await patientsRep.getPicture(remoteId);
-      await upsertPatient(
-        patient,
-        pictureData: pictureData,
-        syncWithServer: false,
-      );
+      for (var patient in response.changed) {
+        var remoteId = patient.remoteId!;
+        var savedPatient = await findPatientByRemoteId(remoteId);
+        if (savedPatient != null) {
+          logWarn('Local patient found with same remote id when syncing with server');
+          patient.id = savedPatient.id;
+        }
+        var pictureData = await patientsRep.getPicture(remoteId);
+        await upsertPatient(
+          patient,
+          pictureData: pictureData,
+          syncWithServer: false,
+        );
+        setLastServerDate(patient.uploadedAt!);
+      }
+      for (var deleteRecord in response.deleted) {
+        for (var patientRemoteId in deleteRecord.patientIds) {
+          var patient = await findPatientByRemoteId(patientRemoteId);
+          if (patient == null) {
+            logWarn('Did not found patient to delete: $patientRemoteId');
+            continue;
+          }
+          await deletePatient(
+            patient.id,
+            sendDeletionToServer: false,
+          );
+        }
+        setLastServerDate(deleteRecord.disabledAt);
+      }
     }
-    var last = patients.last;
-    var uploadedAt = last.uploadedAt!;
-    await updateLastSync(uploadedAt);
+  } finally {
+    if (lastServerDate != null) {
+      await updateLastSync(lastServerDate!);
+    }
   }
 }

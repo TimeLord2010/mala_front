@@ -3,7 +3,10 @@ import 'package:mala_front/usecase/patient/api/background/send_deletion_in_backg
 import 'package:mala_front/usecase/patient/find_patient_by_id.dart';
 import 'package:vit/vit.dart';
 
-Future<void> deletePatient(int patientId) async {
+Future<void> deletePatient(
+  int patientId, {
+  bool sendDeletionToServer = true,
+}) async {
   var stopWatch = StopWatch('deletePatient');
   try {
     var rep = await createPatientRepository();
@@ -12,7 +15,7 @@ Future<void> deletePatient(int patientId) async {
       return;
     }
     var remoteId = patient.remoteId;
-    if (remoteId != null) {
+    if (remoteId != null && sendDeletionToServer) {
       sendDeletionInBackground(remoteId);
       // await postPatientsChanges(
       //   deleted: [remoteId],
