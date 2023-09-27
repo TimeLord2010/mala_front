@@ -2,14 +2,17 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
+import 'package:mala_front/models/patient_tag.dart';
 import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
+import 'package:mala_front/usecase/file/pdf/create_tags_pdf.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
+import 'package:vit/vit.dart';
 
 import '../../../models/patient.dart';
 
@@ -111,10 +114,32 @@ class _PatientExplorerState extends State<PatientExplorer> {
               ),
               CommandBarButton(
                 icon: const Icon(FluentIcons.save),
-                label: const Text('Salvar'),
+                label: const Text('Exportar'),
                 onPressed: () async {
                   await exportPatientsModal(context, query);
                 },
+              ),
+              CommandBarButton(
+                icon: const Icon(FluentIcons.tag),
+                label: const Text('Gerar etiquetas'),
+                onPressed: () async {
+                  var patients = await patientsFuture;
+                  logInfo('Found patients: ${patients.length}');
+                  var tags = patients.map((x) {
+                    return PatientTag(
+                      name: x.name ?? '',
+                      address: x.address.value,
+                    );
+                  });
+                  createTagsPdf(
+                    tags: tags,
+                  );
+                },
+              ),
+              const CommandBarButton(
+                icon: Icon(FluentIcons.print),
+                label: Text('Gerar lista de pacientes'),
+                onPressed: null,
               ),
             ],
           ),

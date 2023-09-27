@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:mala_front/models/patient_query.dart';
+import 'package:mala_front/usecase/date/get_current_date_numbers.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
@@ -22,15 +23,7 @@ Future<void> exportPatients({
   int step = 200,
 }) async {
   var sep = Platform.pathSeparator;
-  var date = DateTime.now();
-  var values = [
-    date.year,
-    date.month,
-    date.day,
-    date.hour,
-    date.minute,
-    date.second,
-  ].map((x) => x.toString().padLeft(2, '0')).join();
+  var values = getCurrentDateNumbers();
   var dir = Directory('$outputDir${sep}Mala backup [$values]');
   var filename = dir.path + sep + getExportPatientsFileName();
   var file = File(filename);
