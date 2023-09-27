@@ -121,7 +121,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
               ),
               CommandBarButton(
                 icon: const Icon(FluentIcons.tag),
-                label: const Text('Gerar etiquetas'),
+                label: const Text('Etiquetas'),
                 onPressed: () async {
                   var patients = await patientsFuture;
                   logInfo('Found patients: ${patients.length}');
@@ -138,7 +138,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
               ),
               const CommandBarButton(
                 icon: Icon(FluentIcons.print),
-                label: Text('Gerar lista de pacientes'),
+                label: Text('Lista de pacientes'),
                 onPressed: null,
               ),
             ],

@@ -62,18 +62,22 @@ class PatientQuery {
       logInfo('Has activity');
       filter = filter.activitiesIdLengthGreaterThan(0);
       for (var activity in activies!) {
+        logInfo('Check if patient has activity ${activity.index} id');
         filter = filter.activitiesIdElementEqualTo(activity.index);
       }
+    }
+    if (!hasDistrict && !hasStreet) {
+      return filter.nameContains('').sortByName();
     }
     return filter.address((q) {
       if (hasDistrict && hasStreet) {
         logInfo('Contains district and street');
         return q.districtContains(district!).streetContains(street!);
       } else if (hasDistrict) {
-        logInfo('Container district');
+        logInfo('Contains district: $district');
         return q.districtContains(district!);
       } else {
-        logInfo('Contains street');
+        logInfo('Contains street: $street');
         return q.streetContains(street!);
       }
     }).sortByName();

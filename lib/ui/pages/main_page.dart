@@ -71,7 +71,6 @@ class _MainPageState extends State<MainPage> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           var width = constraints.maxWidth;
-          logInfo('width: $width');
           return _content(
             context,
             isHorizontal: width > 600,
