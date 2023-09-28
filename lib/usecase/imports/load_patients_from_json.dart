@@ -7,7 +7,7 @@ Future<List<Patient>> loadPatientsFromJson({
   required String filename,
 }) async {
   var file = File(filename);
-  var exists = await file.exists();
+  var exists = file.existsSync();
   if (!exists) {
     return [];
   }

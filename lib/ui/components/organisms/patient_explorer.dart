@@ -9,6 +9,7 @@ import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
+import 'package:mala_front/usecase/file/pdf/create_patients_pdf.dart';
 import 'package:mala_front/usecase/file/pdf/create_tags_pdf.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
@@ -136,10 +137,15 @@ class _PatientExplorerState extends State<PatientExplorer> {
                   );
                 },
               ),
-              const CommandBarButton(
-                icon: Icon(FluentIcons.print),
-                label: Text('Lista de pacientes'),
-                onPressed: null,
+              CommandBarButton(
+                icon: const Icon(FluentIcons.print),
+                label: const Text('Lista de pacientes'),
+                onPressed: () async {
+                  var patients = await patientsFuture;
+                  createPatientsPdf(
+                    patients: patients,
+                  );
+                },
               ),
             ],
           ),

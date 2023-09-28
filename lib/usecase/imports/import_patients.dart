@@ -32,7 +32,7 @@ Future<List<Patient>> importPatients({
   var backupFolder = backupFolders.first;
   var sep = Platform.pathSeparator;
   var picturesFolder = Directory(backupFolder.path);
-  var picFolderExists = await picturesFolder.exists();
+  var picFolderExists = picturesFolder.existsSync();
   Future<Uint8List?> getPic(int id) async {
     if (!picFolderExists) {
       return null;
@@ -41,7 +41,7 @@ Future<List<Patient>> importPatients({
       id,
       basePath: picturesFolder.path,
     );
-    var exists = await file.exists();
+    var exists = file.existsSync();
     if (exists) {
       return file.readAsBytes();
     }

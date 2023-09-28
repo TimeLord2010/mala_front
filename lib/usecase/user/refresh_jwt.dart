@@ -1,14 +1,10 @@
-import 'package:mala_front/models/enums/local_keys.dart';
 import 'package:mala_front/repositories/user.dart';
+import 'package:mala_front/usecase/local_store/get_local_jwt.dart';
 import 'package:mala_front/usecase/user/update_jwt.dart';
 import 'package:vit/vit.dart';
 
 Future<void> refreshJwt() async {
-  var pref = Vit().getSharedPreferences();
-  var jwt = pref.getString(LocalKeys.jwt.name);
-  if (jwt == null) {
-    throw Exception('No jwt saved found.');
-  }
+  getLocalJwt();
   var rep = UserRepository();
   int i = 0;
   while (true) {

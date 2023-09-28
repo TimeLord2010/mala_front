@@ -10,7 +10,7 @@ Future<void> updateRemotePatientPicture(Patient patient) async {
     throw Exception('Não é possível atualizar foto de patiente no servidor sem um identificador.');
   }
   var file = await getPictureFile(patient.id);
-  var exists = await file.exists();
+  var exists = file.existsSync();
   if (exists) {
     await api.updatePicture(
       patientId: remoteId,

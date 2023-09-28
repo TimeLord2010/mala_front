@@ -19,7 +19,7 @@ Future<void> saveOrRemoveProfilePicture({
     await file.writeAsBytes(data);
   } else {
     logInfo('No pacient picture found $patientId');
-    var exists = await file.exists();
+    var exists = file.existsSync();
     if (exists) {
       await file.delete();
     }

@@ -1,4 +1,3 @@
-import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:badges/badges.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/patient.dart';
@@ -6,6 +5,7 @@ import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
 import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';
+import 'package:vit/extensions/iterable.dart';
 
 class PatientTile extends StatelessWidget {
   const PatientTile({
