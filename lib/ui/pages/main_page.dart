@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
+import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
@@ -52,6 +55,13 @@ class _MainPageState extends State<MainPage> {
         logInfo('Sent local patients to server');
         patientUpdater?.call();
       } catch (e) {
+        if (e is DioException) {
+          var innerError = e.error;
+          if (innerError is SocketException) {
+            // NO INTERNET CONNECTION
+            return;
+          }
+        }
         logError('Failed to refresh jwt: ${getErrorMessage(e)}');
         context.navigator.pop();
       }
