@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
@@ -32,6 +33,14 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  String? _loadingDescription = 'Atualizando token de autenticação';
+  String? get loadingDescription => _loadingDescription;
+  set loadingDescription(String? value) {
+    setState(() {
+      _loadingDescription = value;
+    });
+  }
+
   void Function()? patientUpdater;
 
   DateTime? lastAuthCheck;
@@ -46,14 +55,20 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       try {
         await refreshJwt();
+        loadingDescription = 'Atualizando pacientes a partir do servidor';
         logInfo('Refreshed JWT');
-        await updatePatientsFromServer();
+        await updatePatientsFromServer(
+          updater: patientUpdater,
+        );
         logInfo('Updated patients from server');
+        loadingDescription = 'Enviando mudanças pendentes para o servidor';
         await sendFailedBackgroundOperations();
         logInfo('Sent failed background operations');
+        loadingDescription = 'Enviando pacientes criados enquanto offline';
         await sendLocalPatientsToServer();
         logInfo('Sent local patients to server');
         patientUpdater?.call();
+        loadingDescription = null;
       } catch (e) {
         if (e is DioException) {
           var innerError = e.error;
@@ -98,13 +113,24 @@ class _MainPageState extends State<MainPage> {
   }) {
     return NavigationView(
       appBar: NavigationAppBar(
-        title: const Text('Mala'),
+        title: loadingDescription == null ? const Text('Mala') : null,
         leading: Padding(
           padding: const EdgeInsets.all(4),
           child: Center(
             child: Image.asset('assets/logo-icon.png'),
           ),
         ),
+        actions: loadingDescription != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(loadingDescription!),
+                  const SizedBox(width: 10),
+                  const LoadProgressIndicator(),
+                  const SizedBox(width: 5),
+                ],
+              )
+            : null,
       ),
       pane: NavigationPane(
         displayMode: isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.compact,

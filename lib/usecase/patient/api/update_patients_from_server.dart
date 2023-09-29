@@ -7,9 +7,11 @@ import 'package:mala_front/usecase/user/get_local_last_sync.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 import 'package:vit/vit.dart';
 
-Future<void> updatePatientsFromServer() async {
+Future<void> updatePatientsFromServer({
+  void Function()? updater,
+}) async {
   var patientsRep = PatientApiRepository();
-  var pageSize = 200;
+  var pageSize = 100;
   var currentPage = 0;
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
@@ -68,6 +70,10 @@ Future<void> updatePatientsFromServer() async {
         }
         setLastServerDate(deleteRecord.disabledAt);
       }
+      if (lastServerDate != null) {
+        await updateLastSync(lastServerDate!);
+      }
+      updater?.call();
     }
   } finally {
     if (lastServerDate != null) {

@@ -99,55 +99,12 @@ class _PatientExplorerState extends State<PatientExplorer> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-          child: CommandBar(
-            mainAxisAlignment: MainAxisAlignment.end,
-            overflowBehavior: CommandBarOverflowBehavior.noWrap,
-            primaryItems: [
-              CommandBarButton(
-                icon: const Icon(FluentIcons.add),
-                label: const Text('Cadastrar'),
-                onPressed: () async {
-                  await context.navigator.pushMaterial(PatientRegistration(
-                    patient: null,
-                  ));
-                  _search(currentPage, true);
-                },
-              ),
-              CommandBarButton(
-                icon: const Icon(FluentIcons.save),
-                label: const Text('Exportar'),
-                onPressed: () async {
-                  await exportPatientsModal(context, query);
-                },
-              ),
-              CommandBarButton(
-                icon: const Icon(FluentIcons.tag),
-                label: const Text('Etiquetas'),
-                onPressed: () async {
-                  var patients = await patientsFuture;
-                  logInfo('Found patients: ${patients.length}');
-                  var tags = patients.map((x) {
-                    return PatientTag(
-                      name: x.name ?? '',
-                      address: x.address.value,
-                    );
-                  });
-                  createTagsPdf(
-                    tags: tags,
-                  );
-                },
-              ),
-              CommandBarButton(
-                icon: const Icon(FluentIcons.print),
-                label: const Text('Lista de pacientes'),
-                onPressed: () async {
-                  var patients = await patientsFuture;
-                  createPatientsPdf(
-                    patients: patients,
-                  );
-                },
-              ),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              var width = constraints.maxWidth;
+              logInfo('width: $width');
+              return _commandBar(context, width < 400);
+            },
           ),
         ),
         Padding(
@@ -201,6 +158,60 @@ class _PatientExplorerState extends State<PatientExplorer> {
             },
             contextMessage: 'Falha na listagem de pacientes',
           ),
+        ),
+      ],
+    );
+  }
+
+  CommandBar _commandBar(BuildContext context, bool compact) {
+    return CommandBar(
+      mainAxisAlignment: MainAxisAlignment.end,
+      overflowBehavior: CommandBarOverflowBehavior.wrap,
+      isCompact: compact,
+      primaryItems: [
+        CommandBarButton(
+          icon: const Icon(FluentIcons.add),
+          label: const Text('Cadastrar'),
+          onPressed: () async {
+            await context.navigator.pushMaterial(PatientRegistration(
+              patient: null,
+            ));
+            _search(currentPage, true);
+          },
+        ),
+        CommandBarButton(
+          icon: const Icon(FluentIcons.save),
+          label: const Text('Exportar'),
+          onPressed: () async {
+            await exportPatientsModal(context, query);
+          },
+        ),
+        CommandBarButton(
+          icon: const Icon(FluentIcons.tag),
+          label: const Text('Etiquetas'),
+          onPressed: () async {
+            var patients = await patientsFuture;
+            logInfo('Found patients: ${patients.length}');
+            var tags = patients.map((x) {
+              return PatientTag(
+                name: x.name ?? '',
+                address: x.address.value,
+              );
+            });
+            createTagsPdf(
+              tags: tags,
+            );
+          },
+        ),
+        CommandBarButton(
+          icon: const Icon(FluentIcons.print),
+          label: const Text('Lista de pacientes'),
+          onPressed: () async {
+            var patients = await patientsFuture;
+            createPatientsPdf(
+              patients: patients,
+            );
+          },
         ),
       ],
     );

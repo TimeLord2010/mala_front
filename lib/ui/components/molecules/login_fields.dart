@@ -60,27 +60,33 @@ class _LoginFieldsState extends State<LoginFields> {
     return Center(
       child: SizedBox(
         width: 300,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const MalaLogo(),
-            if (errorMessage != null) ...[
-              const SizedBox(height: 10),
-              Text(errorMessage!),
-            ],
-            const SizedBox(height: 20),
-            _email(),
-            const SizedBox(height: 10),
-            _password(),
-            const SizedBox(height: 20),
-            AnimatedCrossFade(
-              crossFadeState: enteredPassword ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-              duration: const Duration(milliseconds: 300),
-              firstChild: _loginButton(),
-              secondChild: const SizedBox.shrink(),
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            var height = constraints.maxHeight;
+            logInfo('height: $height');
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (height > 500) const MalaLogo(),
+                if (errorMessage != null) ...[
+                  const SizedBox(height: 10),
+                  Text(errorMessage!),
+                ],
+                const SizedBox(height: 20),
+                _email(),
+                const SizedBox(height: 10),
+                _password(),
+                const SizedBox(height: 20),
+                AnimatedCrossFade(
+                  crossFadeState: enteredPassword ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                  duration: const Duration(milliseconds: 300),
+                  firstChild: _loginButton(),
+                  secondChild: const SizedBox.shrink(),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

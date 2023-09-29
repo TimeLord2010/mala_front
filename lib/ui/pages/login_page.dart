@@ -53,6 +53,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    var height = mediaQuery.size.height;
+    var bottomPadding = mediaQuery.viewInsets.bottom;
     return MalaApp(
       child: NavigationView(
         content: Builder(
@@ -74,12 +77,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 Positioned.fill(
-                  child: LoginFields(
-                    onLogin: (email, password) async {
-                      logInfo('Login');
-                      await loginUser(email, password);
-                      context.navigator.pushMaterial(const MainPage());
-                    },
+                  child: SingleChildScrollView(
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxHeight: height,
+                      ),
+                      padding: EdgeInsets.only(bottom: bottomPadding),
+                      child: LoginFields(
+                        onLogin: (email, password) async {
+                          logInfo('Login');
+                          await loginUser(email, password);
+                          context.navigator.pushMaterial(const MainPage());
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ],
