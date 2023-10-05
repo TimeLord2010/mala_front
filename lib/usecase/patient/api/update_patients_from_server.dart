@@ -36,6 +36,9 @@ Future<void> updatePatientsFromServer({
 
   try {
     while (true) {
+      if (true == true) {
+        throw Exception('This is a mock message');
+      }
       var response = await fetch();
       logInfo('Found ${response.length} to sync from server');
       if (response.isEmpty) {

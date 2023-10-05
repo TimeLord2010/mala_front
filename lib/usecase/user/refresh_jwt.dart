@@ -1,8 +1,11 @@
+import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
 import 'package:mala_front/repositories/user.dart';
 import 'package:mala_front/usecase/local_store/get_local_jwt.dart';
 import 'package:mala_front/usecase/user/update_jwt.dart';
 import 'package:vit/vit.dart';
 
+///
+/// @throws [FailedToRefreshJwt] if not jwt token is set in the http client.
 Future<void> refreshJwt() async {
   getLocalJwt();
   var rep = UserRepository();
@@ -17,7 +20,7 @@ Future<void> refreshJwt() async {
       if (i++ < 3) {
         await Future.delayed(const Duration(seconds: 1));
       } else {
-        rethrow;
+        throw FailedToRefreshJwt(e);
       }
     }
   }

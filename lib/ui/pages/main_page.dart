@@ -1,12 +1,12 @@
-import 'dart:io';
-
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
-import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
+import 'package:mala_front/usecase/error/is_no_internet_error.dart';
+import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
 import 'package:mala_front/usecase/patient/api/send_local_patients_to_server.dart';
 import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
@@ -68,17 +68,39 @@ class _MainPageState extends State<MainPage> {
         await sendLocalPatientsToServer();
         logInfo('Sent local patients to server');
         patientUpdater?.call();
-        loadingDescription = null;
-      } catch (e) {
-        if (e is DioException) {
-          var innerError = e.error;
-          if (innerError is SocketException) {
-            // NO INTERNET CONNECTION
-            return;
-          }
+      } catch (e, stack) {
+        var msg = getErrorMessage(e);
+        logError('Failed to refresh jwt: $msg');
+        await showDialog<String>(
+          context: context,
+          builder: (context) {
+            var dialogMsg = msg ?? 'Erro desconhecido';
+            var dialogFullMessage = '$dialogMsg\n${stack.toString()}';
+            insertRemoteLog('Syncronizing data', dialogFullMessage, 'error');
+            return ContentDialog(
+              title: const Text('Erro na sincronização de registros'),
+              content: Text(dialogFullMessage),
+              actions: [
+                Button(
+                  child: const Text('Ok'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Ok');
+                    // Delete file here
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        if (isNoInternetError(e)) {
+          return;
         }
-        logError('Failed to refresh jwt: ${getErrorMessage(e)}');
-        context.navigator.pop();
+        if (e is FailedToRefreshJwt) {
+          context.navigator.pop();
+          return;
+        }
+      } finally {
+        loadingDescription = null;
       }
     });
   }
