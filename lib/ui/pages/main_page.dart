@@ -74,9 +74,6 @@ class _MainPageState extends State<MainPage> {
         if (isNoInternetError(e)) {
           return;
         }
-        if (e is FailedToRefreshJwt && isNoInternetError(e.innerException)) {
-          return;
-        }
         await showDialog<String>(
           context: context,
           builder: (context) {
@@ -98,7 +95,11 @@ class _MainPageState extends State<MainPage> {
             );
           },
         );
-        context.navigator.pop();
+        if (e is FailedToRefreshJwt) {
+          if (!isNoInternetError(e.innerException)) {
+            context.navigator.pop();
+          }
+        }
       } finally {
         loadingDescription = null;
       }
