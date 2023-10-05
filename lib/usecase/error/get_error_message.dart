@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:vit/vit.dart';
 
@@ -20,6 +22,11 @@ String? getErrorMessage(Object obj) {
       var msg = getErrorMessage(error);
       return 'Unable to connect to the server: $msg';
     }
+  }
+  if (obj is SocketException) {
+    var server = obj.address;
+    var msg = obj.osError;
+    return 'Unable to connect to server: $server. Message: ${msg?.message}';
   }
   if (obj is Exception) {
     return obj.toString();

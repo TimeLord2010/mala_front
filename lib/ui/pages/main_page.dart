@@ -70,7 +70,13 @@ class _MainPageState extends State<MainPage> {
         patientUpdater?.call();
       } catch (e, stack) {
         var msg = getErrorMessage(e);
-        logError('Failed to refresh jwt: $msg');
+        logError('Failed to sync data: $msg');
+        if (isNoInternetError(e)) {
+          return;
+        }
+        if (e is FailedToRefreshJwt && isNoInternetError(e.innerException)) {
+          return;
+        }
         await showDialog<String>(
           context: context,
           builder: (context) {
@@ -92,13 +98,7 @@ class _MainPageState extends State<MainPage> {
             );
           },
         );
-        if (isNoInternetError(e)) {
-          return;
-        }
-        if (e is FailedToRefreshJwt) {
-          context.navigator.pop();
-          return;
-        }
+        context.navigator.pop();
       } finally {
         loadingDescription = null;
       }
