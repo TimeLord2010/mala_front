@@ -69,16 +69,16 @@ class PatientRepository {
   }
 
   Future<Patient> insert(Patient patient) async {
-    var oldId = patient.id;
+    // var oldId = patient.id;
     await isar.writeTxn(() async {
       await isar.patients.put(patient);
     });
-    var inserted = oldId != patient.id;
-    if (inserted) {
-      logInfo('INSERTED PATIENT!!!');
-    } else {
-      logInfo('UPDATED PATIENT!!!');
-    }
+    // var inserted = oldId != patient.id;
+    // if (inserted) {
+    //   logInfo('INSERTED PATIENT!!!');
+    // } else {
+    //   logInfo('UPDATED PATIENT!!!');
+    // }
     var address = patient.address.value;
     if (address != null) {
       await isar.writeTxn(() async {

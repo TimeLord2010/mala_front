@@ -9,8 +9,10 @@ class PageSelector extends StatelessWidget {
     required this.pages,
     required this.onSelected,
     this.buttonSize = 25,
+    this.horizontalSpacing = 6,
   });
 
+  final double horizontalSpacing;
   final int pages;
   final int index;
   final double buttonSize;
@@ -37,7 +39,7 @@ class PageSelector extends StatelessWidget {
         height: 30,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: list.separatedBy(const SizedBox(width: 10)),
+          children: list.separatedBy(SizedBox(width: horizontalSpacing)),
         ),
       ),
     );

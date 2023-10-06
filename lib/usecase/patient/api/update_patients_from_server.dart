@@ -3,18 +3,21 @@ import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/usecase/patient/delete_patient.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
-import 'package:mala_front/usecase/user/get_local_last_sync.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 import 'package:vit/vit.dart';
 
+import '../../local_store/get_local_last_sync.dart';
+
 Future<void> updatePatientsFromServer({
   void Function()? updater,
+  bool Function()? didCancel,
 }) async {
   var patientsRep = PatientApiRepository();
-  var pageSize = 100;
+  var pageSize = 30;
   var currentPage = 0;
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
+    logInfo('Last sync: ${lastSync.toIso8601String()}');
     var newPatients = await patientsRep.getServerChanges(
       limit: pageSize,
       skip: (currentPage++) * pageSize,
@@ -34,8 +37,20 @@ Future<void> updatePatientsFromServer({
     }
   }
 
+  Future<void> updateSavedLastSync() async {
+    if (didCancel != null && didCancel()) {
+      return;
+    }
+    if (lastServerDate != null) {
+      await updateLastSync(lastServerDate!);
+    }
+  }
+
   try {
     while (true) {
+      if (didCancel != null && didCancel()) {
+        break;
+      }
       var response = await fetch();
       logInfo('Found ${response.length} to sync from server');
       if (response.isEmpty) {
@@ -70,14 +85,14 @@ Future<void> updatePatientsFromServer({
         }
         setLastServerDate(deleteRecord.disabledAt);
       }
-      if (lastServerDate != null) {
-        await updateLastSync(lastServerDate!);
+      await updateSavedLastSync();
+      if (didCancel != null) {
+        if (!didCancel()) updater?.call();
+      } else {
+        updater?.call();
       }
-      updater?.call();
     }
   } finally {
-    if (lastServerDate != null) {
-      await updateLastSync(lastServerDate!);
-    }
+    await updateSavedLastSync();
   }
 }

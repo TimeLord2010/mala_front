@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
+import 'package:mala_front/ui/pages/login_page.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/error/is_no_internet_error.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
@@ -42,7 +45,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   void Function()? patientUpdater;
-
+  bool didLogOut = false;
   DateTime? lastAuthCheck;
 
   void _refreshAuthentication(BuildContext context) {
@@ -53,56 +56,80 @@ class _MainPageState extends State<MainPage> {
     }
     lastAuthCheck = DateTime.now();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      try {
-        await refreshJwt();
-        loadingDescription = 'Atualizando pacientes a partir do servidor';
-        logInfo('Refreshed JWT');
-        await updatePatientsFromServer(
-          updater: patientUpdater,
-        );
-        logInfo('Updated patients from server');
-        loadingDescription = 'Enviando mudanças pendentes para o servidor';
-        await sendFailedBackgroundOperations();
-        logInfo('Sent failed background operations');
-        loadingDescription = 'Enviando pacientes criados enquanto offline';
-        await sendLocalPatientsToServer();
-        logInfo('Sent local patients to server');
-        patientUpdater?.call();
-      } catch (e, stack) {
-        var msg = getErrorMessage(e);
-        logError('Failed to sync data: $msg');
-        if (isNoInternetError(e)) {
-          return;
+      bool canProceed() {
+        if (didLogOut) {
+          logWarn('LOGED OUT, CANNOT PROCEED');
+          return false;
         }
-        await showDialog<String>(
-          context: context,
-          builder: (context) {
-            var dialogMsg = msg ?? 'Erro desconhecido';
-            var dialogFullMessage = '$dialogMsg\n${stack.toString()}';
-            insertRemoteLog('Syncronizing data', dialogFullMessage, 'error');
-            return ContentDialog(
-              title: const Text('Erro na sincronização de registros'),
-              content: Text(dialogFullMessage),
-              actions: [
-                Button(
-                  child: const Text('Ok'),
-                  onPressed: () {
-                    Navigator.pop(context, 'Ok');
-                    // Delete file here
-                  },
-                ),
-              ],
-            );
-          },
-        );
-        if (e is FailedToRefreshJwt) {
-          if (!isNoInternetError(e.innerException)) {
-            context.navigator.pop();
+        if (!mounted) {
+          logWarn('NOT MOUNTED, CANNOT PROCEED');
+          return false;
+        }
+        logInfo('CAN PROCEED');
+        return true;
+      }
+
+      Future<void> syncronize() async {
+        try {
+          await refreshJwt();
+          loadingDescription = 'Atualizando pacientes a partir do servidor';
+          logInfo('Refreshed JWT');
+          await updatePatientsFromServer(
+            updater: patientUpdater,
+            didCancel: () => !canProceed(),
+          );
+          if (!canProceed()) return;
+          logInfo('Updated patients from server');
+          loadingDescription = 'Enviando mudanças pendentes para o servidor';
+          await sendFailedBackgroundOperations();
+          logInfo('Sent failed background operations');
+          loadingDescription = 'Enviando pacientes criados enquanto offline';
+          await sendLocalPatientsToServer();
+          logInfo('Sent local patients to server');
+          patientUpdater?.call();
+        } catch (e, stack) {
+          var msg = getErrorMessage(e);
+          logError('Failed to sync data: $msg');
+          if (isNoInternetError(e)) {
+            return;
+          }
+          var dialogMsg = msg ?? 'Erro desconhecido';
+          var dialogFullMessage = '$dialogMsg\n${stack.toString()}';
+          insertRemoteLog('Syncronizing data', dialogFullMessage, 'error');
+          if (!canProceed()) {
+            return;
+          }
+          await showDialog<String>(
+            context: context,
+            builder: (context) {
+              return ContentDialog(
+                title: const Text('Erro na sincronização de registros'),
+                content: Text(dialogFullMessage),
+                actions: [
+                  Button(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      Navigator.pop(context, 'Ok');
+                      // Delete file here
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+          if (e is FailedToRefreshJwt) {
+            if (!isNoInternetError(e.innerException)) {
+              context.navigator.pop();
+            }
+          }
+        } finally {
+          if (canProceed()) {
+            loadingDescription = null;
           }
         }
-      } finally {
-        loadingDescription = null;
       }
+
+      await syncronize();
     });
   }
 
@@ -198,7 +225,11 @@ class _MainPageState extends State<MainPage> {
                         onPressed: () async {
                           Navigator.pop(con, 'User deleted file');
                           await signout();
+                          didLogOut = true;
                           context.navigator.pop();
+                          if (!context.navigator.canPop()) {
+                            context.navigator.pushMaterial(const LoginPage());
+                          }
                         },
                       ),
                     ],

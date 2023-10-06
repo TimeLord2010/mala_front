@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
+import 'package:mala_front/ui/components/molecules/login_configuration.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:vit/vit.dart';
 
@@ -69,6 +70,31 @@ class _LoginFieldsState extends State<LoginFields> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (height > 500) const MalaLogo(),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(FluentIcons.settings),
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return ContentDialog(
+                            title: const Text('Opções'),
+                            content: const LoginConfiguration(),
+                            actions: [
+                              Button(
+                                child: const Text('Fechar'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 10),
                   Text(errorMessage!),

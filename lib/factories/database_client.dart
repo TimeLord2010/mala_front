@@ -14,7 +14,6 @@ Future<Isar> createDatabaseClient() async {
     _isar = await Isar.open(
       [PatientSchema, AddressSchema],
       directory: dir.path,
-      maxSizeMiB: 5,
       inspector: kDebugMode,
       compactOnLaunch: const CompactCondition(
         minRatio: 1.5,
@@ -22,4 +21,8 @@ Future<Isar> createDatabaseClient() async {
     );
   }
   return _isar!;
+}
+
+void destroyDatabaseClient() {
+  _isar = null;
 }
