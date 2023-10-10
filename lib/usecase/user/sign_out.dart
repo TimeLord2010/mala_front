@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-
-import '../../factories/http_client.dart';
 import 'update_jwt.dart';
 
 Future<void> signout() async {
