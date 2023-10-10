@@ -15,5 +15,5 @@ Future<void> deleteUserFiles() async {
   if (exists) {
     await dir.delete(recursive: true);
   }
-  await Future.delayed(const Duration(seconds: 1));
+  await Future.delayed(const Duration(milliseconds: 500));
 }

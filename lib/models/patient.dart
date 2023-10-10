@@ -14,6 +14,9 @@ class Patient {
   String? remoteId;
 
   @ignore
+  bool? hasPicture;
+
+  @ignore
   DateTime? uploadedAt;
 
   @Index(
@@ -65,6 +68,7 @@ class Patient {
     this.yearOfBirth,
     this.createdAt,
     this.updatedAt,
+    this.hasPicture,
   });
 
   factory Patient.fromMap(Map<String, dynamic> map) {
@@ -92,6 +96,7 @@ class Patient {
       updatedAt: map.getMaybeDateTime('updatedAt'),
       uploadedAt: map.getMaybeDateTime('uploadedAt'),
       remoteId: map['remoteId'],
+      hasPicture: map['hasPicture'],
     );
     var address = map['address'];
     if (address != null) {

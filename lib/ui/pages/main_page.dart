@@ -13,6 +13,7 @@ import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
 import 'package:mala_front/usecase/patient/api/send_local_patients_to_server.dart';
 import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
+import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 import 'package:mala_front/usecase/user/sign_out.dart';
 import 'package:vit/vit.dart';
@@ -71,6 +72,8 @@ class _MainPageState extends State<MainPage> {
 
       Future<void> syncronize() async {
         try {
+          var allCount = await countAllPatients();
+          logInfo('All patients count: $allCount');
           await refreshJwt();
           loadingDescription = 'Atualizando pacientes a partir do servidor';
           logInfo('Refreshed JWT');

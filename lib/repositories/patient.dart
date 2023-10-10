@@ -63,7 +63,10 @@ class PatientRepository {
     return patient;
   }
 
-  Future<int> count(PatientQuery query) async {
+  Future<int> count([PatientQuery? query]) async {
+    if (query == null) {
+      return isar.patients.count();
+    }
     var count = await query.buildQuery(isar).count();
     return count;
   }

@@ -3,5 +3,5 @@ import 'package:mala_front/models/enums/local_keys.dart';
 
 Future<void> updateLocalLastSync(DateTime dt) async {
   var rep = createLocalStoreRepository();
-  await rep.setDate(LocalKeys.lastSync, dt);
+  await rep.setDate(LocalKeys.lastSync, dt.toUtc());
 }

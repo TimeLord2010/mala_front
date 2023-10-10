@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/usecase/patient/delete_patient.dart';
@@ -13,14 +15,15 @@ Future<void> updatePatientsFromServer({
   bool Function()? didCancel,
 }) async {
   var patientsRep = PatientApiRepository();
-  var pageSize = 30;
-  var currentPage = 0;
+  var pageSize = 300;
+  // var currentPage = 0;
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
-    logInfo('Last sync: ${lastSync.toIso8601String()}');
+    // var skip = (currentPage++) * pageSize;
+    logInfo('Last sync: ${lastSync.toIso8601String()}.');
     var newPatients = await patientsRep.getServerChanges(
       limit: pageSize,
-      skip: (currentPage++) * pageSize,
+      skip: 0,
       date: lastSync,
     );
     return newPatients;
@@ -63,7 +66,10 @@ Future<void> updatePatientsFromServer({
           logWarn('Local patient found with same remote id when syncing with server');
           patient.id = savedPatient.id;
         }
-        var pictureData = await patientsRep.getPicture(remoteId);
+        Uint8List? pictureData;
+        if (patient.hasPicture == null || patient.hasPicture == true) {
+          pictureData = await patientsRep.getPicture(remoteId);
+        }
         await upsertPatient(
           patient,
           pictureData: pictureData,
@@ -83,7 +89,7 @@ Future<void> updatePatientsFromServer({
             sendDeletionToServer: false,
           );
         }
-        setLastServerDate(deleteRecord.disabledAt);
+        // setLastServerDate(deleteRecord.disabledAt);
       }
       await updateSavedLastSync();
       if (didCancel != null) {

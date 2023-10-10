@@ -10,7 +10,7 @@ import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
 import 'package:mala_front/usecase/file/pdf/create_patients_pdf.dart';
-import 'package:mala_front/usecase/file/pdf/create_tags_pdf.dart';
+import 'package:mala_front/usecase/file/pdf/print_tags_pdf.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 import 'package:vit/vit.dart';
@@ -68,7 +68,11 @@ class _PatientExplorerState extends State<PatientExplorer> {
 
   Set<Activities> activities = {};
 
-  int pages = 1;
+  int count = 0;
+  int get pages {
+    return count ~/ pageSize;
+  }
+
   int pageSize = 60;
 
   PatientQuery get query {
@@ -146,12 +150,19 @@ class _PatientExplorerState extends State<PatientExplorer> {
                       },
                     ),
                   ),
-                  PageSelector(
-                    index: currentPage,
-                    pages: pages,
-                    onSelected: (index) {
-                      _search(index, false);
-                    },
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PageSelector(
+                          index: currentPage,
+                          pages: pages,
+                          onSelected: (index) {
+                            _search(index, false);
+                          },
+                        ),
+                      ),
+                      Text('$count resultados '),
+                    ],
                   ),
                 ],
               );
@@ -190,15 +201,12 @@ class _PatientExplorerState extends State<PatientExplorer> {
           icon: const Icon(FluentIcons.tag),
           label: const Text('Etiquetas'),
           onPressed: () async {
-            var patients = await patientsFuture;
-            logInfo('Found patients: ${patients.length}');
-            var tags = patients.map((x) {
-              return PatientTag(
-                name: x.name ?? '',
-                address: x.address.value,
-              );
-            });
-            createTagsPdf(
+            var patients = await listPatients(
+              patientQuery: query,
+              limit: 300,
+            );
+            var tags = patients.map(PatientTag.fromPatient);
+            printTagsPdf(
               tags: tags,
             );
           },
@@ -218,11 +226,14 @@ class _PatientExplorerState extends State<PatientExplorer> {
   }
 
   void _search(int page, bool shouldCount) async {
+    logInfo('Searching. Page: $page, ShouldCount: $shouldCount');
     currentPage = page;
     var patientQuery = query;
     if (shouldCount) {
       var count = await countPatients(patientQuery);
-      pages = count ~/ pageSize;
+      //pages = count ~/ pageSize;
+      this.count = count;
+      logInfo('Count: $count, Pages: $pages');
     }
     patientsFuture = listPatients(
       patientQuery: patientQuery,

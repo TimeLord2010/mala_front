@@ -1,4 +1,5 @@
 import 'package:mala_front/models/address.dart';
+import 'package:mala_front/models/patient.dart';
 
 class PatientTag {
   String name;
@@ -7,7 +8,12 @@ class PatientTag {
   PatientTag({
     required this.name,
     required this.address,
-  }) {
-    assert(name.isNotEmpty);
+  });
+
+  factory PatientTag.fromPatient(Patient patient) {
+    return PatientTag(
+      name: patient.name ?? '',
+      address: patient.address.value,
+    );
   }
 }

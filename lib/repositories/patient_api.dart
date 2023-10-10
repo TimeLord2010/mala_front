@@ -16,13 +16,14 @@ class PatientApiRepository {
     DateTime? date,
   }) async {
     var stopWatch = StopWatch('api:getServerChanges');
+    Map<String, dynamic> query = {
+      ...(skip == null) ? {} : {'skip': skip},
+      ...(limit == null) ? {} : {'limit': limit},
+      ...(date == null) ? {} : {'date': date.toUtc().toIso8601String()},
+    };
     var response = await dio.get(
       '/patient/sync',
-      queryParameters: {
-        ...(skip == null) ? {} : {'skip': skip},
-        ...(limit == null) ? {} : {'limit': limit},
-        ...(date == null) ? {} : {'date': date.toUtc().toIso8601String()},
-      },
+      queryParameters: query,
     );
     Map<String, dynamic> body = response.data;
     stopWatch.stop();

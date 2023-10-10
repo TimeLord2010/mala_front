@@ -1,8 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:mala_front/models/address.dart';
-import 'package:mala_front/usecase/date/get_current_date_numbers.dart';
-import 'package:mala_front/usecase/file/pick_directory.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:vit/extensions/iterable.dart';
@@ -27,11 +25,9 @@ const double _tagVerticalSpacing = 0 * _cm;
 const double _tagWidth = 9.9 * _cm;
 const double _tagHeight = 2.54 * _cm;
 
-Future<File?> createTagsPdf({
+Future<Uint8List> createTagsPdf({
   required Iterable<PatientTag> tags,
 }) async {
-  var dir = await pickDirectory();
-  if (dir == null) return null;
   var doc = Document();
   var tagsPerLine = _getTagsPerLine();
   logInfo('Tags per line: $tagsPerLine');
@@ -48,11 +44,8 @@ Future<File?> createTagsPdf({
     );
     doc.addPage(page);
   }
-  var filename = '${dir.path}/entiquetas ${getCurrentDateNumbers()}.pdf';
-  final file = File(filename);
   var bytes = await doc.save();
-  await file.writeAsBytes(bytes);
-  return file;
+  return bytes;
 }
 
 Page _createPage({
