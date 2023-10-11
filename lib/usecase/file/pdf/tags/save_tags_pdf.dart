@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:mala_front/usecase/file/pdf/create_tags_pdf.dart';
+import 'package:mala_front/usecase/file/pdf/tags/create_tags_pdf.dart';
 
-import '../../../models/patient_tag.dart';
-import '../../date/get_current_date_numbers.dart';
-import '../pick_directory.dart';
+import '../../../../models/patient_tag.dart';
+import '../../../date/get_current_date_numbers.dart';
+import '../../pick_directory.dart';
 
 Future<File?> saveTagsPdf({
   required Iterable<PatientTag> tags,

@@ -6,7 +6,7 @@ import 'package:pdf/widgets.dart';
 import 'package:vit/extensions/iterable.dart';
 import 'package:vit/vit.dart';
 
-import '../../../models/patient_tag.dart';
+import '../../../../models/patient_tag.dart';
 
 const double _cm = PdfPageFormat.cm;
 

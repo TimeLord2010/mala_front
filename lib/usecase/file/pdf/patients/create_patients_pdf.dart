@@ -1,12 +1,11 @@
-import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:mala_front/usecase/file/pick_directory.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:vit/extensions/iterable.dart';
 import 'package:vit/vit.dart';
 
-import '../../../models/patient.dart';
+import '../../../../models/patient.dart';
 
 const double _cm = PdfPageFormat.cm;
 
@@ -17,19 +16,14 @@ const double _margin = _cm * 0.5;
 
 const double _contentWidth = _totalWidth - (2 * _margin);
 
-Future<File?> createPatientsPdf({
+Future<Uint8List> createPatientsPdf({
   required List<Patient> patients,
 }) async {
-  var dir = await pickDirectory();
-  if (dir == null) return null;
   var doc = Document();
   var page = _createPage(patients);
   doc.addPage(page);
-  var filename = '${dir.path}/Lista de pacientes.pdf';
-  var file = File(filename);
   var bytes = await doc.save();
-  await file.writeAsBytes(bytes);
-  return file;
+  return bytes;
 }
 
 Page _createPage(List<Patient> patients) {
