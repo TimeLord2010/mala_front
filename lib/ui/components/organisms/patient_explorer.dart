@@ -203,7 +203,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
           onPressed: () async {
             var patients = await listPatients(
               patientQuery: query,
-              limit: 300,
+              limit: 5000,
             );
             var tags = patients.map(PatientTag.fromPatient);
             printTagsPdf(
@@ -217,7 +217,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
           onPressed: () async {
             var patients = await listPatients(
               patientQuery: query,
-              limit: 300,
+              limit: 5000,
             );
             printPatientsPdf(
               patients: patients,

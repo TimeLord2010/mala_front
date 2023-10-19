@@ -97,6 +97,9 @@ Container _createTag(PatientTag tag) {
           x,
           overflow: TextOverflow.clip,
           maxLines: 1,
+          style: const TextStyle(
+            fontSize: 9,
+          ),
         );
         return FittedBox(
           child: text,
@@ -116,7 +119,7 @@ String _street(Address address) {
   }
   var street = streetStr ?? '';
   var number = numberStr ?? '';
-  var district = numberStr ?? '';
+  var district = districtStr ?? '';
   return '$street $number - $district';
 }
 
