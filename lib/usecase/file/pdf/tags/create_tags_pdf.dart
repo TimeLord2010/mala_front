@@ -54,11 +54,18 @@ Page _createPage({
   required int tagsPerColumn,
 }) {
   var page = Page(
-    pageFormat: PdfPageFormat.a4,
-    margin: const EdgeInsets.symmetric(
-      vertical: _verticalMargin,
-      horizontal: _horizontalMargin,
+    pageFormat: const PdfPageFormat(
+      _totalWidth,
+      _totalHeight,
+      marginBottom: _verticalMargin,
+      marginLeft: _horizontalMargin,
+      marginRight: _horizontalMargin,
+      marginTop: _verticalMargin,
     ),
+    // margin: const EdgeInsets.symmetric(
+    //   vertical: _verticalMargin,
+    //   horizontal: _horizontalMargin,
+    // ),
     build: (context) {
       var rows = <Row>[];
       for (var rowIndex = 0; rowIndex < tagsPerColumn; rowIndex++) {
@@ -82,6 +89,7 @@ Container _createTag(PatientTag tag) {
   return Container(
     width: _tagWidth,
     height: _tagHeight,
+    padding: const EdgeInsets.all(10),
     margin: const EdgeInsets.only(
       right: _tagHorizontalSpacing,
       bottom: _tagVerticalSpacing,
