@@ -1,6 +1,6 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:mala_front/models/address.dart';
+import 'package:mala_front/usecase/number/rount_to_threshold.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:vit/extensions/iterable.dart';
@@ -11,19 +11,22 @@ import '../../../../models/patient_tag.dart';
 const double _cm = PdfPageFormat.cm;
 
 const double _totalWidth = 21.0 * _cm;
-const double _totalHeight = 29.7 * _cm;
+double _totalHeight = roundToThreshold(29.7 * _cm);
 
 const double _horizontalMargin = 0.47 * _cm;
 const double _verticalMargin = 0.88 * _cm;
 
 const double _contentWidth = _totalWidth - (2 * _horizontalMargin);
-const double _contentHeight = _totalHeight - (2 * _verticalMargin);
+// Fixing rounding point precision error that interferes with the tags
+// per column calculation
+double _contentHeight = roundToThreshold(_totalHeight - (2 * _verticalMargin));
 
 const double _tagHorizontalSpacing = 0.25 * _cm;
 const double _tagVerticalSpacing = 0 * _cm;
 
 const double _tagWidth = 9.9 * _cm;
-const double _tagHeight = 2.54 * _cm;
+const double _tagHeight = 2.535 * _cm;
+//const double _tagHeight = 2.54 * _cm;
 
 Future<Uint8List> createTagsPdf({
   required Iterable<PatientTag> tags,
@@ -54,7 +57,7 @@ Page _createPage({
   required int tagsPerColumn,
 }) {
   var page = Page(
-    pageFormat: const PdfPageFormat(
+    pageFormat: PdfPageFormat(
       _totalWidth,
       _totalHeight,
       marginBottom: _verticalMargin,
@@ -89,10 +92,17 @@ Container _createTag(PatientTag tag) {
   return Container(
     width: _tagWidth,
     height: _tagHeight,
-    padding: const EdgeInsets.all(10),
+    color: PdfColor.fromHex('#FFAAAA'),
+    // padding: const EdgeInsets.all(10),
+    padding: const EdgeInsets.only(
+      left: 0.6 * _cm,
+      top: 0.4 * _cm,
+      //top: 0.6 * _cm,
+    ),
     margin: const EdgeInsets.only(
       right: _tagHorizontalSpacing,
-      bottom: _tagVerticalSpacing,
+      //bottom: 0.02 * _cm,
+      //bottom: _tagVerticalSpacing,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +164,8 @@ int _getTagsPerLine([double availableWidth = _contentWidth]) {
   return 1 + _getTagsPerLine(availableWidth - takenWidth);
 }
 
-int _getTagsPerColumn([double availableHeight = _contentHeight]) {
+int _getTagsPerColumn([double? availableHeight]) {
+  availableHeight ??= _contentHeight;
   if (availableHeight < _tagHeight) return 0;
   var takenHeight = _tagHeight + _tagVerticalSpacing;
   return 1 + _getTagsPerColumn(availableHeight - takenHeight);
