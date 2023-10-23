@@ -92,7 +92,7 @@ Container _createTag(PatientTag tag) {
   return Container(
     width: _tagWidth,
     height: _tagHeight,
-    color: PdfColor.fromHex('#FFAAAA'),
+    // color: PdfColor.fromHex('#FFAAAA'),
     // padding: const EdgeInsets.all(10),
     padding: const EdgeInsets.only(
       left: 0.6 * _cm,
