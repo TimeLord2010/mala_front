@@ -14,7 +14,7 @@ const double _totalWidth = 21.0 * _cm;
 double _totalHeight = roundToThreshold(29.7 * _cm);
 
 const double _horizontalMargin = 0.47 * _cm;
-const double _verticalMargin = 0.8 * _cm;
+double _verticalMargin = roundToThreshold(0.8 * _cm); // Original was 0.88
 
 const double _contentWidth = _totalWidth - (2 * _horizontalMargin);
 // Fixing rounding point precision error that interferes with the tags
@@ -24,9 +24,11 @@ double _contentHeight = roundToThreshold(_totalHeight - (2 * _verticalMargin));
 const double _tagHorizontalSpacing = 0.25 * _cm;
 const double _tagVerticalSpacing = 0 * _cm;
 
-const double _tagWidth = 9.9 * _cm;
-const double _tagHeight = 2.535 * _cm;
-//const double _tagHeight = 2.54 * _cm;
+//const double _tagWidth = 9.9 * _cm;
+const double _tagWidth = (_contentWidth - _tagHorizontalSpacing) / 2;
+double _tagHeight = (_contentHeight - (_tagVerticalSpacing * 10)) / 11;
+// const double _tagHeight = 2.535 * _cm;
+//const double _tagHeight = 2.54 * _cm; // Original
 
 Future<Uint8List> createTagsPdf({
   required Iterable<PatientTag> tags,
@@ -102,7 +104,7 @@ Container _createTag(PatientTag tag) {
     margin: const EdgeInsets.only(
       right: _tagHorizontalSpacing,
       //bottom: 0.02 * _cm,
-      //bottom: _tagVerticalSpacing,
+      bottom: _tagVerticalSpacing,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,6 +168,7 @@ int _getTagsPerLine([double availableWidth = _contentWidth]) {
 
 int _getTagsPerColumn([double? availableHeight]) {
   availableHeight ??= _contentHeight;
+  debugPrint('AvailableHeight: $availableHeight');
   if (availableHeight < _tagHeight) return 0;
   var takenHeight = _tagHeight + _tagVerticalSpacing;
   return 1 + _getTagsPerColumn(availableHeight - takenHeight);
