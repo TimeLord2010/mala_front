@@ -244,7 +244,7 @@ class _MainPageState extends State<MainPage> {
           PaneItem(
             icon: const Icon(FluentIcons.info),
             title: const Text('Info'),
-            body: const MalaInfo(),
+            body: MalaInfo(),
           ),
         ],
       ),

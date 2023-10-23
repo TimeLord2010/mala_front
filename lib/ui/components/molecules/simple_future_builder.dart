@@ -11,7 +11,7 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
   });
 
   final Future<T> future;
-  final Widget Function(T? value) builder;
+  final Widget Function(T value) builder;
 
   /// This is used to display the error message.
   ///
@@ -35,7 +35,7 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
               );
             }
             var data = snap.data;
-            return builder(data);
+            return builder(data as T);
           default:
             return const Text('Invalid state');
         }

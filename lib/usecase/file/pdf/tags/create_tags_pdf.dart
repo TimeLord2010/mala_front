@@ -14,7 +14,7 @@ const double _totalWidth = 21.0 * _cm;
 double _totalHeight = roundToThreshold(29.7 * _cm);
 
 const double _horizontalMargin = 0.47 * _cm;
-const double _verticalMargin = 0.88 * _cm;
+const double _verticalMargin = 0.8 * _cm;
 
 const double _contentWidth = _totalWidth - (2 * _horizontalMargin);
 // Fixing rounding point precision error that interferes with the tags

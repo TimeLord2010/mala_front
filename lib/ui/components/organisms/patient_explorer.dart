@@ -144,7 +144,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
                 children: [
                   Expanded(
                     child: PatientList(
-                      patients: patients ?? [],
+                      patients: patients,
                       onEdit: (patient) {
                         _search(currentPage, true);
                       },

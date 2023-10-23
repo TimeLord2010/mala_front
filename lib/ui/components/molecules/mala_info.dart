@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mala_front/ui/components/atoms/mala_logo.dart';
+import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
+import 'package:mala_front/usecase/platform/get_app_version.dart';
 
 class MalaInfo extends StatelessWidget {
-  const MalaInfo({super.key});
+  MalaInfo({super.key});
+
+  final _version = getAppVersion();
 
   @override
   Widget build(BuildContext context) {
@@ -40,21 +44,31 @@ class MalaInfo extends StatelessWidget {
   }
 
   Widget _info() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           'Mala',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
-        Text('Aplicação de gerência de pacientes.'),
-        Spacer(),
-        Text('2023'),
-        Text('VIT - Desenvolvimento e Tecnologia'),
-        SelectionArea(
+        const Text('Aplicação de gerência de pacientes.'),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SimpleFutureBuilder(
+            future: _version,
+            builder: (value) {
+              return Text(value);
+            },
+            contextMessage: 'Versão do applicativo',
+          ),
+        ),
+        const Spacer(),
+        const Text('2023'),
+        const Text('VIT - Desenvolvimento e Tecnologia'),
+        const SelectionArea(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
