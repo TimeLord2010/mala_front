@@ -11,7 +11,7 @@ import 'package:vit/vit.dart';
 import '../../local_store/get_local_last_sync.dart';
 
 Future<void> updatePatientsFromServer({
-  void Function()? updater,
+  void Function(String? lastSync)? updater,
   bool Function()? didCancel,
 }) async {
   var patientsRep = PatientApiRepository();
@@ -21,11 +21,13 @@ Future<void> updatePatientsFromServer({
     var lastSync = getLocalLastSync() ?? DateTime(2020);
     // var skip = (currentPage++) * pageSize;
     logInfo('Last sync: ${lastSync.toIso8601String()}.');
-    var newPatients = await patientsRep.getServerChanges(
-      limit: pageSize,
-      skip: 0,
-      date: lastSync,
-    );
+    var newPatients = await patientsRep
+        .getServerChanges(
+          limit: pageSize,
+          skip: 0,
+          date: lastSync,
+        )
+        .timeout(const Duration(seconds: 6));
     return newPatients;
   }
 
@@ -35,7 +37,7 @@ Future<void> updatePatientsFromServer({
       lastServerDate = dt;
       return;
     }
-    if (dt.isAfter(lastServerDate!)) {
+    if (dt.isAfter(lastServerDate!) || dt.millisecondsSinceEpoch == lastServerDate!.millisecondsSinceEpoch) {
       lastServerDate = dt;
     }
   }
@@ -91,11 +93,24 @@ Future<void> updatePatientsFromServer({
         }
         // setLastServerDate(deleteRecord.disabledAt);
       }
-      await updateSavedLastSync();
-      if (didCancel != null) {
-        if (!didCancel()) updater?.call();
+      if (response.changed.isEmpty) {
+        if (response.deleted.isEmpty) {
+          break;
+        } else {
+          var last = response.deleted.last;
+          setLastServerDate(last.disabledAt);
+          await updateSavedLastSync();
+        }
       } else {
-        updater?.call();
+        await updateSavedLastSync();
+      }
+      if (didCancel != null) {
+        if (!didCancel()) updater?.call(lastServerDate?.toIso8601String());
+      } else {
+        updater?.call(lastServerDate?.toIso8601String());
+      }
+      if (response.length < pageSize) {
+        break;
       }
     }
   } finally {

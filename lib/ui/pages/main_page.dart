@@ -78,7 +78,10 @@ class _MainPageState extends State<MainPage> {
           loadingDescription = 'Atualizando pacientes a partir do servidor';
           logInfo('Refreshed JWT');
           await updatePatientsFromServer(
-            updater: patientUpdater,
+            updater: (dt) {
+              loadingDescription = 'Atualizando pacientes: $dt';
+              patientUpdater?.call();
+            },
             didCancel: () => !canProceed(),
           );
           if (!canProceed()) return;
