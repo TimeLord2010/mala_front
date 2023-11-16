@@ -12,6 +12,7 @@ class MalaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
+      restorationScopeId: 'Mala',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
