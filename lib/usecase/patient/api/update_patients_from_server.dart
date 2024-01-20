@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
+import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
+import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/patient/delete_patient.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
@@ -17,6 +19,13 @@ Future<void> updatePatientsFromServer({
   var patientsRep = PatientApiRepository();
   var pageSize = 300;
   // var currentPage = 0;
+
+  final count = await countAllPatients();
+  if (count == 0) {
+    // Resetando a data para o inicio da aplicação para pegar todos os registros
+    await updateLocalLastSync(DateTime(2020));
+  }
+
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
     // var skip = (currentPage++) * pageSize;

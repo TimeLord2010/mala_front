@@ -102,6 +102,12 @@ class _MainPageState extends State<MainPage> {
           var dialogMsg = msg ?? 'Erro desconhecido';
           var dialogFullMessage = '$dialogMsg\n${stack.toString()}';
           insertRemoteLog('Syncronizing data', dialogFullMessage, 'error');
+          if (e is FailedToRefreshJwt) {
+            if (!isNoInternetError(e.innerException)) {
+              context.navigator.pop();
+              return;
+            }
+          }
           if (!canProceed()) {
             return;
           }
@@ -123,11 +129,6 @@ class _MainPageState extends State<MainPage> {
               );
             },
           );
-          if (e is FailedToRefreshJwt) {
-            if (!isNoInternetError(e.innerException)) {
-              context.navigator.pop();
-            }
-          }
         } finally {
           if (canProceed()) {
             loadingDescription = null;

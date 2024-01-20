@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' show SelectionArea;
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/ui/components/atoms/mala_date_picker.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/atoms/mala_title.dart';
 import 'package:mala_front/ui/components/molecules/activities_selector.dart';
@@ -226,15 +227,22 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                         placeholder: '999.999.999-99',
                       ),
                     ),
-                    InfoLabel(
+                    MalaDatePicker(
                       label: 'Data de nascimento',
-                      child: DatePicker(
-                        selected: selectedBirth,
-                        onChanged: (v) {
-                          selectedBirth = v;
-                        },
-                      ),
+                      value: selectedBirth,
+                      onChanged: (v) {
+                        selectedBirth = v;
+                      },
                     ),
+                    // InfoLabel(
+                    //   label: 'Data de nascimento',
+                    //   child: DatePicker(
+                    //     selected: selectedBirth,
+                    //     onChanged: (v) {
+                    //       selectedBirth = v;
+                    //     },
+                    //   ),
+                    // ),
                   ].separatedBy(const SizedBox(width: 20)),
                 ),
                 const Divider(),

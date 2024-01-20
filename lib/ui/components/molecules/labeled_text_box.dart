@@ -29,6 +29,7 @@ class LabeledTextBox extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         inputFormatters: formaters,
+        // scrollPhysics: const ClampingScrollPhysics(),
         placeholder: placeholder,
         placeholderStyle: TextStyle(
           color: Colors.grey[80],

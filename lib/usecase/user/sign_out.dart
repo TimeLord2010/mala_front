@@ -1,3 +1,5 @@
+import 'package:mala_front/usecase/user/update_last_sync.dart';
+
 import 'update_jwt.dart';
 
 Future<void> signout() async {
@@ -5,5 +7,6 @@ Future<void> signout() async {
   //   //await deleteUserFiles();
   // } else {
   // }
+  await updateLastSync(DateTime(2020));
   await updateJwt(null);
 }
