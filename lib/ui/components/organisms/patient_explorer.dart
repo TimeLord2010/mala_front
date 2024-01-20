@@ -106,7 +106,6 @@ class _PatientExplorerState extends State<PatientExplorer> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               var width = constraints.maxWidth;
-              logInfo('width: $width');
               return _commandBar(context, width < 400);
             },
           ),

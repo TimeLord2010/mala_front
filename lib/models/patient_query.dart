@@ -35,11 +35,11 @@ class PatientQuery {
   }
 
   QueryBuilder<Patient, Patient, QAfterSortBy> buildQuery(Isar isar) {
-    var r = isar.patients.where().nameStartsWith(name ?? '');
+    var r = isar.patients.filter().nameContains(name ?? '');
     if (isEmptyQuery) {
       return r.sortByName();
     }
-    var filter = r.filter();
+    var filter = r;
     if (minAge != null || maxAge != null) {
       filter = filter.yearOfBirthIsNotNull();
     }

@@ -64,7 +64,6 @@ class _LoginFieldsState extends State<LoginFields> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             var height = constraints.maxHeight;
-            logInfo('height: $height');
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
