@@ -252,6 +252,6 @@ class _PatientExplorerState extends State<PatientExplorer> {
     _maxAge = null;
     _monthBirthDay = false;
     activities.clear();
-    _search(0, false);
+    _search(0, true);
   }
 }
