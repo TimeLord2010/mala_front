@@ -3,20 +3,9 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show SelectionArea;
-import 'package:mala_front/models/address.dart';
-import 'package:mala_front/models/enums/activities.dart';
-import 'package:mala_front/models/patient.dart';
-import 'package:mala_front/ui/components/atoms/mala_date_picker.dart';
-import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
-import 'package:mala_front/ui/components/atoms/mala_title.dart';
-import 'package:mala_front/ui/components/molecules/activities_selector.dart';
-import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
-import 'package:mala_front/usecase/address/search_address.dart';
-import 'package:mala_front/usecase/patient/delete_patient.dart';
-import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
-import 'package:mala_front/usecase/patient/upsert_patient.dart';
-
-import '../components/atoms/mala_app.dart';
+import 'package:mala_front/models/index.dart';
+import 'package:mala_front/ui/components/index.dart';
+import 'package:mala_front/usecase/index.dart';
 
 class PatientRegistration extends StatefulWidget {
   PatientRegistration({
