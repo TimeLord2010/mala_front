@@ -1,7 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
+import 'package:mala_front/ui/components/molecules/profile_picture_taker.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/file/pick_image.dart';
 import 'package:vit/vit.dart';
@@ -24,14 +26,20 @@ class MalaProfilePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (onPick == null) {
+    final pick = onPick;
+    if (pick == null) {
       return _frame();
     }
     return GestureDetector(
       onTap: () async {
+        // TODO: Remove
+        if (kDebugMode) {
+          context.navigator.pushMaterial(const ProfilePictureTaker());
+          return;
+        }
         var path = await pickImage();
         if (path == null) {
-          onPick!(null);
+          pick(null);
           return;
         }
         var compressed = await compressImage(
@@ -45,8 +53,7 @@ class MalaProfilePicker extends StatelessWidget {
           var bytes = compressed.output.lengthInBytes ~/ 1024;
           debugPrint('compresssed: $bytes kb');
         }
-        onPick!(compressed.output);
-        //widget.onPick!(path);
+        pick(compressed.output);
       },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,

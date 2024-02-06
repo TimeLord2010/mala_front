@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  camera_windows
   image_compression_flutter
   isar_flutter_libs
   printing
