@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:camera/camera.dart' as camera_package;
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/material.dart';
 import 'package:mala_front/models/errors/camera_exception.dart' as model;
+import 'package:mala_front/ui/components/molecules/camera/processing_picture_overlay.dart';
 import 'package:mala_front/ui/components/organisms/picture_taker_control_panel.dart';
 import 'package:mala_front/ui/protocols/camera/get_camera_count.dart';
 import 'package:mala_front/ui/protocols/invert_axis.dart';
@@ -15,7 +18,12 @@ import '../../theme/colors.dart';
 import '../atoms/index.dart';
 
 class ProfilePictureTaker extends StatefulWidget {
-  const ProfilePictureTaker({super.key});
+  const ProfilePictureTaker({
+    super.key,
+    required this.onPick,
+  });
+
+  final void Function(Uint8List? bytes) onPick;
 
   @override
   State<StatefulWidget> createState() {
@@ -27,6 +35,23 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
   final cameraController = CameraController();
   int camerasCount = 0;
   int selectedIndex = 0;
+
+  OverlayEntry? _overlayEntry;
+
+  bool get isTakingPicture => _overlayEntry != null;
+  set isTakingPicture(bool value) {
+    if (value) {
+      _overlayEntry = OverlayEntry(
+        builder: (context) {
+          return const ProcessingPictureOverlay();
+        },
+      );
+      Overlay.of(context).insert(_overlayEntry!);
+    } else {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+  }
 
   @override
   void initState() {
@@ -96,7 +121,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         return Flex(
           direction: direction,
           children: [
-            _cameraFrame(),
+            Expanded(child: _cameraFrame()),
             SizedBox(
               width: direction == Axis.horizontal ? controlPanelSize : null,
               height: direction == Axis.vertical ? controlPanelSize : null,
@@ -111,6 +136,32 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
                     selectedIndex = index;
                   });
                 },
+                onPictureTaken: (path) async {
+                  if (isTakingPicture) return;
+                  isTakingPicture = true;
+                  try {
+                    if (path == null) {
+                      widget.onPick(null);
+                      return;
+                    }
+                    var file = File(path);
+                    var compressed = await compressImage(
+                      file,
+                      quality: 30,
+                      minimumSizeInKb: 128,
+                    );
+                    if (!compressed.compressed) {
+                      debugPrint('did not compress');
+                    } else {
+                      var bytes = compressed.output.lengthInBytes ~/ 1024;
+                      debugPrint('compresssed: $bytes kb');
+                    }
+                    widget.onPick(compressed.output);
+                    context.navigator.pop();
+                  } finally {
+                    isTakingPicture = false;
+                  }
+                },
               ),
             ),
           ],
@@ -120,25 +171,23 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
   }
 
   Widget _cameraFrame() {
-    return Expanded(
-      child: Camera(
-        cameraController: cameraController,
-        onCameraNotInit: (context) {
-          return const MalaText('Camera não inicializada');
-        },
-        onCameraNotSelect: (context) {
-          return const MalaText('Camera não selecionada');
-        },
-        onCameraNotActive: (context) {
-          return const MalaText('Camera não ativada');
-        },
-        onPlatformNotSupported: (context) {
-          return const MalaText(
-            'Plataforma não suportada',
-            style: errorTextStyle,
-          );
-        },
-      ),
+    return Camera(
+      cameraController: cameraController,
+      onCameraNotInit: (context) {
+        return const MalaText('Camera não inicializada');
+      },
+      onCameraNotSelect: (context) {
+        return const MalaText('Camera não selecionada');
+      },
+      onCameraNotActive: (context) {
+        return const MalaText('Camera não ativada');
+      },
+      onPlatformNotSupported: (context) {
+        return const MalaText(
+          'Plataforma não suportada',
+          style: errorTextStyle,
+        );
+      },
     );
   }
 }

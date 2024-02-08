@@ -3,4 +3,5 @@ enum CameraExceptionReason {
   didNotActivate,
   didNotSelect,
   notImplemented,
+  canceled,
 }

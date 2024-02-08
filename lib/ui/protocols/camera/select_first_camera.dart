@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:camera_universal/camera_universal.dart';
 import 'package:camera/camera.dart' as camera_package;
 
@@ -12,7 +9,7 @@ Future<void> selectFistCamera({
     await controller.initializeCamera(
       setState: updateUI,
     );
-  } on camera_package.CameraException catch (e) {
+  } on camera_package.CameraException {
     rethrow;
     // var description = e.description;
     // if (description == null) {
