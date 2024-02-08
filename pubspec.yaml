@@ -31,7 +31,7 @@ dependencies:
   shared_preferences: ^2.2.1
   vit:
     git:
-      url: git@gitlab.com:vit16/vit_dart_extensions.git
+      url: https://gitlab.com/vit16/vit_dart_extensions.git
   wave: ^0.2.2
 
 dev_dependencies:

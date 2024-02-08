@@ -1,5 +1,5 @@
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 import '../../factories/http_client.dart';
 
@@ -14,6 +14,6 @@ Future<void> insertRemoteLog(String context, String message, [String level = 'in
       },
     );
   } catch (e) {
-    logError(getErrorMessage(e) ?? 'Falha ao enviar logs');
+    vit.logError(getErrorMessage(e) ?? 'Falha ao enviar logs');
   }
 }

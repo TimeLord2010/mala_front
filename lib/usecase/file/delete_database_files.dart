@@ -4,7 +4,7 @@ import 'package:mala_front/factories/database_client.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/file/get_database_directory.dart';
 import 'package:vit/extensions/directory.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 Future<void> deleteDatabaseFiles() async {
   var isar = await createDatabaseClient();
@@ -13,14 +13,14 @@ Future<void> deleteDatabaseFiles() async {
     deleteFromDisk: true,
   );
   if (filePath != null) {
-    logInfo('Database file: $filePath');
+    vit.logInfo('Database file: $filePath');
     var file = File(filePath);
     bool exists = file.existsSync();
     if (exists) {
       try {
         await file.delete();
       } catch (e) {
-        logError('Failed to delete database file: ${getErrorMessage(e)}');
+        vit.logError('Failed to delete database file: ${getErrorMessage(e)}');
       }
     }
   }
@@ -30,10 +30,10 @@ Future<void> deleteDatabaseFiles() async {
   files.listen((event) async {
     var path = event.getName(true);
     if (path.contains('.isar')) {
-      logWarn('Deleting database file: $path');
+      vit.logWarn('Deleting database file: $path');
       event.deleteSync();
     } else {
-      logInfo('Did NOT delete file: $path');
+      vit.logInfo('Did NOT delete file: $path');
     }
   });
 }

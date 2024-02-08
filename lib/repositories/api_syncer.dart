@@ -6,7 +6,7 @@ import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 class ApiSynchronizer {
   final SharedPreferences preferences;
@@ -20,7 +20,7 @@ class ApiSynchronizer {
   Future<void> retryFailedSyncronizations() async {
     var pendingDeletion = preferences.getStringList(_deleteKey) ?? [];
     for (var patient in pendingDeletion) {
-      logInfo('Sending pending deletion: $patient');
+      vit.logInfo('Sending pending deletion: $patient');
       await deletePatient(patient);
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -28,7 +28,7 @@ class ApiSynchronizer {
     var pendingUpdate = preferences.getStringList(_updateKey) ?? [];
     for (var patientId in pendingUpdate) {
       var id = int.parse(patientId);
-      logInfo('Sending pending upsert: $id');
+      vit.logInfo('Sending pending upsert: $id');
       var patient = await findPatientById(id);
       if (patient == null) continue;
       await upsertPatient(patient);
@@ -79,7 +79,7 @@ class ApiSynchronizer {
           await errorReporter(entityId.toString(), error);
         }
       } catch (e) {
-        logError('Failed to report error from api sync: ${getErrorMessage(e)}');
+        vit.logError('Failed to report error from api sync: ${getErrorMessage(e)}');
       }
     }
   }

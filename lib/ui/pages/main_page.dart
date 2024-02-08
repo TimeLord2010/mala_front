@@ -16,7 +16,7 @@ import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart'
 import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 import 'package:mala_front/usecase/user/sign_out.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';
@@ -59,24 +59,24 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       bool canProceed() {
         if (didLogOut) {
-          logWarn('LOGED OUT, CANNOT PROCEED');
+          vit.logWarn('LOGED OUT, CANNOT PROCEED');
           return false;
         }
         if (!mounted) {
-          logWarn('NOT MOUNTED, CANNOT PROCEED');
+          vit.logWarn('NOT MOUNTED, CANNOT PROCEED');
           return false;
         }
-        logInfo('CAN PROCEED');
+        vit.logInfo('CAN PROCEED');
         return true;
       }
 
       Future<void> syncronize() async {
         try {
           var allCount = await countAllPatients();
-          logInfo('All patients count: $allCount');
+          vit.logInfo('All patients count: $allCount');
           await refreshJwt();
           loadingDescription = 'Atualizando pacientes a partir do servidor';
-          logInfo('Refreshed JWT');
+          vit.logInfo('Refreshed JWT');
           await updatePatientsFromServer(
             updater: (dt) {
               loadingDescription = 'Atualizando pacientes: $dt';
@@ -85,17 +85,17 @@ class _MainPageState extends State<MainPage> {
             didCancel: () => !canProceed(),
           );
           if (!canProceed()) return;
-          logInfo('Updated patients from server');
+          vit.logInfo('Updated patients from server');
           loadingDescription = 'Enviando mudanças pendentes para o servidor';
           await sendFailedBackgroundOperations();
-          logInfo('Sent failed background operations');
+          vit.logInfo('Sent failed background operations');
           loadingDescription = 'Enviando pacientes criados enquanto offline';
           await sendLocalPatientsToServer();
-          logInfo('Sent local patients to server');
+          vit.logInfo('Sent local patients to server');
           patientUpdater?.call();
         } catch (e, stack) {
           var msg = getErrorMessage(e);
-          logError('Failed to sync data: $msg');
+          vit.logError('Failed to sync data: $msg');
           if (isNoInternetError(e)) {
             return;
           }
@@ -142,7 +142,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    logInfo('Refreshed main page');
+    vit.logInfo('Refreshed main page');
     _refreshAuthentication(context);
     var explorer = PatientExplorer(
       updateExposer: (updater) {

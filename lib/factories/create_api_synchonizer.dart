@@ -1,11 +1,11 @@
 import 'package:mala_front/repositories/api_syncer.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 import 'http_client.dart';
 
 ApiSynchronizer createApiSynchonizer() {
-  var prefs = Vit().getSharedPreferences();
+  var prefs = vit.Vit().getSharedPreferences();
   return ApiSynchronizer(
     preferences: prefs,
     errorReporter: (context, err) async {

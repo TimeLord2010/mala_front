@@ -4,7 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/login_configuration.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
@@ -173,7 +173,7 @@ class _LoginFieldsState extends State<LoginFields> {
     try {
       await widget.onLogin(email, password);
     } catch (e) {
-      logInfo('errored at login: ${e.toString()}');
+      vit.logInfo('errored at login: ${e.toString()}');
       errorMessage = getErrorMessage(e);
     } finally {
       isLoading = false;
