@@ -33,7 +33,7 @@ class ProfilePictureTaker extends StatefulWidget {
 
 class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
   final cameraController = CameraController();
-  int camerasCount = 0;
+  int camerasCount = -1;
   int selectedIndex = 0;
 
   OverlayEntry? _overlayEntry;
@@ -145,7 +145,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
                       return;
                     }
                     var file = File(path);
-                    var compressed = await compressImage(
+                    var compressed = await vit.compressImage(
                       file,
                       quality: 30,
                       minimumSizeInKb: 128,
@@ -170,7 +170,26 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
     );
   }
 
+  Widget _cameraMessage(String message) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: MalaText(
+        message,
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   Widget _cameraFrame() {
+    if (camerasCount == -1) {
+      return _cameraMessage('Carregando...');
+    }
+    if (camerasCount == 0) {
+      return _cameraMessage('Nenhuma camera encontrada.');
+    }
     return Camera(
       cameraController: cameraController,
       onCameraNotInit: (context) {
