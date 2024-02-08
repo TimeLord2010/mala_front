@@ -12,7 +12,7 @@ import 'package:mala_front/ui/protocols/camera/get_camera_count.dart';
 import 'package:mala_front/ui/protocols/invert_axis.dart';
 import 'package:mala_front/ui/theme/text_styles/error_text_style.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart';
+import 'package:vit/vit.dart' as vit;
 
 import '../../theme/colors.dart';
 import '../atoms/index.dart';
@@ -55,7 +55,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
 
   @override
   void initState() {
-    logInfo('Init state profile picture');
+    vit.logInfo('Init state profile picture');
     super.initState();
     task();
   }
@@ -68,7 +68,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
       var camerasCount = getCameraCount(cameraController);
 
       if (camerasCount == 0) {
-        logWarn('No cameras found');
+        vit.logWarn('No cameras found');
         return;
       }
 
@@ -83,26 +83,26 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         mounted: () => mounted,
       );
 
-      logInfo('Camera count: $camerasCount');
+      vit.logInfo('Camera count: $camerasCount');
       setState(() {
         this.camerasCount = camerasCount;
       });
     } on camera_package.CameraException catch (e) {
-      logError('Internal camera exception: (${e.code}) ${e.description}');
+      vit.logError('Internal camera exception: (${e.code}) ${e.description}');
     } on model.CameraException catch (e) {
-      logError('Camera exception: $e');
+      vit.logError('Camera exception: $e');
     } on Exception catch (e) {
-      logError(getErrorMessage(e) ?? 'Camera initialization error');
+      vit.logError(getErrorMessage(e) ?? 'Camera initialization error');
     }
   }
 
   @override
   void dispose() {
-    logInfo('[PictureTaker] dispose');
+    vit.logInfo('[PictureTaker] dispose');
     if (Platform.isWindows) {
       var cameraId = cameraController.camera_id;
       if (cameraId != 0) {
-        logInfo('Disposing of camereId $cameraId');
+        vit.logInfo('Disposing of camereId $cameraId');
         cameraController.camera_windows.dispose(cameraId);
       }
     }
