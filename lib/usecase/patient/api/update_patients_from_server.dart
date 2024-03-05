@@ -17,7 +17,7 @@ Future<void> updatePatientsFromServer({
   bool Function()? didCancel,
 }) async {
   var patientsRep = PatientApiRepository();
-  var pageSize = 300;
+  var pageSize = 150;
   // var currentPage = 0;
 
   final count = await countAllPatients();
