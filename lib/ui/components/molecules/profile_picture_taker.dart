@@ -68,6 +68,9 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
       var camerasCount = getCameraCount(cameraController);
 
       if (camerasCount == 0) {
+        setState(() {
+          this.camerasCount = 0;
+        });
         vit.logWarn('No cameras found');
         return;
       }
@@ -147,14 +150,15 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
                     var file = File(path);
                     var compressed = await vit.compressImage(
                       file,
-                      quality: 30,
-                      minimumSizeInKb: 128,
+                      quality: 10,
+                      minimumSizeInKb: 64,
                     );
                     if (!compressed.compressed) {
                       debugPrint('did not compress');
                     } else {
                       var bytes = compressed.output.lengthInBytes ~/ 1024;
-                      debugPrint('compresssed: $bytes kb');
+                      var originalSize = compressed.originalSize ~/ 1024;
+                      debugPrint('compresssed: $bytes / $originalSize kb');
                     }
                     widget.onPick(compressed.output);
                     context.navigator.pop();

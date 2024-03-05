@@ -10,6 +10,10 @@ class Patient {
 
   @Index(
     type: IndexType.hash,
+    name: 'remoteIdIndex',
+    unique: true,
+    replace: true,
+    caseSensitive: false,
   )
   String? remoteId;
 

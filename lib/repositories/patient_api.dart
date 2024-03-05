@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mala_front/factories/http_client.dart';
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/models/api_responses/post_patient_changes_response.dart';
@@ -62,9 +62,12 @@ class PatientApiRepository {
     String extension = file.fileExtension!;
     var uploadUrl = await _getUploadUrl(patientId, extension);
     try {
+      var data = await file.readAsBytes();
+      var size = data.lengthInBytes ~/ 1024;
+      stopWatch.lap(tag: '$size kb');
       await dio.put(
         uploadUrl,
-        data: await file.readAsBytes(),
+        data: data,
         options: Options(
           headers: {
             'Content-Type': 'application/octet-stream',
@@ -85,8 +88,8 @@ class PatientApiRepository {
     await dio.download(downloadUrl, path);
   }
 
-  Future<Uint8List?> getPicture(String patientId) async {
-    var downloadUrl = await getDownloadUrl(patientId);
+  Future<Uint8List?> getPicture(String remoteId) async {
+    var downloadUrl = await getDownloadUrl(remoteId);
     if (downloadUrl == null) {
       return null;
     }

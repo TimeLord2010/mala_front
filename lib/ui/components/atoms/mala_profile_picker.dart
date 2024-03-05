@@ -32,26 +32,6 @@ class MalaProfilePicker extends StatelessWidget {
         context.navigator.pushMaterial(ProfilePictureTaker(
           onPick: pick,
         ));
-        // if (kDebugMode) {
-        //   return;
-        // }
-        // var path = await pickImage();
-        // if (path == null) {
-        //   pick(null);
-        //   return;
-        // }
-        // var compressed = await compressImage(
-        //   File(path),
-        //   quality: 30,
-        //   minimumSizeInKb: 128,
-        // );
-        // if (!compressed.compressed) {
-        //   debugPrint('did not compress');
-        // } else {
-        //   var bytes = compressed.output.lengthInBytes ~/ 1024;
-        //   debugPrint('compresssed: $bytes kb');
-        // }
-        // pick(compressed.output);
       },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,

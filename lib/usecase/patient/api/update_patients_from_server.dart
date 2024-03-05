@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
@@ -18,7 +16,6 @@ Future<void> updatePatientsFromServer({
 }) async {
   var patientsRep = PatientApiRepository();
   var pageSize = 150;
-  // var currentPage = 0;
 
   final count = await countAllPatients();
   if (count == 0) {
@@ -28,7 +25,6 @@ Future<void> updatePatientsFromServer({
 
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
-    // var skip = (currentPage++) * pageSize;
     logInfo('Last sync: ${lastSync.toIso8601String()}.');
     var newPatients = await patientsRep
         .getServerChanges(
@@ -72,47 +68,43 @@ Future<void> updatePatientsFromServer({
       }
       for (var patient in response.changed) {
         var remoteId = patient.remoteId!;
-        var savedPatient = await findPatientByRemoteId(remoteId);
-        if (savedPatient != null) {
+        var localId = await findPatientByRemoteId(remoteId);
+        if (localId != null) {
           logWarn('Local patient found with same remote id when syncing with server');
-          patient.id = savedPatient.id;
-        }
-        Uint8List? pictureData;
-        if (patient.hasPicture == null || patient.hasPicture == true) {
-          pictureData = await patientsRep.getPicture(remoteId);
+          patient.id = localId;
         }
         await upsertPatient(
           patient,
-          pictureData: pictureData,
           syncWithServer: false,
+          ignorePicture: true,
         );
         setLastServerDate(patient.uploadedAt!);
       }
       for (var deleteRecord in response.deleted) {
         for (var patientRemoteId in deleteRecord.patientIds) {
-          var patient = await findPatientByRemoteId(patientRemoteId);
-          if (patient == null) {
+          var localId = await findPatientByRemoteId(patientRemoteId);
+          if (localId == null) {
             logWarn('Did not found patient to delete: $patientRemoteId');
             continue;
           }
           await deletePatient(
-            patient.id,
+            localId,
             sendDeletionToServer: false,
           );
         }
         // setLastServerDate(deleteRecord.disabledAt);
       }
-      if (response.changed.isEmpty) {
-        if (response.deleted.isEmpty) {
-          break;
-        } else {
-          var last = response.deleted.last;
-          setLastServerDate(last.disabledAt);
-          await updateSavedLastSync();
-        }
-      } else {
-        await updateSavedLastSync();
-      }
+      // if (response.changed.isEmpty) {
+      //   if (response.deleted.isEmpty) {
+      //     break;
+      //   } else {
+      //     var last = response.deleted.last;
+      //     setLastServerDate(last.disabledAt);
+      //     await updateSavedLastSync();
+      //   }
+      // } else {
+      //   await updateSavedLastSync();
+      // }
       if (didCancel != null) {
         if (!didCancel()) updater?.call(lastServerDate?.toIso8601String());
       } else {

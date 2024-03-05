@@ -57,10 +57,10 @@ class PatientRepository {
     return patients;
   }
 
-  Future<Patient?> findByRemoteId(String id) async {
+  Future<int?> findIdByRemoteId(String remoteId) async {
     var where = isar.patients.where();
-    var patient = await where.remoteIdEqualTo(id).findFirst();
-    return patient;
+    var id = await where.remoteIdEqualTo(remoteId).idProperty().findFirst();
+    return id;
   }
 
   Future<int> count([PatientQuery? query]) async {
