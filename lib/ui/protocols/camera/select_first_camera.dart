@@ -1,5 +1,5 @@
-import 'package:camera_universal/camera_universal.dart';
 import 'package:camera/camera.dart' as camera_package;
+import 'package:camera_universal/camera_universal.dart';
 
 Future<void> selectFistCamera({
   required CameraController controller,
