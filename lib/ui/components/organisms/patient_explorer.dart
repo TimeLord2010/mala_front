@@ -1,5 +1,6 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/models/patient_tag.dart';
@@ -73,7 +74,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
     return count ~/ pageSize;
   }
 
-  int pageSize = 60;
+  int pageSize = kDebugMode ? 10 : 60;
 
   PatientQuery get query {
     return PatientQuery(

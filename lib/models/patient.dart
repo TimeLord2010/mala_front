@@ -17,7 +17,6 @@ class Patient {
   )
   String? remoteId;
 
-  @ignore
   bool? hasPicture;
 
   @ignore
@@ -78,6 +77,7 @@ class Patient {
   factory Patient.fromMap(Map<String, dynamic> map) {
     List? phones = map['phones'];
     List? activities = map['activitiesId'];
+    bool hasPicture = map['hasPicture'];
     var p = Patient(
       name: map['name'],
       phones: phones?.map((x) => x as String).toList(),
@@ -100,7 +100,7 @@ class Patient {
       updatedAt: map.getMaybeDateTime('updatedAt'),
       uploadedAt: map.getMaybeDateTime('uploadedAt'),
       remoteId: map['remoteId'],
-      hasPicture: map['hasPicture'],
+      hasPicture: hasPicture,
     );
     var address = map['address'];
     if (address != null) {
@@ -159,6 +159,7 @@ class Patient {
       if (name != null) ...{
         'name': name,
       },
+      'hasPicture': hasPicture,
       if (phones?.isNotEmpty ?? false) ...{
         'phones': phones,
       },

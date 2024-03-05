@@ -23,8 +23,14 @@ Future<void> updatePatientsFromServer({
     await updateLocalLastSync(DateTime(2020));
   }
 
+  var scannedDates = <DateTime>{};
+
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
+    if (scannedDates.contains(lastSync)) {
+      throw Exception('Tried to scan the same date: ${lastSync.toIso8601String()}');
+    }
+    scannedDates.add(lastSync);
     logInfo('Last sync: ${lastSync.toIso8601String()}.');
     var newPatients = await patientsRep
         .getServerChanges(
@@ -70,7 +76,7 @@ Future<void> updatePatientsFromServer({
         var remoteId = patient.remoteId!;
         var localId = await findPatientByRemoteId(remoteId);
         if (localId != null) {
-          logWarn('Local patient found with same remote id when syncing with server');
+          logWarn('Local patient found with same remote id when syncing');
           patient.id = localId;
         }
         await upsertPatient(
@@ -105,6 +111,7 @@ Future<void> updatePatientsFromServer({
       // } else {
       //   await updateSavedLastSync();
       // }
+      await updateSavedLastSync();
       if (didCancel != null) {
         if (!didCancel()) updater?.call(lastServerDate?.toIso8601String());
       } else {

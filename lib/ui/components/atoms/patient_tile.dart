@@ -9,6 +9,7 @@ import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/usecase/index.dart';
 import 'package:vit/extensions/iterable.dart';
+import 'package:vit/vit.dart';
 
 class PatientTile extends StatefulWidget {
   const PatientTile({
@@ -39,8 +40,6 @@ class _PatientTileState extends State<PatientTile> {
       pictureData = data;
     });
 
-    debugPrint('Loading picture from api');
-
     // Ensuring there is not picture.
 
     var resolvedData = await data;
@@ -51,12 +50,14 @@ class _PatientTileState extends State<PatientTile> {
     }
 
     var patient = widget.patient;
-    var mayHavePicture = patient.hasPicture == null || patient.hasPicture == true;
+    var mayHavePicture = patient.hasPicture != false;
 
     // If the record signals there is not picture, then we trust it.
     if (!mayHavePicture) {
       return;
     }
+
+    debugPrint('Loading picture from api. Has picture: ${patient.hasPicture}');
 
     var rep = PatientApiRepository();
     var remoteId = patient.remoteId;
@@ -69,6 +70,7 @@ class _PatientTileState extends State<PatientTile> {
 
     // No data found after all.
     if (apiData == null) {
+      logWarn('Updating local patient to flag no picture');
       patient.hasPicture = false;
       await upsertPatient(
         patient,
@@ -78,7 +80,9 @@ class _PatientTileState extends State<PatientTile> {
       return;
     }
 
-    pictureData = Future.value(apiData);
+    setState(() {
+      pictureData = Future.value(apiData);
+    });
     await saveOrRemoveProfilePicture(
       patientId: patient.id,
       data: apiData,

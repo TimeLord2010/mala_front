@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
@@ -74,7 +75,9 @@ class PatientRepository {
   Future<Patient> insert(Patient patient) async {
     // var oldId = patient.id;
     await isar.writeTxn(() async {
-      await isar.patients.put(patient);
+      var hadId = patient.id > 0;
+      var id = await isar.patients.put(patient);
+      if (!hadId) debugPrint('New id: $id');
     });
     // var inserted = oldId != patient.id;
     // if (inserted) {

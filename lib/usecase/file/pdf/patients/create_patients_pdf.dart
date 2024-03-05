@@ -74,7 +74,7 @@ Widget _createFields(Patient patient) {
             value: patient.name,
           ),
           _createField(
-            title: 'Data de nascimento',
+            title: 'Nasc.',
             value: patient.birthDate?.readable(false),
           ),
         ],
@@ -82,16 +82,21 @@ Widget _createFields(Patient patient) {
       ),
       _createRow(
         children: [
+          // _createField(
+          //   title: 'CPF',
+          //   value: patient.cpf,
+          // ),
           _createField(
-            title: 'CPF',
-            value: patient.cpf,
+            title: 'CEP',
+            value: address?.zipCode,
           ),
           _createField(
             title: 'Telefones',
             value: patient.phones?.join(', '),
           ),
+          Spacer(),
         ],
-        getFlex: (index) => index == 0 ? 1 : 2,
+        //getFlex: (index) => index == 0 ? 1 : 2,
       ),
       // _createRow(
       //   children: [
@@ -99,14 +104,16 @@ Widget _createFields(Patient patient) {
       //       title: 'CEP',
       //       value: address?.zipCode,
       //     ),
-      //     _createField(
-      //       title: 'Estado',
-      //       value: address?.state,
-      //     ),
-      //     _createField(
-      //       title: 'Cidade',
-      //       value: address?.city,
-      //     ),
+      //     Spacer(),
+      //     // _createField(
+      //     //   title: 'Estado',
+      //     //   value: address?.state,
+      //     // ),
+      //     Spacer(),
+      //     // _createField(
+      //     //   title: 'Cidade',
+      //     //   value: address?.city,
+      //     // ),
       //   ],
       // ),
       _createRow(
@@ -127,7 +134,7 @@ Widget _createFields(Patient patient) {
         ],
       ),
       _createField(
-        title: 'Observação',
+        title: 'Obs.',
         value: patient.observation,
         valueMaxLines: null,
       ),
