@@ -39,7 +39,7 @@ class LabeledTextBox extends StatelessWidget {
       ),
     );
     return LimitedBox(
-      maxHeight: 50,
+      maxHeight: 58,
       maxWidth: 200,
       child: infoLabel,
     );
