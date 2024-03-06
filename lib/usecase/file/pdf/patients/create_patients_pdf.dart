@@ -19,7 +19,12 @@ const double _contentWidth = _totalWidth - (2 * _margin);
 Future<Uint8List> createPatientsPdf({
   required List<Patient> patients,
 }) async {
-  var doc = Document();
+  var doc = Document(
+      theme: ThemeData(
+    defaultTextStyle: TextStyle(
+      font: Font.helvetica(),
+    ),
+  ));
   var page = _createPage(patients);
   doc.addPage(page);
   var bytes = await doc.save();
@@ -69,7 +74,7 @@ Widget _createFields(Patient patient) {
             value: patient.name,
           ),
           _createField(
-            title: 'Data de nascimento',
+            title: 'Nasc.',
             value: patient.birthDate?.readable(false),
           ),
         ],
@@ -77,38 +82,46 @@ Widget _createFields(Patient patient) {
       ),
       _createRow(
         children: [
-          _createField(
-            title: 'CPF',
-            value: patient.cpf,
-          ),
-          _createField(
-            title: 'Telefones',
-            value: patient.phones?.join(', '),
-          ),
-        ],
-        getFlex: (index) => index == 0 ? 1 : 2,
-      ),
-      _createRow(
-        children: [
+          // _createField(
+          //   title: 'CPF',
+          //   value: patient.cpf,
+          // ),
           _createField(
             title: 'CEP',
             value: address?.zipCode,
           ),
           _createField(
-            title: 'Estado',
-            value: address?.state,
+            title: 'Telefones',
+            value: patient.phones?.join(', '),
           ),
-          _createField(
-            title: 'Cidade',
-            value: address?.city,
-          ),
+          Spacer(),
         ],
+        //getFlex: (index) => index == 0 ? 1 : 2,
       ),
+      // _createRow(
+      //   children: [
+      //     _createField(
+      //       title: 'CEP',
+      //       value: address?.zipCode,
+      //     ),
+      //     Spacer(),
+      //     // _createField(
+      //     //   title: 'Estado',
+      //     //   value: address?.state,
+      //     // ),
+      //     Spacer(),
+      //     // _createField(
+      //     //   title: 'Cidade',
+      //     //   value: address?.city,
+      //     // ),
+      //   ],
+      // ),
       _createRow(
         children: [
           _createField(
             title: 'Endereço',
             value: address?.street,
+            valueMaxLines: 4,
           ),
           _createField(
             title: 'Número',
@@ -121,7 +134,7 @@ Widget _createFields(Patient patient) {
         ],
       ),
       _createField(
-        title: 'Observação',
+        title: 'Obs.',
         value: patient.observation,
         valueMaxLines: null,
       ),
@@ -147,7 +160,7 @@ Row _createRow({
 Row _createField({
   String? title,
   String? value,
-  double fieldSize = 80,
+  double fieldSize = 70,
   int? valueMaxLines = 1,
 }) {
   return Row(
@@ -166,8 +179,9 @@ Row _createField({
         ),
       Expanded(
         child: Text(
-          value ?? '',
+          value ?? ' ',
           maxLines: valueMaxLines,
+          overflow: TextOverflow.clip,
         ),
       )
     ],

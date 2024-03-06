@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mala_front/factories/http_client.dart';
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/models/api_responses/post_patient_changes_response.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
+import 'package:vit/usecases/log.dart';
 import 'package:vit/vit.dart' as vit;
 
 class PatientApiRepository {
@@ -16,6 +17,9 @@ class PatientApiRepository {
     DateTime? date,
   }) async {
     var stopWatch = vit.StopWatch('api:getServerChanges');
+    if (date != null) {
+      stopWatch.lap(tag: date.toIso8601String());
+    }
     Map<String, dynamic> query = {
       ...(skip == null) ? {} : {'skip': skip},
       ...(limit == null) ? {} : {'limit': limit},
@@ -62,9 +66,12 @@ class PatientApiRepository {
     String extension = file.fileExtension!;
     var uploadUrl = await _getUploadUrl(patientId, extension);
     try {
+      var data = await file.readAsBytes();
+      var size = data.lengthInBytes ~/ 1024;
+      stopWatch.lap(tag: '$size kb');
       await dio.put(
         uploadUrl,
-        data: await file.readAsBytes(),
+        data: data,
         options: Options(
           headers: {
             'Content-Type': 'application/octet-stream',
@@ -77,46 +84,66 @@ class PatientApiRepository {
     stopWatch.stop();
   }
 
+  /// Fetches the picture data to the appropriate file.
   Future<void> savePicture(String patientId, String path) async {
-    var downloadUrl = await getDownloadUrl(patientId);
-    if (downloadUrl == null) {
-      return;
+    var stopWatch = vit.StopWatch('api:savePicture:$patientId');
+    try {
+      var downloadUrl = await _getDownloadUrl(patientId, stopWatch: stopWatch);
+      if (downloadUrl == null) {
+        return;
+      }
+      await dio.download(downloadUrl, path);
+    } finally {
+      stopWatch.stop();
     }
-    await dio.download(downloadUrl, path);
   }
 
-  Future<Uint8List?> getPicture(String patientId) async {
-    var downloadUrl = await getDownloadUrl(patientId);
-    if (downloadUrl == null) {
-      return null;
+  /// Fetches the profile picture data.
+  Future<Uint8List?> getPicture(String remoteId) async {
+    var stopWatch = vit.StopWatch('api:getPicture:$remoteId');
+    try {
+      var downloadUrl = await _getDownloadUrl(remoteId, stopWatch: stopWatch);
+      if (downloadUrl == null) {
+        return null;
+      }
+      var response = await dio.get(
+        downloadUrl,
+        options: Options(
+          responseType: ResponseType.bytes,
+        ),
+      );
+      var data = response.data;
+      if (data is String) {
+        data = Uint8List.fromList(data.codeUnits);
+      }
+      if (data is Uint8List) {
+        Uint8List bytes = data;
+        return bytes;
+      }
+      throw Exception('Failed to load picture: Data was not a list of bytes: Type found=${data.runtimeType}');
+    } finally {
+      stopWatch.stop();
     }
-    var response = await dio.get(
-      downloadUrl,
-      options: Options(
-        responseType: ResponseType.bytes,
-      ),
-    );
-    var data = response.data;
-    if (data is String) {
-      data = Uint8List.fromList(data.codeUnits);
-    }
-    if (data is Uint8List) {
-      Uint8List bytes = data;
-      return bytes;
-    }
-    throw Exception('Failed to load picture: Data was not a list of bytes: Type found=${data.runtimeType}');
   }
 
-  Future<String?> getDownloadUrl(String patientId) async {
-    var stopWatch = vit.StopWatch('api:getDownloadUrl:$patientId');
+  Future<String?> _getDownloadUrl(
+    String remoteId, {
+    vit.StopWatch? stopWatch,
+  }) async {
+    bool createdStopWatch = false;
+    if (stopWatch == null) {
+      createdStopWatch = true;
+      stopWatch = vit.StopWatch('api:getDownloadUrl:$remoteId');
+    }
     try {
       var url = '/patient/picture/download';
       var response = await dio.get(
         url,
         queryParameters: {
-          'patientId': patientId,
+          'patientId': remoteId,
         },
       );
+      if (!createdStopWatch) stopWatch.lap(tag: 'Fetched download url');
       String downloadUrl = response.data;
       return downloadUrl;
     } on DioException catch (e) {
@@ -124,12 +151,13 @@ class PatientApiRepository {
       if (response != null) {
         var code = response.statusCode;
         if (code == 404) {
+          logWarn('[$remoteId] No picture data found from the api');
           return null;
         }
       }
       rethrow;
     } finally {
-      stopWatch.stop();
+      if (createdStopWatch) stopWatch.stop();
     }
   }
 

@@ -22,6 +22,7 @@ class PatientList extends StatelessWidget {
           return SizedBox(
             width: 350,
             child: PatientTile(
+              key: ValueKey(x.id),
               patient: x,
               onPressed: onEdit != null
                   ? () async {

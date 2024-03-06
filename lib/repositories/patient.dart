@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
@@ -57,10 +58,10 @@ class PatientRepository {
     return patients;
   }
 
-  Future<Patient?> findByRemoteId(String id) async {
+  Future<int?> findIdByRemoteId(String remoteId) async {
     var where = isar.patients.where();
-    var patient = await where.remoteIdEqualTo(id).findFirst();
-    return patient;
+    var id = await where.remoteIdEqualTo(remoteId).idProperty().findFirst();
+    return id;
   }
 
   Future<int> count([PatientQuery? query]) async {
@@ -74,7 +75,9 @@ class PatientRepository {
   Future<Patient> insert(Patient patient) async {
     // var oldId = patient.id;
     await isar.writeTxn(() async {
-      await isar.patients.put(patient);
+      var hadId = patient.id > 0;
+      var id = await isar.patients.put(patient);
+      if (!hadId) debugPrint('New id: $id');
     });
     // var inserted = oldId != patient.id;
     // if (inserted) {

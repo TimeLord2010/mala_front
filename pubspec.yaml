@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   archive: ^3.3.8
+  auto_size_text: ^3.0.0
   awesome_flutter_extensions: ^1.1.1
   badges: ^3.1.2
   brasil_fields: ^1.14.0
