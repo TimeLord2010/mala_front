@@ -70,7 +70,7 @@ class _PatientTileState extends State<PatientTile> {
 
     // No data found after all.
     if (apiData == null) {
-      logWarn('Updating local patient to flag no picture');
+      logWarn('Updating local patient $remoteId to flag no picture');
       patient.hasPicture = false;
       await upsertPatient(
         patient,
@@ -111,7 +111,8 @@ class _PatientTileState extends State<PatientTile> {
             return MalaProfilePicker(
               bytes: value,
               onRenderError: () {
-                saveOrRemoveProfilePicture(patientId: widget.patient.id, data: null);
+                saveOrRemoveProfilePicture(
+                    patientId: widget.patient.id, data: null);
               },
             );
           },

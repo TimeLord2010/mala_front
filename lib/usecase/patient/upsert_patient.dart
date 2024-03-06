@@ -12,7 +12,8 @@ Future<Patient> upsertPatient(
   bool syncWithServer = true,
   bool ignorePicture = false,
 }) async {
-  var stopWatch = StopWatch('upsertPatient');
+  var patientId = patient.id;
+  var stopWatch = StopWatch('upsertPatient:$patientId');
   var rep = await createPatientRepository();
   var result = await rep.insert(patient);
   if (!ignorePicture) {
