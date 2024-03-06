@@ -87,14 +87,17 @@ Widget _createFields(Patient patient) {
           //   value: patient.cpf,
           // ),
           _createField(
+            title: 'Telefones',
+            value: patient.phones?.join(', '),
+          ),
+          _createField(
             title: 'CEP',
             value: address?.zipCode,
           ),
           _createField(
-            title: 'Telefones',
-            value: patient.phones?.join(', '),
+            title: 'Bairro',
+            value: address?.district,
           ),
-          Spacer(),
         ],
         //getFlex: (index) => index == 0 ? 1 : 2,
       ),
@@ -132,6 +135,7 @@ Widget _createFields(Patient patient) {
             value: address?.complement,
           ),
         ],
+        getFlex: (index) => index == 0 ? 2 : 1,
       ),
       _createField(
         title: 'Obs.',
