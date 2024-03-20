@@ -54,6 +54,7 @@ class _ImportPatientsState extends State<ImportPatients> {
           ),
           Expanded(
             child: PatientList(
+              modalContext: context,
               patients: addedPatients,
               onEdit: null,
             ),
@@ -67,6 +68,7 @@ class _ImportPatientsState extends State<ImportPatients> {
     addedPatients.clear();
     var added = await importPatients(
       zipFileName: path!,
+      context: context,
     );
     setState(() {
       addedPatients = added;

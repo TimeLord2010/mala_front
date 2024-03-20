@@ -1,6 +1,5 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/models/patient_tag.dart';
@@ -22,11 +21,13 @@ class PatientExplorer extends StatefulWidget {
   PatientExplorer({
     super.key,
     required this.updateExposer,
+    required this.modalContext,
   });
 
   final nameController = TextEditingController();
   final districtController = TextEditingController();
   final streetController = TextEditingController();
+  final BuildContext modalContext;
 
   final void Function(void Function() updater) updateExposer;
 
@@ -74,7 +75,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
     return count ~/ pageSize;
   }
 
-  int pageSize = kDebugMode ? 10 : 60;
+  int pageSize = 60;
 
   PatientQuery get query {
     return PatientQuery(
@@ -145,6 +146,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
                   Expanded(
                     child: PatientList(
                       patients: patients,
+                      modalContext: widget.modalContext,
                       onEdit: (patient) {
                         _search(currentPage, true);
                       },
@@ -186,6 +188,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
           onPressed: () async {
             await context.navigator.pushMaterial(PatientRegistration(
               patient: null,
+              modalContext: widget.modalContext,
             ));
             _search(currentPage, true);
           },
@@ -206,7 +209,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
               limit: 5000,
             );
             var tags = patients.map(PatientTag.fromPatient);
-            printTagsPdf(
+            await printTagsPdf(
               tags: tags,
             );
           },
@@ -219,7 +222,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
               patientQuery: query,
               limit: 5000,
             );
-            printPatientsPdf(
+            await printPatientsPdf(
               patients: patients,
             );
           },

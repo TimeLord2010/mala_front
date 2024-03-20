@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/factories/patients_semaphore.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/repositories/patient_api.dart';
+import 'package:mala_front/repositories/patients_semaphore.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/usecase/index.dart';
@@ -16,9 +18,11 @@ class PatientTile extends StatefulWidget {
     super.key,
     required this.patient,
     this.onPressed,
+    required this.modalContext,
   });
 
   final Patient patient;
+  final BuildContext modalContext;
   final void Function()? onPressed;
 
   @override
@@ -31,7 +35,18 @@ class _PatientTileState extends State<PatientTile> {
   @override
   void initState() {
     super.initState();
-    _loadPicture();
+    int patientId = widget.patient.id;
+    patientsSemaphore
+        .lockWhile(
+      patientId: patientId,
+      task: PatientTask.pictureLoad,
+      func: _loadPicture,
+    )
+        .then((ranTask) {
+      if (!ranTask) {
+        logWarn('Picture load and save aborted for $patientId');
+      }
+    });
   }
 
   Future<void> _loadPicture() async {
@@ -66,23 +81,30 @@ class _PatientTileState extends State<PatientTile> {
     if (remoteId == null) {
       return;
     }
+
+    // Loading picture from server
     var apiData = await rep.getPicture(remoteId);
 
-    // No data found after all.
     if (apiData == null) {
+      // No data found after all.
       logWarn('Updating local patient $remoteId to flag no picture');
       patient.hasPicture = false;
+
+      // Fixing the server to flag patient has no picture.
       await upsertPatient(
         patient,
         ignorePicture: true,
         syncWithServer: false,
+        context: widget.modalContext,
       );
       return;
     }
 
-    setState(() {
-      pictureData = Future.value(apiData);
-    });
+    if (mounted) {
+      setState(() {
+        pictureData = Future.value(apiData);
+      });
+    }
     await saveOrRemoveProfilePicture(
       patientId: patient.id,
       data: apiData,
@@ -111,8 +133,7 @@ class _PatientTileState extends State<PatientTile> {
             return MalaProfilePicker(
               bytes: value,
               onRenderError: () {
-                saveOrRemoveProfilePicture(
-                    patientId: widget.patient.id, data: null);
+                saveOrRemoveProfilePicture(patientId: widget.patient.id, data: null);
               },
             );
           },

@@ -10,6 +10,7 @@ class PatientRegistration extends StatefulWidget {
   PatientRegistration({
     super.key,
     this.patient,
+    required this.modalContext,
   }) {
     if (patient == null) {
       return;
@@ -39,6 +40,12 @@ class PatientRegistration extends StatefulWidget {
     numberController.text = address.number ?? '';
     complementController.text = address.complement ?? '';
   }
+
+  /// The context of the calling route.
+  ///
+  /// This is used to create a modal message if the save or delete operation
+  /// fails.
+  final BuildContext modalContext;
 
   final Patient? patient;
   final nameController = TextEditingController();
@@ -384,6 +391,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     await upsertPatient(
       patient,
       pictureData: pictureData,
+      context: widget.modalContext,
     );
     context.navigator.pop();
   }
@@ -400,7 +408,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
           Button(
             child: const Text('Deletar'),
             onPressed: () async {
-              await deletePatient(widget.patient!.id);
+              await deletePatient(
+                widget.patient!.id,
+                sendDeletionToServer: true,
+                context: widget.modalContext,
+              );
               Navigator.pop(context, "DEL");
             },
           ),
