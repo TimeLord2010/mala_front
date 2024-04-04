@@ -9,5 +9,6 @@ Future<void> assignRemoteIdToPatient(Patient patient, String remoteId) async {
     patient,
     ignorePicture: true,
     syncWithServer: false,
+    context: null,
   );
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
+import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/usecase/file/get_export_patients_file_name.dart';
@@ -15,6 +16,7 @@ import 'package:vit/vit.dart';
 
 Future<List<Patient>> importPatients({
   required String zipFileName,
+  required BuildContext? context,
 }) async {
   var dir = await getApplicationDocumentsDirectory();
   logInfo('zipFile: $zipFileName');
@@ -75,6 +77,7 @@ Future<List<Patient>> importPatients({
         await upsertPatient(
           record,
           pictureData: picData,
+          context: context,
         );
       }
       added.addAll(newRecords);

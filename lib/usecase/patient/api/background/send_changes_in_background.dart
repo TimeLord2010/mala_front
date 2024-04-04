@@ -6,7 +6,13 @@ import '../../../../models/patient.dart';
 ///
 /// This method should NOT return a future, to prevent delays in the
 /// UI.
-void sendChangesInBackground(Patient patient) async {
+Future<void> sendChangesInBackground(
+  Patient patient, {
+  bool throwOnError = false,
+}) async {
   var rep = createApiSynchonizer();
-  await rep.upsertPatient(patient);
+  await rep.upsertPatient(
+    patient,
+    throwOnError: throwOnError,
+  );
 }

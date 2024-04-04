@@ -90,7 +90,9 @@ class _MainPageState extends State<MainPage> {
           await sendFailedBackgroundOperations();
           vit.logInfo('Sent failed background operations');
           loadingDescription = 'Enviando pacientes criados enquanto offline';
-          await sendLocalPatientsToServer();
+          await sendLocalPatientsToServer(
+            context: context,
+          );
           vit.logInfo('Sent local patients to server');
           patientUpdater?.call();
         } catch (e, stack) {
@@ -122,7 +124,6 @@ class _MainPageState extends State<MainPage> {
                     child: const Text('Ok'),
                     onPressed: () {
                       Navigator.pop(context, 'Ok');
-                      // Delete file here
                     },
                   ),
                 ],
@@ -145,6 +146,7 @@ class _MainPageState extends State<MainPage> {
     vit.logInfo('Refreshed main page');
     _refreshAuthentication(context);
     var explorer = PatientExplorer(
+      modalContext: context,
       updateExposer: (updater) {
         patientUpdater = updater;
       },

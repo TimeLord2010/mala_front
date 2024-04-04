@@ -36,11 +36,18 @@ class ApiSynchronizer {
     }
   }
 
-  Future<void> upsertPatient(Patient patient) async {
+  /// This function will never throw an exception.
+  ///
+  /// Use [errorReporter] to catch exceptions instead.
+  Future<void> upsertPatient(
+    Patient patient, {
+    bool throwOnError = false,
+  }) async {
     var isLocal = patient.remoteId == null;
     return _sendChangeToServer(
       entityId: patient.id.toString(),
       key: isLocal ? null : _updateKey,
+      throwOnError: throwOnError,
       function: () async {
         await postPatientsChanges(
           changed: [patient],
@@ -49,10 +56,14 @@ class ApiSynchronizer {
     );
   }
 
-  Future<void> deletePatient(String patientId) {
+  Future<void> deletePatient(
+    String patientId, {
+    bool throwOnError = false,
+  }) {
     return _sendChangeToServer(
       entityId: patientId,
       key: _deleteKey,
+      throwOnError: throwOnError,
       function: () async {
         await postPatientsChanges(
           deleted: [patientId],
@@ -66,6 +77,7 @@ class ApiSynchronizer {
     required String entityId,
     required String? key,
     required Future<void> Function() function,
+    bool throwOnError = false,
   }) async {
     if (key != null) await _insertKey(entityId: entityId, key: key);
     try {
@@ -81,6 +93,7 @@ class ApiSynchronizer {
       } catch (e) {
         vit.logError('Failed to report error from api sync: ${getErrorMessage(e)}');
       }
+      if (throwOnError) rethrow;
     }
   }
 

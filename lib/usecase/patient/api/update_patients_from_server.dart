@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
@@ -11,6 +12,7 @@ import 'package:vit/vit.dart';
 import '../../local_store/get_local_last_sync.dart';
 
 Future<void> updatePatientsFromServer({
+  BuildContext? context,
   void Function(String? lastSync)? updater,
   bool Function()? didCancel,
 }) async {
@@ -83,6 +85,7 @@ Future<void> updatePatientsFromServer({
           patient,
           syncWithServer: false,
           ignorePicture: true,
+          context: context,
         );
         setLastServerDate(patient.uploadedAt!);
       }
@@ -95,7 +98,7 @@ Future<void> updatePatientsFromServer({
           }
           await deletePatient(
             localId,
-            sendDeletionToServer: false,
+            context: context,
           );
         }
         // setLastServerDate(deleteRecord.disabledAt);

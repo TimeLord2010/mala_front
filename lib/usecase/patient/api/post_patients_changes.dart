@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/usecase/patient/api/assign_remote_id_to_patient.dart';
 import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
@@ -11,9 +12,12 @@ Future<void> postPatientsChanges({
   List<Patient>? changed,
   List<String>? deleted,
   bool updateFromServer = true,
+  BuildContext? modalContext,
 }) async {
   if (updateFromServer) {
-    await updatePatientsFromServer();
+    await updatePatientsFromServer(
+      context: modalContext,
+    );
   }
   var api = PatientApiRepository();
   var response = await api.postChanges(
@@ -39,6 +43,7 @@ Future<void> postPatientsChanges({
       patient,
       ignorePicture: true,
       syncWithServer: false,
+      context: modalContext,
     );
     await updateRemotePatientPicture(patient);
   }

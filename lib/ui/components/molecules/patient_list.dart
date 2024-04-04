@@ -9,9 +9,11 @@ class PatientList extends StatelessWidget {
     super.key,
     required this.patients,
     this.onEdit,
+    required this.modalContext,
   });
 
   final List<Patient> patients;
+  final BuildContext modalContext;
   final void Function(Patient patient)? onEdit;
 
   @override
@@ -22,13 +24,16 @@ class PatientList extends StatelessWidget {
           return SizedBox(
             width: 350,
             child: PatientTile(
+              modalContext: modalContext,
               key: ValueKey(x.id),
               patient: x,
               onPressed: onEdit != null
                   ? () async {
-                      await context.navigator.pushMaterial(PatientRegistration(
+                      var page = PatientRegistration(
                         patient: x,
-                      ));
+                        modalContext: modalContext,
+                      );
+                      await context.navigator.pushMaterial(page);
                       onEdit!(x);
                     }
                   : null,
