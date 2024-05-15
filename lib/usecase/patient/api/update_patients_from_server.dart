@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
+import 'package:mala_front/repositories/stop_watch_events.dart';
 import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
+import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/patient/delete_patient.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
@@ -10,12 +14,14 @@ import 'package:mala_front/usecase/user/update_last_sync.dart';
 import 'package:vit/vit.dart';
 
 import '../../local_store/get_local_last_sync.dart';
+import '../../number/average.dart';
 
 Future<void> updatePatientsFromServer({
   BuildContext? context,
   void Function(String? lastSync)? updater,
   bool Function()? didCancel,
 }) async {
+  var begin = DateTime.now();
   var patientsRep = PatientApiRepository();
   var pageSize = 150;
 
@@ -26,6 +32,7 @@ Future<void> updatePatientsFromServer({
   }
 
   var scannedDates = <DateTime>{};
+  var eventTimes = StopWatchEvents();
 
   Future<GetPatientChangesResponse> fetch() async {
     var lastSync = getLocalLastSync() ?? DateTime(2020);
@@ -34,13 +41,15 @@ Future<void> updatePatientsFromServer({
     }
     scannedDates.add(lastSync);
     logInfo('Last sync: ${lastSync.toIso8601String()}.');
-    var newPatients = await patientsRep
-        .getServerChanges(
-          limit: pageSize,
-          skip: 0,
-          date: lastSync,
-        )
-        .timeout(const Duration(seconds: 6));
+    var newPatients = await eventTimes.add(() async {
+      return await patientsRep
+          .getServerChanges(
+            limit: pageSize,
+            skip: 0,
+            date: lastSync,
+          )
+          .timeout(const Duration(seconds: 6));
+    });
     return newPatients;
   }
 
@@ -62,6 +71,16 @@ Future<void> updatePatientsFromServer({
     if (lastServerDate != null) {
       await updateLastSync(lastServerDate!);
     }
+  }
+
+  Map<String, dynamic> getExtras() {
+    var inMilli = eventTimes.inMilli;
+    return {
+      'lastServerDate': lastServerDate?.toIso8601String(),
+      'ApiDelays': inMilli,
+      'ApiDelayAvg': average(inMilli),
+      'elapsed': '${DateTime.now().difference(begin).inSeconds}s',
+    };
   }
 
   try {
@@ -124,6 +143,19 @@ Future<void> updatePatientsFromServer({
         break;
       }
     }
+    unawaited(insertRemoteLog(
+      message: 'Finished syncing',
+      context: 'Sync patients',
+      extras: getExtras(),
+    ));
+  } catch (e) {
+    var msg = getErrorMessage(e) ?? '?';
+    unawaited(insertRemoteLog(
+      message: msg,
+      context: 'Sync patients',
+      extras: getExtras(),
+    ));
+    rethrow;
   } finally {
     await updateSavedLastSync();
   }
