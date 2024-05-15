@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                         onLogin: (email, password) async {
                           logInfo('Login');
                           await loginUser(email, password);
-                          context.navigator.pushMaterial(const MainPage());
+                          await context.navigator.pushMaterial(const MainPage());
                         },
                       ),
                     ),

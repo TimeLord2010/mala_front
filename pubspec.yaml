@@ -30,6 +30,7 @@ dependencies:
   printing: ^5.11.0
   search_cep: ^4.0.2
   shared_preferences: ^2.2.1
+  system_info2: ^4.0.0
   vit:
     git:
       url: https://gitlab.com/vit16/vit_dart_extensions.git

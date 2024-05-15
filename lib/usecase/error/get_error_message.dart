@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
 import 'package:vit/vit.dart';
 
 String? getErrorMessage(Object obj) {
@@ -36,6 +37,9 @@ String? getErrorMessage(Object obj) {
   }
   if (obj is Error) {
     return obj.toString();
+  }
+  if (obj is FailedToRefreshJwt) {
+    return 'Falha ao autalizar token de autenticação';
   }
   return null;
 }
