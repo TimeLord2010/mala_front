@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:system_info2/system_info2.dart';
@@ -13,8 +15,10 @@ Future<void> insertRemoteLog({
   String level = 'info',
 }) async {
   try {
-    var freeMem = SysInfo.getFreeVirtualMemory();
-    var totalMem = SysInfo.getTotalVirtualMemory();
+    var freeVMem = SysInfo.getFreeVirtualMemory();
+    var totalVMem = SysInfo.getTotalVirtualMemory();
+    var freePMemory = SysInfo.getFreePhysicalMemory();
+    var totalPMemory = SysInfo.getTotalPhysicalMemory();
     await dio.post(
       '/log',
       data: {
@@ -24,13 +28,12 @@ Future<void> insertRemoteLog({
         'stack': stack,
         'pcName': SysInfo.userName,
         'extras': {
+          'cpus': Platform.numberOfProcessors,
+          'platform': Platform.operatingSystem,
           'ram': {
-            'free': freeMem.readableByteSize(),
-            'total': totalMem.readableByteSize(),
-            '%': ((freeMem / totalMem) * 100).toStringAsFixed(2),
-          },
-          'storage': {
-            'free': SysInfo.getFreePhysicalMemory().readableByteSize(),
+            'virtual': _usage(freeVMem, totalVMem),
+            'physical': _usage(freePMemory, totalPMemory),
+            'v_used': SysInfo.getVirtualMemorySize(),
           },
           if (extras != null) ...extras,
         },
@@ -39,4 +42,12 @@ Future<void> insertRemoteLog({
   } catch (e) {
     logger.error(getErrorMessage(e) ?? 'Falha ao enviar logs');
   }
+}
+
+Map<String, dynamic> _usage(int free, int total) {
+  return {
+    'free': free.readableByteSize(),
+    'total': total.readableByteSize(),
+    '% free': ((free / total) * 100).toStringAsFixed(2),
+  };
 }
