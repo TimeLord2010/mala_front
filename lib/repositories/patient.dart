@@ -3,7 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/models/patient_query.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_logger/vit_logger.dart';
 
 class PatientRepository {
   final Isar isar;
@@ -28,10 +28,10 @@ class PatientRepository {
 
   Future<List<Patient>> findByIds(List<int> ids) {
     var where = isar.patients.where();
-    var first = ids.pop()!;
+    var first = ids.removeAt(0);
     var afterWhere = where.idEqualTo(first);
     while (ids.isNotEmpty) {
-      afterWhere = afterWhere.or().idEqualTo(ids.pop()!);
+      afterWhere = afterWhere.or().idEqualTo(ids.removeAt(0));
     }
     return afterWhere.findAll();
   }
@@ -51,7 +51,7 @@ class PatientRepository {
     required int skip,
     required int limit,
   }) {
-    var stopWatch = StopWatch('findLocalPatients');
+    var stopWatch = VitStopWatch('findLocalPatients');
     var where = isar.patients.where();
     var patients = where.remoteIdIsNull().offset(skip).limit(limit).findAll();
     stopWatch.stop();
@@ -81,9 +81,9 @@ class PatientRepository {
     });
     // var inserted = oldId != patient.id;
     // if (inserted) {
-    //   logInfo('INSERTED PATIENT!!!');
+    //   logger.info('INSERTED PATIENT!!!');
     // } else {
-    //   logInfo('UPDATED PATIENT!!!');
+    //   logger.info('UPDATED PATIENT!!!');
     // }
     var address = patient.address.value;
     if (address != null) {

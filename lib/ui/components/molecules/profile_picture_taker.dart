@@ -5,6 +5,7 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:camera/camera.dart' as camera_package;
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/material.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/errors/camera_exception.dart' as model;
 import 'package:mala_front/ui/components/molecules/camera/processing_picture_overlay.dart';
 import 'package:mala_front/ui/components/organisms/picture_taker_control_panel.dart';
@@ -12,7 +13,7 @@ import 'package:mala_front/ui/protocols/camera/get_camera_count.dart';
 import 'package:mala_front/ui/protocols/invert_axis.dart';
 import 'package:mala_front/ui/theme/text_styles/error_text_style.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart' as vit;
+import 'package:mala_front/usecase/file/compress_image.dart';
 
 import '../../theme/colors.dart';
 import '../atoms/index.dart';
@@ -55,7 +56,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
 
   @override
   void initState() {
-    vit.logInfo('Init state profile picture');
+    logger.info('Init state profile picture');
     super.initState();
     task();
   }
@@ -71,7 +72,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         setState(() {
           this.camerasCount = 0;
         });
-        vit.logWarn('No cameras found');
+        logger.warn('No cameras found');
         return;
       }
 
@@ -86,26 +87,26 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         mounted: () => mounted,
       );
 
-      vit.logInfo('Camera count: $camerasCount');
+      logger.info('Camera count: $camerasCount');
       setState(() {
         this.camerasCount = camerasCount;
       });
     } on camera_package.CameraException catch (e) {
-      vit.logError('Internal camera exception: (${e.code}) ${e.description}');
+      logger.error('Internal camera exception: (${e.code}) ${e.description}');
     } on model.CameraException catch (e) {
-      vit.logError('Camera exception: $e');
+      logger.error('Camera exception: $e');
     } on Exception catch (e) {
-      vit.logError(getErrorMessage(e) ?? 'Camera initialization error');
+      logger.error(getErrorMessage(e) ?? 'Camera initialization error');
     }
   }
 
   @override
   void dispose() {
-    vit.logInfo('[PictureTaker] dispose');
+    logger.info('[PictureTaker] dispose');
     if (Platform.isWindows) {
       var cameraId = cameraController.camera_id;
       if (cameraId != 0) {
-        vit.logInfo('Disposing of camereId $cameraId');
+        logger.info('Disposing of camereId $cameraId');
         cameraController.camera_windows.dispose(cameraId);
       }
     }
@@ -148,7 +149,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
                       return;
                     }
                     var file = File(path);
-                    var compressed = await vit.compressImage(
+                    var compressed = await compressImage(
                       file,
                       quality: 10,
                       minimumSizeInKb: 64,

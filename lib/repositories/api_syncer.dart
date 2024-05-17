@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/enums/local_keys.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vit/vit.dart' as vit;
 
 class ApiSynchronizer {
   final SharedPreferences preferences;
@@ -20,7 +20,7 @@ class ApiSynchronizer {
   Future<void> retryFailedSyncronizations() async {
     var pendingDeletion = preferences.getStringList(_deleteKey) ?? [];
     for (var patient in pendingDeletion) {
-      vit.logInfo('Sending pending deletion: $patient');
+      logger.info('Sending pending deletion: $patient');
       await deletePatient(patient);
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -28,7 +28,7 @@ class ApiSynchronizer {
     var pendingUpdate = preferences.getStringList(_updateKey) ?? [];
     for (var patientId in pendingUpdate) {
       var id = int.parse(patientId);
-      vit.logInfo('Sending pending upsert: $id');
+      logger.info('Sending pending upsert: $id');
       var patient = await findPatientById(id);
       if (patient == null) continue;
       await upsertPatient(patient);
@@ -83,7 +83,8 @@ class ApiSynchronizer {
     try {
       await function();
       if (key != null) await _removeKey(entityId: entityId, key: key);
-    } catch (error) {
+    } catch (error, stack) {
+      logger.error(stack.toString());
       try {
         if (key != null) {
           await errorReporter(key, error);
@@ -91,7 +92,7 @@ class ApiSynchronizer {
           await errorReporter(entityId.toString(), error);
         }
       } catch (e) {
-        vit.logError('Failed to report error from api sync: ${getErrorMessage(e)}');
+        logger.error('Failed to report error from api sync: ${getErrorMessage(e)}');
       }
       if (throwOnError) rethrow;
     }

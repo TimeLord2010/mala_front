@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/repositories/stop_watch_events.dart';
+import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/count_all_patients.dart';
@@ -11,7 +13,6 @@ import 'package:mala_front/usecase/patient/delete_patient.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
-import 'package:vit/vit.dart';
 
 import '../../local_store/get_local_last_sync.dart';
 import '../../number/average.dart';
@@ -40,7 +41,7 @@ Future<void> updatePatientsFromServer({
       throw Exception('Tried to scan the same date: ${lastSync.toIso8601String()}');
     }
     scannedDates.add(lastSync);
-    logInfo('Last sync: ${lastSync.toIso8601String()}.');
+    logger.info('Last sync: ${lastSync.toIso8601String()}.');
     var newPatients = await eventTimes.add(() async {
       return await patientsRep
           .getServerChanges(
@@ -89,7 +90,7 @@ Future<void> updatePatientsFromServer({
         break;
       }
       var response = await fetch();
-      logInfo('Found ${response.length} to sync from server');
+      logger.info('Found ${response.length} to sync from server');
       if (response.isEmpty) {
         break;
       }
@@ -97,7 +98,7 @@ Future<void> updatePatientsFromServer({
         var remoteId = patient.remoteId!;
         var localId = await findPatientByRemoteId(remoteId);
         if (localId != null) {
-          logWarn('Local patient found with same remote id when syncing');
+          logger.warn('Local patient found with same remote id when syncing');
           patient.id = localId;
         }
         await upsertPatient(
@@ -112,7 +113,7 @@ Future<void> updatePatientsFromServer({
         for (var patientRemoteId in deleteRecord.patientIds) {
           var localId = await findPatientByRemoteId(patientRemoteId);
           if (localId == null) {
-            logWarn('Did not found patient to delete: $patientRemoteId');
+            logger.warn('Did not found patient to delete: $patientRemoteId');
             continue;
           }
           await deletePatient(

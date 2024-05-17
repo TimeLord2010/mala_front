@@ -1,4 +1,4 @@
-import 'package:vit/extensions/index.dart';
+import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 class User {
   final String id;

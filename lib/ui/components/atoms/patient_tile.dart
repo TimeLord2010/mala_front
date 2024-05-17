@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/factories/patients_semaphore.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/repositories/patient_api.dart';
@@ -10,8 +12,7 @@ import 'package:mala_front/repositories/patients_semaphore.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/usecase/index.dart';
-import 'package:vit/extensions/iterable.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 class PatientTile extends StatefulWidget {
   const PatientTile({
@@ -36,7 +37,7 @@ class _PatientTileState extends State<PatientTile> {
   void initState() {
     super.initState();
     int patientId = widget.patient.id;
-    patientsSemaphore
+    unawaited(patientsSemaphore
         .lockWhile(
       patientId: patientId,
       task: PatientTask.pictureLoad,
@@ -44,9 +45,9 @@ class _PatientTileState extends State<PatientTile> {
     )
         .then((ranTask) {
       if (!ranTask) {
-        logWarn('Picture load and save aborted for $patientId');
+        logger.warn('Picture load and save aborted for $patientId');
       }
-    });
+    }));
   }
 
   Future<void> _loadPicture() async {
@@ -87,7 +88,7 @@ class _PatientTileState extends State<PatientTile> {
 
     if (apiData == null) {
       // No data found after all.
-      logWarn('Updating local patient $remoteId to flag no picture');
+      logger.warn('Updating local patient $remoteId to flag no picture');
       patient.hasPicture = false;
 
       // Fixing the server to flag patient has no picture.

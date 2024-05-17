@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/usecase/file/get_export_patients_file_name.dart';
 import 'package:mala_front/usecase/imports/load_patients_from_json.dart';
@@ -11,15 +12,14 @@ import 'package:mala_front/usecase/patient/list_patients_by_creation_dates.dart'
 import 'package:mala_front/usecase/patient/profile_picture/get_picture_file.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:vit/extensions/iterable.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 Future<List<Patient>> importPatients({
   required String zipFileName,
   required BuildContext? context,
 }) async {
   var dir = await getApplicationDocumentsDirectory();
-  logInfo('zipFile: $zipFileName');
+  logger.info('zipFile: $zipFileName');
   await extractFileToDisk(
     zipFileName,
     dir.path,

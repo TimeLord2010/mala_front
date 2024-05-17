@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart' as camera_package;
 import 'package:camera_universal/camera_universal.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/enums/camera_exception_reason.dart';
 import 'package:mala_front/models/errors/failed_to_change_camera.dart';
-import 'package:camera/camera.dart' as camera_package;
-import 'package:vit/vit.dart';
 
 Future<int?> changeCamera({
   required CameraController controller,
@@ -25,15 +25,15 @@ Future<int?> changeCamera({
   }
 
   var desiredIndex = getDesiredIndex();
-  logInfo('Desired index: $desiredIndex');
+  logger.info('Desired index: $desiredIndex');
   var camera = cameras[desiredIndex];
-  logInfo('New camera: ${camera.name}');
+  logger.info('New camera: ${camera.name}');
 
   int? cameraId;
   if (Platform.isWindows) {
     // Disposing old camera.
     var oldCameraId = controller.camera_id;
-    logInfo('Disposing of old camera: $oldCameraId');
+    logger.info('Disposing of old camera: $oldCameraId');
     await controller.camera_windows.dispose(oldCameraId);
 
     var con = controller.camera_windows;
@@ -41,7 +41,7 @@ Future<int?> changeCamera({
       camera,
       camera_package.ResolutionPreset.max,
     );
-    logInfo('New camera id: $cameraId');
+    logger.info('New camera id: $cameraId');
     await controller.initializeCameraById(
       camera_id: cameraId,
       setState: setState,

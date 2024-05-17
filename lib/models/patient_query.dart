@@ -1,8 +1,8 @@
 import 'package:isar/isar.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient.dart';
-import 'package:vit/vit.dart';
 
 class PatientQuery {
   String? name;
@@ -46,23 +46,23 @@ class PatientQuery {
     var now = DateTime.now();
     if (minAge != null) {
       var value = now.year - minAge!;
-      logInfo('Min year: $value');
+      logger.info('Min year: $value');
       filter = filter.yearOfBirthLessThan(value);
     }
     if (maxAge != null) {
       var value = now.year - maxAge!;
-      logInfo('Max year: $value');
+      logger.info('Max year: $value');
       filter = filter.yearOfBirthGreaterThan(value);
     }
     if (monthBirthday) {
-      logInfo('Month birthday: ${now.day}/${now.month}');
+      logger.info('Month birthday: ${now.day}/${now.month}');
       filter = filter.monthOfBirthIsNotNull().monthOfBirthEqualTo(now.month);
     }
     if (hasActivities) {
-      logInfo('Has activity');
+      logger.info('Has activity');
       filter = filter.activitiesIdLengthGreaterThan(0);
       for (var activity in activies!) {
-        logInfo('Check if patient has activity ${activity.index} id');
+        logger.info('Check if patient has activity ${activity.index} id');
         filter = filter.activitiesIdElementEqualTo(activity.index);
       }
     }
@@ -71,13 +71,13 @@ class PatientQuery {
     }
     return filter.address((q) {
       if (hasDistrict && hasStreet) {
-        logInfo('Contains district and street');
+        logger.info('Contains district and street');
         return q.districtContains(district!).streetContains(street!);
       } else if (hasDistrict) {
-        logInfo('Contains district: $district');
+        logger.info('Contains district: $district');
         return q.districtContains(district!);
       } else {
-        logInfo('Contains street: $street');
+        logger.info('Contains street: $street');
         return q.streetContains(street!);
       }
     }).sortByName();

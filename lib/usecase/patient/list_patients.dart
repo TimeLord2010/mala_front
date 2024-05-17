@@ -7,7 +7,7 @@ Future<List<Patient>> listPatients({
   int? skip,
   int? limit,
 }) async {
-  //var stopWatch = StopWatch('listPatients');
+  //var stopWatch = VitStopWatch('listPatients');
   var rep = await createPatientRepository();
   var patients = <Patient>[];
   var l = await rep.list(

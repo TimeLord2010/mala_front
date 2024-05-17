@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/ui/components/molecules/login_fields.dart';
 import 'package:mala_front/ui/pages/main_page.dart';
 import 'package:mala_front/usecase/user/is_authenticated.dart';
 import 'package:mala_front/usecase/user/login_user.dart';
-import 'package:vit/vit.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
@@ -46,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var authed = isAuthenticated();
       if (authed) {
-        context.navigator.pushMaterial(const MainPage());
+        unawaited(context.navigator.pushMaterial(const MainPage()));
       }
     });
   }
@@ -63,19 +65,7 @@ class _LoginPageState extends State<LoginPage> {
             _checkAuthentication(context);
             return Stack(
               children: [
-                Positioned.fill(
-                  child: WaveWidget(
-                    config: CustomConfig(
-                      colors: _colors,
-                      durations: _durations,
-                      heightPercentages: _heightPercentages,
-                      blur: const MaskFilter.blur(BlurStyle.normal, 10),
-                    ),
-                    backgroundColor: _backgroundColor,
-                    size: const Size(double.infinity, double.infinity),
-                    waveAmplitude: 50,
-                  ),
-                ),
+                _background(),
                 Positioned.fill(
                   child: SingleChildScrollView(
                     child: Container(
@@ -85,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.only(bottom: bottomPadding),
                       child: LoginFields(
                         onLogin: (email, password) async {
-                          logInfo('Login');
+                          logger.info('Login');
                           await loginUser(email, password);
                           await context.navigator.pushMaterial(const MainPage());
                         },
@@ -97,6 +87,22 @@ class _LoginPageState extends State<LoginPage> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Positioned _background() {
+    return Positioned.fill(
+      child: WaveWidget(
+        config: CustomConfig(
+          colors: _colors,
+          durations: _durations,
+          heightPercentages: _heightPercentages,
+          blur: const MaskFilter.blur(BlurStyle.normal, 10),
+        ),
+        backgroundColor: _backgroundColor,
+        size: const Size(double.infinity, double.infinity),
+        waveAmplitude: 50,
       ),
     );
   }

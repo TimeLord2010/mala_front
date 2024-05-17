@@ -1,22 +1,19 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/login_configuration.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart' as vit;
 
 import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
 
 class LoginFields extends StatefulWidget {
-  LoginFields({
+  const LoginFields({
     super.key,
     required this.onLogin,
   });
-
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
 
   final FutureOr<void> Function(String email, String password) onLogin;
 
@@ -25,13 +22,16 @@ class LoginFields extends StatefulWidget {
 }
 
 class _LoginFieldsState extends State<LoginFields> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   bool _enteredEmail = false;
   bool get enteredEmail => _enteredEmail;
   set enteredEmail(bool value) {
     if (value == _enteredEmail) return;
     setState(() {
       if (!value) {
-        widget.passwordController.clear();
+        passwordController.clear();
         _enteredPassword = false;
       }
       _enteredEmail = value;
@@ -57,6 +57,13 @@ class _LoginFieldsState extends State<LoginFields> {
   String? errorMessage;
 
   @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
@@ -69,31 +76,7 @@ class _LoginFieldsState extends State<LoginFields> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (height > 500) const MalaLogo(),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: const Icon(FluentIcons.settings),
-                    onPressed: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ContentDialog(
-                            title: const Text('Opções'),
-                            content: const LoginConfiguration(),
-                            actions: [
-                              Button(
-                                child: const Text('Fechar'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
+                _optionsButton(context),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 10),
                   Text(errorMessage!),
@@ -117,10 +100,38 @@ class _LoginFieldsState extends State<LoginFields> {
     );
   }
 
+  Align _optionsButton(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: IconButton(
+        icon: const Icon(FluentIcons.settings),
+        onPressed: () async {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return ContentDialog(
+                title: const Text('Opções'),
+                content: const LoginConfiguration(),
+                actions: [
+                  Button(
+                    child: const Text('Fechar'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
   LabeledTextBox _email() {
     return LabeledTextBox(
       label: 'Email',
-      controller: widget.emailController,
+      controller: emailController,
       onChanged: (value) {
         enteredEmail = value.contains('@');
       },
@@ -133,7 +144,7 @@ class _LoginFieldsState extends State<LoginFields> {
       duration: const Duration(milliseconds: 400),
       firstChild: LabeledTextBox(
         label: 'Senha',
-        controller: widget.passwordController,
+        controller: passwordController,
         isPassword: true,
         onChanged: (value) {
           enteredPassword = value.isNotEmpty;
@@ -166,14 +177,14 @@ class _LoginFieldsState extends State<LoginFields> {
   }
 
   void _login() async {
-    var email = widget.emailController.text;
-    var password = widget.passwordController.text;
+    var email = emailController.text;
+    var password = passwordController.text;
     errorMessage = null;
     isLoading = true;
     try {
       await widget.onLogin(email, password);
     } catch (e) {
-      vit.logInfo('errored at login: ${e.toString()}');
+      logger.info('errored at login: ${e.toString()}');
       errorMessage = getErrorMessage(e);
     } finally {
       isLoading = false;

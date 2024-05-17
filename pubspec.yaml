@@ -21,19 +21,20 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  get_it: ^7.7.0
+  image_compression_flutter: ^1.0.4
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   mask_text_input_formatter: ^2.8.0
   package_info_plus: ^4.2.0
   path_provider: ^2.1.0
   pdf: ^3.10.4
-  printing: ^5.11.0
+  printing: ^5.12.0
   search_cep: ^4.0.2
   shared_preferences: ^2.2.1
   system_info2: ^4.0.0
-  vit:
-    git:
-      url: https://gitlab.com/vit16/vit_dart_extensions.git
+  vit_dart_extensions: ^1.8.1
+  vit_logger: ^2.0.1
   wave: ^0.2.2
 
 dev_dependencies:

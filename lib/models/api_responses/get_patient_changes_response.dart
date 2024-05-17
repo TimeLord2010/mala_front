@@ -1,4 +1,4 @@
-import 'package:vit/vit.dart';
+import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 import '../patient.dart';
 

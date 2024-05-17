@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/usecase/number/rount_to_threshold.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
-import 'package:vit/extensions/iterable.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 import '../../../../models/patient_tag.dart';
 
@@ -35,11 +35,11 @@ Future<Uint8List> createTagsPdf({
 }) async {
   var doc = Document();
   var tagsPerLine = _getTagsPerLine();
-  logInfo('Tags per line: $tagsPerLine');
+  logger.info('Tags per line: $tagsPerLine');
   var tagsPerColumn = _getTagsPerColumn();
-  logInfo('Tags per column: $tagsPerColumn');
+  logger.info('Tags per column: $tagsPerColumn');
   var tagsPerPage = tagsPerColumn * tagsPerLine;
-  logInfo('Tags per page: $tagsPerPage');
+  logger.info('Tags per page: $tagsPerPage');
   var chuncks = tags.chunck(tagsPerPage);
   for (var chunck in chuncks) {
     var page = _createPage(

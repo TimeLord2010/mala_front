@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:mala_front/factories/database_client.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/file/get_database_directory.dart';
-import 'package:vit/extensions/directory.dart';
-import 'package:vit/vit.dart' as vit;
+import 'package:vit_dart_extensions/vit_dart_extensions_io.dart';
 
 Future<void> deleteDatabaseFiles() async {
   var isar = await createDatabaseClient();
@@ -13,27 +13,27 @@ Future<void> deleteDatabaseFiles() async {
     deleteFromDisk: true,
   );
   if (filePath != null) {
-    vit.logInfo('Database file: $filePath');
+    logger.info('Database file: $filePath');
     var file = File(filePath);
     bool exists = file.existsSync();
     if (exists) {
       try {
         await file.delete();
       } catch (e) {
-        vit.logError('Failed to delete database file: ${getErrorMessage(e)}');
+        logger.error('Failed to delete database file: ${getErrorMessage(e)}');
       }
     }
   }
   destroyDatabaseClient();
   var dir = await getDatabaseDirectory();
-  var files = dir.listDirectoryFiles(dir);
+  var files = dir.listDirectoryFiles();
   files.listen((event) async {
     var path = event.getName(true);
     if (path.contains('.isar')) {
-      vit.logWarn('Deleting database file: $path');
+      logger.warn('Deleting database file: $path');
       event.deleteSync();
     } else {
-      vit.logInfo('Did NOT delete file: $path');
+      logger.info('Did NOT delete file: $path');
     }
   });
 }

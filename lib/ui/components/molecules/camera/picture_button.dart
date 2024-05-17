@@ -1,8 +1,8 @@
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/enums/camera_exception_reason.dart';
 import 'package:mala_front/models/errors/failed_to_take_picture.dart';
-import 'package:vit/vit.dart';
 
 import '../../../theme/colors.dart';
 
@@ -40,12 +40,12 @@ class PictureButton extends StatelessWidget {
               throw FailedToTakePicture(CameraExceptionReason.canceled);
             }
             var name = result.name;
-            logInfo('Name: $name');
+            logger.info('Name: $name');
             var path = result.path;
-            logInfo('Path: $path');
+            logger.info('Path: $path');
             onPictureTaken(path);
           } on Exception catch (e) {
-            logError('Failed to take picture: ${e.toString()}');
+            logger.error('Failed to take picture: ${e.toString()}');
           }
         },
         child: Container(

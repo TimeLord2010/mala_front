@@ -1,6 +1,6 @@
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/material.dart';
-import 'package:vit/vit.dart';
+import 'package:mala_front/factories/logger.dart';
 
 import '../../../protocols/camera/change_camera.dart';
 
@@ -32,7 +32,7 @@ class ChangeCameraButton extends StatelessWidget {
                 isMounted: isMounted,
               );
               if (newIndex != null) {
-                logInfo('Setting new camera index: $newIndex');
+                logger.info('Setting new camera index: $newIndex');
                 setCameraIndex(newIndex);
               }
             }

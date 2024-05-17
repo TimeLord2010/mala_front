@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/usecase/date/get_current_date_numbers.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
 import 'package:mala_front/usecase/patient/profile_picture/load_profile_picture.dart';
 import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';
-import 'package:vit/vit.dart';
 
 import '../file/get_export_patients_file_name.dart';
 
@@ -40,7 +40,7 @@ Future<void> exportPatients({
       limit: step,
       skip: page * step,
     );
-    logInfo('Exporting ${items.length} patients');
+    logger.info('Exporting ${items.length} patients');
     var maps = items.map((x) => jsonEncode(x.toMap)).join(',');
     if (hasNextPage) {
       stream.write('$maps,');
@@ -65,7 +65,7 @@ Future<void> exportPatients({
     );
     await Future.delayed(const Duration(milliseconds: 10));
   }
-  logInfo('Exported $processed patients');
+  logger.info('Exported $processed patients');
   stream.write(']');
   await stream.flush();
   await stream.close();

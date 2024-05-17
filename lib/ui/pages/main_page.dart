@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
@@ -16,7 +16,6 @@ import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart'
 import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 import 'package:mala_front/usecase/user/sign_out.dart';
-import 'package:vit/vit.dart' as vit;
 
 import '../components/atoms/mala_app.dart';
 import '../components/organisms/patient_explorer.dart';
@@ -59,24 +58,24 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       bool canProceed() {
         if (didLogOut) {
-          vit.logWarn('LOGED OUT, CANNOT PROCEED');
+          logger.warn('LOGED OUT, CANNOT PROCEED');
           return false;
         }
         if (!mounted) {
-          vit.logWarn('NOT MOUNTED, CANNOT PROCEED');
+          logger.warn('NOT MOUNTED, CANNOT PROCEED');
           return false;
         }
-        vit.logInfo('CAN PROCEED');
+        logger.info('CAN PROCEED');
         return true;
       }
 
       Future<void> syncronize() async {
         try {
           var allCount = await countAllPatients();
-          vit.logInfo('All patients count: $allCount');
+          logger.info('All patients count: $allCount');
           await refreshJwt();
           loadingDescription = 'Atualizando pacientes a partir do servidor';
-          vit.logInfo('Refreshed JWT');
+          logger.info('Refreshed JWT');
           await updatePatientsFromServer(
             updater: (dt) {
               loadingDescription = 'Atualizando pacientes: $dt';
@@ -85,20 +84,21 @@ class _MainPageState extends State<MainPage> {
             didCancel: () => !canProceed(),
           );
           if (!canProceed()) return;
-          vit.logInfo('Updated patients from server');
+          logger.info('Updated patients from server');
           loadingDescription = 'Enviando mudanças pendentes para o servidor';
           await sendFailedBackgroundOperations();
-          vit.logInfo('Sent failed background operations');
+          logger.info('Sent failed background operations');
           loadingDescription = 'Enviando pacientes criados enquanto offline';
           await sendLocalPatientsToServer(
             context: context,
           );
-          vit.logInfo('Sent local patients to server');
+          logger.info('Sent local patients to server');
           patientUpdater?.call();
         } catch (e, stack) {
           var msg = getErrorMessage(e);
-          vit.logError('Failed to sync data: $msg');
+          logger.error('Failed to sync data: $msg');
           if (isNoInternetError(e)) {
+            logger.warn('No internet detected! Ended error handling');
             return;
           }
           var dialogMsg = msg ?? 'Erro desconhecido';
@@ -109,12 +109,6 @@ class _MainPageState extends State<MainPage> {
             stack: stack.toString(),
             level: 'error',
           ));
-          if (e is FailedToRefreshJwt) {
-            if (!isNoInternetError(e.innerException)) {
-              context.navigator.pop();
-              return;
-            }
-          }
           if (!canProceed()) {
             return;
           }
@@ -148,7 +142,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    vit.logInfo('Refreshed main page');
+    logger.info('Refreshed main page');
     _refreshAuthentication(context);
     var explorer = PatientExplorer(
       modalContext: context,
@@ -242,7 +236,7 @@ class _MainPageState extends State<MainPage> {
                           didLogOut = true;
                           context.navigator.pop();
                           if (!context.navigator.canPop()) {
-                            context.navigator.pushMaterial(const LoginPage());
+                            await context.navigator.pushMaterial(const LoginPage());
                           }
                         },
                       ),

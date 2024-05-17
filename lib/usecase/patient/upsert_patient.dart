@@ -7,7 +7,7 @@ import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/ui/protocols/modal/run_monitored_function.dart';
 import 'package:mala_front/usecase/patient/api/background/send_changes_in_background.dart';
 import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_logger/vit_logger.dart';
 
 Future<Patient> upsertPatient(
   Patient patient, {
@@ -17,7 +17,7 @@ Future<Patient> upsertPatient(
   bool ignorePicture = false,
 }) async {
   var patientId = patient.id;
-  var stopWatch = StopWatch('upsertPatient:$patientId');
+  var stopWatch = VitStopWatch('upsertPatient:$patientId');
   var rep = await createPatientRepository();
   var result = await rep.insert(patient);
   if (!ignorePicture) {

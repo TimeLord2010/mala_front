@@ -2,8 +2,7 @@ import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
-import 'package:vit/extensions/iterable.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 import '../../../../models/patient.dart';
 
@@ -75,7 +74,7 @@ Widget _createFields(Patient patient) {
           ),
           _createField(
             title: 'Nasc.',
-            value: patient.birthDate?.readable(false),
+            value: patient.birthDate?.formatAsReadable(false),
           ),
         ],
         getFlex: (index) => index == 0 ? 2 : 1,

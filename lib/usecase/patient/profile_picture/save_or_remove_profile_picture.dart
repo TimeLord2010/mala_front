@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/usecase/patient/profile_picture/get_picture_file.dart';
-import 'package:vit/vit.dart';
 
 Future<void> saveOrRemoveProfilePicture({
   required int patientId,
@@ -14,11 +14,11 @@ Future<void> saveOrRemoveProfilePicture({
     basePath: dir?.path,
   );
   if (data != null) {
-    logInfo('Saving pacient picture $patientId');
+    logger.info('Saving pacient picture $patientId');
     await file.create(recursive: true);
     await file.writeAsBytes(data);
   } else {
-    logInfo('No pacient picture found $patientId');
+    logger.info('No pacient picture found $patientId');
     var exists = file.existsSync();
     if (exists) {
       await file.delete();

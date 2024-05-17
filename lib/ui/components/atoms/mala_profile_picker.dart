@@ -1,9 +1,9 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/ui/components/molecules/profile_picture_taker.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/vit.dart' as vit;
 
 class MalaProfilePicker extends StatelessWidget {
   const MalaProfilePicker({
@@ -29,7 +29,7 @@ class MalaProfilePicker extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () async {
-        context.navigator.pushMaterial(ProfilePictureTaker(
+        await context.navigator.pushMaterial(ProfilePictureTaker(
           onPick: pick,
         ));
       },
@@ -56,7 +56,7 @@ class MalaProfilePicker extends StatelessWidget {
         onForegroundImageError: imageProvider2 == null
             ? null
             : (exception, stackTrace) {
-                vit.logError('Failed to load image: ${getErrorMessage(exception)}');
+                logger.error('Failed to load image: ${getErrorMessage(exception)}');
                 onRenderError?.call();
               },
         child: _child(),

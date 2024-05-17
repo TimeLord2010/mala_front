@@ -1,12 +1,12 @@
 import 'package:mala_front/factories/http_client.dart';
 import 'package:mala_front/models/api_responses/login_response.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_logger/vit_logger.dart';
 
 import '../models/user.dart';
 
 class UserRepository {
   Future<LoginResponse> login(String email, String password) async {
-    var stopWatch = StopWatch('api:login');
+    var stopWatch = VitStopWatch('api:login');
     var response = await dio.get(
       '/user',
       queryParameters: {
@@ -25,7 +25,7 @@ class UserRepository {
   }
 
   Future<String> generateNewJwt() async {
-    var stopWatch = StopWatch('api:generateNewJWT');
+    var stopWatch = VitStopWatch('api:generateNewJWT');
     try {
       var response = await dio.get('/user/self');
       String? jwt = response.headers.value('jwt');
@@ -38,7 +38,7 @@ class UserRepository {
 
   Future<void> updateLastSync(DateTime date) async {
     var iso = date.toUtc().toIso8601String();
-    var stopWatch = StopWatch('api:updateLastSync ($iso)');
+    var stopWatch = VitStopWatch('api:updateLastSync ($iso)');
     await dio.post(
       '/user',
       data: {

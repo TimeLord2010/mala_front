@@ -1,8 +1,8 @@
 import 'package:mala_front/factories/patient_repository.dart';
-import 'package:vit/vit.dart';
+import 'package:vit_logger/vit_logger.dart';
 
 Future<int?> findPatientByRemoteId(String remoteId) async {
-  var stopWatch = StopWatch('findPatientByRemoteId');
+  var stopWatch = VitStopWatch('findPatientByRemoteId');
   var rep = await createPatientRepository();
   var id = await rep.findIdByRemoteId(remoteId);
   stopWatch.stop();

@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mala_front/factories/http_client.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
 import 'package:mala_front/models/api_responses/post_patient_changes_response.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:vit/usecases/log.dart';
-import 'package:vit/vit.dart' as vit;
+import 'package:vit_dart_extensions/vit_dart_extensions_io.dart';
+import 'package:vit_logger/vit_logger.dart';
 
 class PatientApiRepository {
   Future<GetPatientChangesResponse> getServerChanges({
@@ -16,7 +17,7 @@ class PatientApiRepository {
     int? limit,
     DateTime? date,
   }) async {
-    var stopWatch = vit.StopWatch('api:getServerChanges');
+    var stopWatch = VitStopWatch('api:getServerChanges');
     if (date != null) {
       stopWatch.lap(tag: date.toIso8601String());
     }
@@ -38,15 +39,15 @@ class PatientApiRepository {
     List<Patient>? changed,
     List<String>? deleted,
   }) async {
-    var stopWatch = vit.StopWatch('api:postChanges');
+    var stopWatch = VitStopWatch('api:postChanges');
     var response = await dio.post(
       '/patient/sync',
       data: {
         'changed': (changed ?? []).map((x) {
           if (x.remoteId == null) {
-            vit.logInfo('Uploading new patient: ${x.name}');
+            logger.info('Uploading new patient: ${x.name}');
           } else {
-            vit.logInfo('Uploading changed to patient: ${x.name}');
+            logger.info('Uploading changed to patient: ${x.name}');
           }
           var toApiMap = x.toApiMap;
           return toApiMap;
@@ -62,7 +63,7 @@ class PatientApiRepository {
     required String patientId,
     required File file,
   }) async {
-    var stopWatch = vit.StopWatch('api:updatePicture');
+    var stopWatch = VitStopWatch('api:updatePicture');
     String extension = file.fileExtension!;
     var uploadUrl = await _getUploadUrl(patientId, extension);
     try {
@@ -79,14 +80,14 @@ class PatientApiRepository {
         ),
       );
     } on DioException catch (e) {
-      vit.logError('Error uploading picture: ${getErrorMessage(e)}');
+      logger.error('Error uploading picture: ${getErrorMessage(e)}');
     }
     stopWatch.stop();
   }
 
   /// Fetches the picture data to the appropriate file.
   Future<void> savePicture(String patientId, String path) async {
-    var stopWatch = vit.StopWatch('api:savePicture:$patientId');
+    var stopWatch = VitStopWatch('api:savePicture:$patientId');
     try {
       var downloadUrl = await _getDownloadUrl(patientId, stopWatch: stopWatch);
       if (downloadUrl == null) {
@@ -100,7 +101,7 @@ class PatientApiRepository {
 
   /// Fetches the profile picture data.
   Future<Uint8List?> getPicture(String remoteId) async {
-    var stopWatch = vit.StopWatch('api:getPicture:$remoteId');
+    var stopWatch = VitStopWatch('api:getPicture:$remoteId');
     try {
       var downloadUrl = await _getDownloadUrl(remoteId, stopWatch: stopWatch);
       if (downloadUrl == null) {
@@ -128,12 +129,12 @@ class PatientApiRepository {
 
   Future<String?> _getDownloadUrl(
     String remoteId, {
-    vit.StopWatch? stopWatch,
+    VitStopWatch? stopWatch,
   }) async {
     bool createdStopWatch = false;
     if (stopWatch == null) {
       createdStopWatch = true;
-      stopWatch = vit.StopWatch('api:getDownloadUrl:$remoteId');
+      stopWatch = VitStopWatch('api:getDownloadUrl:$remoteId');
     }
     try {
       var url = '/patient/picture/download';
@@ -151,7 +152,7 @@ class PatientApiRepository {
       if (response != null) {
         var code = response.statusCode;
         if (code == 404) {
-          logWarn('[$remoteId] No picture data found from the api');
+          logger.warn('[$remoteId] No picture data found from the api');
           return null;
         }
       }
@@ -162,7 +163,7 @@ class PatientApiRepository {
   }
 
   Future<String> _getUploadUrl(String patientId, String extension) async {
-    var stopWatch = vit.StopWatch('api:getUploadUrl');
+    var stopWatch = VitStopWatch('api:getUploadUrl');
     var url = '/patient/picture/upload';
     var response = await dio.get(
       url,
@@ -177,7 +178,7 @@ class PatientApiRepository {
   }
 
   Future<void> deletePicture({required String patientId}) async {
-    var stopWatch = vit.StopWatch('api:deletePicture');
+    var stopWatch = VitStopWatch('api:deletePicture');
     await dio.delete(
       '/patient/picture',
       queryParameters: {

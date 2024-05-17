@@ -1,7 +1,8 @@
+import 'package:get_it/get_it.dart';
 import 'package:mala_front/repositories/local_store.dart';
-import 'package:vit/vit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 LocalStoreRepository createLocalStoreRepository() {
-  var prefs = Vit().getSharedPreferences();
+  var prefs = GetIt.I.get<SharedPreferences>();
   return LocalStoreRepository(prefs);
 }

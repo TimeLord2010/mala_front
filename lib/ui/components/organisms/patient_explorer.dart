@@ -1,5 +1,6 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/enums/activities.dart';
 import 'package:mala_front/models/patient_query.dart';
 import 'package:mala_front/models/patient_tag.dart';
@@ -13,7 +14,6 @@ import 'package:mala_front/usecase/file/pdf/patients/print_patients_pdf.dart';
 import 'package:mala_front/usecase/file/pdf/tags/print_tags_pdf.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';
-import 'package:vit/vit.dart';
 
 import '../../../models/patient.dart';
 
@@ -232,14 +232,14 @@ class _PatientExplorerState extends State<PatientExplorer> {
   }
 
   void _search(int page, bool shouldCount) async {
-    logInfo('Searching. Page: $page, ShouldCount: $shouldCount');
+    logger.info('Searching. Page: $page, ShouldCount: $shouldCount');
     currentPage = page;
     var patientQuery = query;
     if (shouldCount) {
       var count = await countPatients(patientQuery);
       //pages = count ~/ pageSize;
       this.count = count;
-      logInfo('Count: $count, Pages: $pages');
+      logger.info('Count: $count, Pages: $pages');
     }
     patientsFuture = listPatients(
       patientQuery: patientQuery,

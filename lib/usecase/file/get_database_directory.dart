@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:mala_front/factories/logger.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:vit/vit.dart';
 
 Future<Directory> getDatabaseDirectory() async {
   Future<Directory> getDir() async {
@@ -18,6 +18,6 @@ Future<Directory> getDatabaseDirectory() async {
   }
 
   var dir = await getDir();
-  logInfo('Database directory: ${dir.path}');
+  logger.info('Database directory: ${dir.path}');
   return dir;
 }
