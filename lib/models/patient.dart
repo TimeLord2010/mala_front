@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
@@ -76,7 +75,6 @@ class Patient {
   });
 
   factory Patient.fromMap(Map<String, dynamic> map) {
-    logger.debug('Parsing patient: ${map.prettyJSON}');
     List? phones = map['phones'];
     List? activities = map['activitiesId'];
     bool hasPicture = map['hasPicture'] ?? false;

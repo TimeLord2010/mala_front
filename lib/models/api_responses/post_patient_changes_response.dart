@@ -1,6 +1,4 @@
-import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/patient.dart';
-import 'package:vit_dart_extensions/vit_dart_extensions_io.dart';
 
 class PostPatientChangesResponse {
   ChangedPatients? changed;
@@ -29,7 +27,7 @@ class ChangedPatients {
   factory ChangedPatients.fromMap(Map<String, dynamic> map) {
     List inserted = map['inserted'];
     List updated = map['updated'];
-    logger.debug('Loading patient changes: ${map.prettyJSON}');
+    updated = updated.where((x) => x != null).toList();
     return ChangedPatients(
       inserted: inserted.map((x) => x as String).toList(),
       updated: updated.map((x) {

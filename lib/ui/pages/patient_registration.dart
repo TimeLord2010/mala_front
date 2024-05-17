@@ -203,43 +203,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: LabeledTextBox(
-                        label: 'Telefones',
-                        placeholder: '85 999-999-999, 85 999-999-999',
-                        controller: widget.phonesController,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 160,
-                      child: LabeledTextBox(
-                        label: 'CPF',
-                        controller: widget.cpfController,
-                        placeholder: '999.999.999-99',
-                      ),
-                    ),
-                    MalaDatePicker(
-                      label: 'Data de nascimento',
-                      value: selectedBirth,
-                      onChanged: (v) {
-                        selectedBirth = v;
-                      },
-                    ),
-                    // InfoLabel(
-                    //   label: 'Data de nascimento',
-                    //   child: DatePicker(
-                    //     selected: selectedBirth,
-                    //     onChanged: (v) {
-                    //       selectedBirth = v;
-                    //     },
-                    //   ),
-                    // ),
-                  ].separatedBy(const SizedBox(width: 20)),
-                ),
+                _info(),
                 const Divider(),
                 const MalaTitle('Endereço'),
                 Row(
@@ -262,26 +226,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    LabeledTextBox(
-                      label: 'Estado',
-                      controller: widget.stateController,
-                      placeholder: 'Ceará',
-                    ),
-                    LabeledTextBox(
-                      label: 'Cidade',
-                      controller: widget.cityController,
-                      placeholder: 'Fortaleza',
-                    ),
-                    LabeledTextBox(
-                      label: 'Bairro',
-                      controller: widget.districtController,
-                      placeholder: 'Aldeota',
-                    ),
-                  ].separatedBy(const SizedBox(width: 20)),
-                ),
+                _addressGroups(),
                 Row(
                   children: [
                     Expanded(
@@ -333,6 +278,139 @@ class _PatientRegistrationState extends State<PatientRegistration> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _addressGroups() {
+    Widget horizontal() {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _state(),
+          _city(),
+          _district(),
+        ].separatedBy(const SizedBox(width: 20)),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var width = constraints.maxWidth;
+        if (width > 650) {
+          return horizontal();
+        }
+        return Column(
+          children: [
+            Row(
+              children: [
+                Expanded(child: _state()),
+                const SizedBox(width: 20),
+                Expanded(child: _city()),
+              ],
+            ),
+            const SizedBox(height: 10),
+            _district(),
+          ],
+        );
+      },
+    );
+  }
+
+  LabeledTextBox _district() {
+    return LabeledTextBox(
+      label: 'Bairro',
+      controller: widget.districtController,
+      placeholder: 'Aldeota',
+    );
+  }
+
+  LabeledTextBox _city() {
+    return LabeledTextBox(
+      label: 'Cidade',
+      controller: widget.cityController,
+      placeholder: 'Fortaleza',
+    );
+  }
+
+  LabeledTextBox _state() {
+    return LabeledTextBox(
+      label: 'Estado',
+      controller: widget.stateController,
+      placeholder: 'Ceará',
+    );
+  }
+
+  Widget _info() {
+    Widget horizontal() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: _phones(),
+          ),
+          _cpf(),
+          _birth(),
+          // InfoLabel(
+          //   label: 'Data de nascimento',
+          //   child: DatePicker(
+          //     selected: selectedBirth,
+          //     onChanged: (v) {
+          //       selectedBirth = v;
+          //     },
+          //   ),
+          // ),
+        ].separatedBy(const SizedBox(width: 20)),
+      );
+    }
+
+    return LayoutBuilder(builder: (context, constraints) {
+      var width = constraints.maxWidth;
+      if (width > 600) {
+        return horizontal();
+      }
+      return Column(
+        children: [
+          _phones(),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _cpf(),
+              _birth(),
+            ],
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _cpf() {
+    return SizedBox(
+      width: 160,
+      child: LabeledTextBox(
+        label: 'CPF',
+        controller: widget.cpfController,
+        placeholder: '999.999.999-99',
+      ),
+    );
+  }
+
+  LabeledTextBox _phones() {
+    return LabeledTextBox(
+      label: 'Telefones',
+      placeholder: '85 999-999-999, 85 999-999-999',
+      controller: widget.phonesController,
+    );
+  }
+
+  MalaDatePicker _birth() {
+    return MalaDatePicker(
+      label: 'Data de nascimento',
+      value: selectedBirth,
+      onChanged: (v) {
+        selectedBirth = v;
+      },
     );
   }
 

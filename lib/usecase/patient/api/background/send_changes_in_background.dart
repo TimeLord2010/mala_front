@@ -1,4 +1,5 @@
 import 'package:mala_front/factories/create_api_synchonizer.dart';
+import 'package:vit_logger/vit_logger.dart';
 
 import '../../../../models/patient.dart';
 
@@ -11,8 +12,15 @@ Future<void> sendChangesInBackground(
   bool throwOnError = false,
 }) async {
   var rep = createApiSynchonizer();
-  await rep.upsertPatient(
-    patient,
-    throwOnError: throwOnError,
-  );
+  var stopWatch = VitStopWatch('Sending patient to server in background');
+  try {
+    await rep.upsertPatient(
+      patient,
+      throwOnError: throwOnError,
+    );
+  } catch (e) {
+    stopWatch.lap(tag: 'Error');
+  } finally {
+    stopWatch.stop();
+  }
 }

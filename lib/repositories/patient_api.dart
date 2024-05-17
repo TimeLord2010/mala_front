@@ -40,23 +40,27 @@ class PatientApiRepository {
     List<String>? deleted,
   }) async {
     var stopWatch = VitStopWatch('api:postChanges');
+    var payload = {
+      'changed': (changed ?? []).map((x) {
+        if (x.remoteId == null) {
+          logger.info('Uploading new patient: ${x.name}');
+        } else {
+          logger.info('Uploading changed to patient: ${x.name}');
+        }
+        var toApiMap = x.toApiMap;
+        return toApiMap;
+      }).toList(),
+      'delete': (deleted ?? []),
+    };
+    logger.info('Posting changes: ${payload.prettyJSON}');
     var response = await dio.post(
       '/patient/sync',
-      data: {
-        'changed': (changed ?? []).map((x) {
-          if (x.remoteId == null) {
-            logger.info('Uploading new patient: ${x.name}');
-          } else {
-            logger.info('Uploading changed to patient: ${x.name}');
-          }
-          var toApiMap = x.toApiMap;
-          return toApiMap;
-        }).toList(),
-        'delete': (deleted ?? []),
-      },
+      data: payload,
     );
     stopWatch.stop();
-    return PostPatientChangesResponse.fromMap(response.data);
+    Map<String, dynamic> data = response.data;
+    logger.info('Post changes response: ${data.prettyJSON}');
+    return PostPatientChangesResponse.fromMap(data);
   }
 
   Future<void> updatePicture({
