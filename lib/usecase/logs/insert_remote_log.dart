@@ -25,7 +25,7 @@ Future<void> insertRemoteLog({
         'context': context,
         'message': message,
         'level': level,
-        'stack': stack,
+        if (stack != null) ...{'stack': stack},
         'pcName': SysInfo.userName,
         'extras': {
           'cpus': Platform.numberOfProcessors,
