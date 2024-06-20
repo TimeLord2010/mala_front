@@ -13,9 +13,11 @@ Future<void> signout() async {
   // } else {
   // }
   await updateLastSync(DateTime(2020));
+  logger.debug('Insering remote log "signed out"');
   unawaited(insertRemoteLog(
     message: 'Signing out',
     context: 'Sign out',
   ));
+  logger.debug('Removing jwt');
   await updateJwt(null);
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -58,7 +59,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
   void initState() {
     logger.info('Init state profile picture');
     super.initState();
-    task();
+    unawaited(task());
   }
 
   Future<void> task() async {
@@ -107,10 +108,10 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
       var cameraId = cameraController.camera_id;
       if (cameraId != 0) {
         logger.info('Disposing of camereId $cameraId');
-        cameraController.camera_windows.dispose(cameraId);
+        unawaited(cameraController.camera_windows.dispose(cameraId));
       }
     }
-    cameraController.dispose();
+    unawaited(cameraController.dispose());
     super.dispose();
   }
 

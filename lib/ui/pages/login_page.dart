@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var authed = isAuthenticated();
       if (authed) {
-        unawaited(context.navigator.pushMaterial(const MainPage()));
+        unawaited(context.navigator.pushMaterial(MainPage.create()));
       }
     });
   }
@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                         onLogin: (email, password) async {
                           logger.info('Login');
                           await loginUser(email, password);
-                          await context.navigator.pushMaterial(const MainPage());
+                          await context.navigator.pushMaterial(MainPage.create());
                         },
                       ),
                     ),
