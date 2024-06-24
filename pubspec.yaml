@@ -25,6 +25,7 @@ dependencies:
   image_compression_flutter: ^1.0.4
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  mask: ^1.0.5
   mask_text_input_formatter: ^2.8.0
   package_info_plus: ^4.2.0
   path_provider: ^2.1.0

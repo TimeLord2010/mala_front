@@ -76,8 +76,7 @@ class _PatientTileState extends State<PatientTile> {
         return;
       }
 
-      debugPrint(
-          'Loading picture from api. Has picture: ${patient.hasPicture}');
+      debugPrint('Loading picture from api. Has picture: ${patient.hasPicture}');
 
       var rep = PatientApiRepository();
       var remoteId = patient.remoteId;

@@ -653,6 +653,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  mask:
+    dependency: "direct main"
+    description:
+      name: mask
+      sha256: "27c1d4e8b463775b877e404f43c7ddd2e8b83af94dbfb314d9db4271db25135e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   mask_text_input_formatter:
     dependency: "direct main"
     description:

@@ -27,7 +27,7 @@ class SettingsPane extends StatelessWidget {
           Positioned.fill(
             child: Container(
               margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
+              padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: const Color.fromARGB(255, 157, 157, 157),
@@ -54,7 +54,7 @@ class SettingsPane extends StatelessWidget {
     );
   }
 
-  Row _tagsFields() {
+  Widget _tagsFields() {
     return const Row(
       children: [
         Expanded(
