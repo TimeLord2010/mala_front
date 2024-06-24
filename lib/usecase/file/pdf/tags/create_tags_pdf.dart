@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/address.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/get_tag_height.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/get_tag_width.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/dimensions/get_tag_height.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/dimensions/get_tag_width.dart';
 import 'package:mala_front/usecase/number/rount_to_threshold.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';

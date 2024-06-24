@@ -1,10 +1,9 @@
 import 'package:mala_front/factories/local_store_repository.dart';
 import 'package:mala_front/models/index.dart';
 
-double getTagHeight() {
+double getTagValue(LocalKeys key, double defaultValue) {
   var rep = createLocalStoreRepository();
-  var value = rep.getDouble(LocalKeys.pdfTagHeight);
+  var value = rep.getDouble(key);
 
-  const double defaultValue = 73.95848;
   return value ?? defaultValue;
 }

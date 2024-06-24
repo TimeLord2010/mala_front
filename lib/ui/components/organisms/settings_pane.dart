@@ -1,7 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:mala_front/ui/components/index.dart';
 import 'package:mala_front/ui/components/molecules/settings_pane/tag/tag_dimensions.dart';
+import 'package:mala_front/ui/components/molecules/settings_pane/tag/tag_margins.dart';
+import 'package:mala_front/ui/components/molecules/settings_pane/tag/tag_spacings.dart';
 
 class SettingsPane extends StatelessWidget {
   const SettingsPane({super.key});
@@ -54,44 +55,18 @@ class SettingsPane extends StatelessWidget {
   }
 
   Row _tagsFields() {
-    return Row(
+    return const Row(
       children: [
-        const Expanded(
+        Expanded(
           child: TagDimensions(),
         ),
-        const material.VerticalDivider(),
+        material.VerticalDivider(),
         Expanded(
-          child: Column(
-            children: [
-              const Text(
-                'Espaçamentos',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              LabeledTextBox(label: 'Horizontal'),
-              const SizedBox(height: 8),
-              LabeledTextBox(label: 'Vertical'),
-            ],
-          ),
+          child: TagSpacings(),
         ),
-        const material.VerticalDivider(),
+        material.VerticalDivider(),
         Expanded(
-          child: Column(
-            children: [
-              const Text(
-                'Margens da página',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              LabeledTextBox(label: 'Horizontal'),
-              const SizedBox(height: 8),
-              LabeledTextBox(label: 'Vertical'),
-            ],
-          ),
+          child: TagMargins(),
         ),
       ],
     );

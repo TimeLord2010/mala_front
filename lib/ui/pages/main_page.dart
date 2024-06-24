@@ -99,7 +99,7 @@ class MainPage extends StatelessWidget {
           PaneItem(
             icon: const Icon(FluentIcons.settings),
             title: const Text('Configurações'),
-            body: SettingsPane(),
+            body: const SettingsPane(),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.info),

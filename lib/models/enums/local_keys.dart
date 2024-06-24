@@ -4,7 +4,11 @@ enum LocalKeys {
   pendingPatientsDeletion,
   pdfTagHeight,
   pdfTagWidth,
-  pendingPatientsUpdate;
+  pendingPatientsUpdate,
+  pdfTagHorizontalSpacing,
+  pdfTagVerticalSpacing,
+  pdfTagHorizontalMargin,
+  pdfTagVerticalMargin;
 
   @override
   String toString() {
