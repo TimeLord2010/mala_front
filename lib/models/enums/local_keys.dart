@@ -2,6 +2,8 @@ enum LocalKeys {
   jwt,
   lastSync,
   pendingPatientsDeletion,
+  pdfTagHeight,
+  pdfTagWidth,
   pendingPatientsUpdate;
 
   @override

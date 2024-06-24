@@ -15,10 +15,20 @@ Future<void> insertRemoteLog({
   String level = 'info',
 }) async {
   try {
+    int getVirtualMemorySize() {
+      try {
+        return SysInfo.getVirtualMemorySize();
+      } catch (_) {
+        return -1;
+      }
+    }
+
     var freeVMem = SysInfo.getFreeVirtualMemory();
     var totalVMem = SysInfo.getTotalVirtualMemory();
     var freePMemory = SysInfo.getFreePhysicalMemory();
     var totalPMemory = SysInfo.getTotalPhysicalMemory();
+
+    var virtualMemorySize = getVirtualMemorySize();
     await dio.post(
       '/log',
       data: {
@@ -33,14 +43,15 @@ Future<void> insertRemoteLog({
           'ram': {
             'virtual': _usage(freeVMem, totalVMem),
             'physical': _usage(freePMemory, totalPMemory),
-            'v_used': SysInfo.getVirtualMemorySize(),
+            'v_used': virtualMemorySize,
           },
           if (extras != null) ...extras,
         },
       },
     );
   } catch (e) {
-    logger.error(getErrorMessage(e) ?? 'Falha ao enviar logs');
+    var msg = getErrorMessage(e) ?? 'Falha ao enviar logs';
+    logger.error('(insertRemoteLog) $msg');
   }
 }
 
