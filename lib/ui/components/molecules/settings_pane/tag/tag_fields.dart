@@ -5,7 +5,7 @@ import 'package:mala_front/repositories/extensions/text_input_formatter.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
 import 'package:mask/mask.dart';
 
-const int _multiplier = 10000;
+const int _multiplier = 100;
 
 class TagFields extends StatefulWidget {
   const TagFields({
@@ -36,7 +36,7 @@ class _TagDimensionsState extends State<TagFields> {
   final _bottomController = TextEditingController();
 
   final _generic = Mask.generic(
-    masks: ['###', '# ###', '## ###', '### ###', '# ### ###'],
+    masks: ['### ### ###'],
   );
 
   @override

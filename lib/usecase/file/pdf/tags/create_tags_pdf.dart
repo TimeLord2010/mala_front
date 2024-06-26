@@ -3,6 +3,12 @@ import 'package:mala_front/factories/logger.dart';
 import 'package:mala_front/models/address.dart';
 import 'package:mala_front/usecase/local_store/pdf/tag/dimensions/get_tag_height.dart';
 import 'package:mala_front/usecase/local_store/pdf/tag/dimensions/get_tag_width.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/margins/bottom/get_tag_bottom_margin.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/margins/left/get_tag_left_margin.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/margins/right/get_tag_right_margin.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/margins/top/get_tag_top_margin.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/spacings/get_tag_horizontal_spacing.dart';
+import 'package:mala_front/usecase/local_store/pdf/tag/spacings/get_tag_vertical_spacing.dart';
 import 'package:mala_front/usecase/number/rount_to_threshold.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
@@ -15,43 +21,68 @@ const double _cm = PdfPageFormat.cm;
 const double _totalWidth = 21.0 * _cm;
 double _totalHeight = roundToThreshold(29.7 * _cm);
 
-const double _horizontalMargin = 0.47 * _cm;
-double _verticalMargin = roundToThreshold(0.5 * _cm); // Original was 0.88
+// const double _horizontalMargin = 0.47 * _cm;
+// double _verticalMargin = roundToThreshold(0.5 * _cm); // Original was 0.88
 
-const double _contentWidth = _totalWidth - (2 * _horizontalMargin);
+//const double _contentWidth = _totalWidth - (2 * _horizontalMargin);
 // Fixing rounding point precision error that interferes with the tags
 // per column calculation
-double _contentHeight = roundToThreshold(_totalHeight - (2 * _verticalMargin));
+//double _contentHeight = roundToThreshold(_totalHeight - (2 * _verticalMargin));
 
-const double _tagHorizontalSpacing = 0.25 * _cm;
-const double _tagVerticalSpacing = 0 * _cm;
+// const double _tagHorizontalSpacing = 0.25 * _cm;
+// const double _tagVerticalSpacing = 0 * _cm;
 
 // const double _tagWidth = (_contentWidth - _tagHorizontalSpacing) / 2;
 // double _tagHeight = (_contentHeight - (_tagVerticalSpacing * 10)) / 11;
 
 class _Configuration {
-  double tagWidth;
-  double tagHeight;
+  double width;
+  double height;
+
+  double horizontalSpacing;
+  double verticalSpacing;
+
+  EdgeInsets margin;
 
   _Configuration({
-    required this.tagHeight,
-    required this.tagWidth,
+    required this.height,
+    required this.width,
+    required this.horizontalSpacing,
+    required this.verticalSpacing,
+    required this.margin,
   });
+
+  double get horizontalMargin => margin.left + margin.right;
+
+  double get verticalMargin => margin.top + margin.bottom;
+
+  double get contentWidth => _totalWidth - horizontalMargin;
+
+  double get contentHeight {
+    return roundToThreshold(_totalHeight - verticalMargin);
+  }
 }
 
 Future<Uint8List> createTagsPdf({
   required Iterable<PatientTag> tags,
 }) async {
   var configuration = _Configuration(
-    tagHeight: getTagHeight(),
-    tagWidth: getTagWidth(),
+    height: getTagHeight(),
+    width: getTagWidth(),
+    horizontalSpacing: getTagHorizontalSpacing(),
+    verticalSpacing: getTagVerticalSpacing(),
+    margin: EdgeInsets.only(
+      left: getTagLeftMargin(),
+      bottom: getTagBottomMargin(),
+      right: getTagRightMargin(),
+      top: getTagTopMargin(),
+    ),
   );
-  logger.info('Horinzontal margin: $_horizontalMargin');
-  logger.info('Vertical margin: $_verticalMargin');
-  logger.info('Tag width: ${configuration.tagWidth}');
-  logger.info('Tag height: ${configuration.tagHeight}');
-  logger.info('Tag horizontal spacing: $_tagHorizontalSpacing');
-  logger.info('Tag vertical spacing: $_tagVerticalSpacing');
+  logger.info('Horizontal margin: ${configuration.margin.toString()}');
+  logger.info('Tag width: ${configuration.width}');
+  logger.info('Tag height: ${configuration.height}');
+  logger.info('Tag horizontal spacing: ${configuration.horizontalSpacing}');
+  logger.info('Tag vertical spacing: ${configuration.verticalSpacing}');
   var doc = Document();
   var tagsPerLine = _getTagsPerLine(configuration);
   logger.info('Tags per line: $tagsPerLine');
@@ -83,15 +114,11 @@ Page _createPage({
     pageFormat: PdfPageFormat(
       _totalWidth,
       _totalHeight,
-      marginBottom: _verticalMargin,
-      marginLeft: _horizontalMargin,
-      marginRight: _horizontalMargin,
-      marginTop: _verticalMargin,
+      marginTop: config.margin.top,
+      marginBottom: config.margin.bottom,
+      marginLeft: config.margin.left,
+      marginRight: config.margin.right,
     ),
-    // margin: const EdgeInsets.symmetric(
-    //   vertical: _verticalMargin,
-    //   horizontal: _horizontalMargin,
-    // ),
     build: (context) {
       var rows = <Row>[];
       for (var rowIndex = 0; rowIndex < tagsPerColumn; rowIndex++) {
@@ -113,19 +140,17 @@ Page _createPage({
 Container _createTag(PatientTag tag, _Configuration config) {
   var address = tag.address ?? Address();
   return Container(
-    width: config.tagWidth,
-    height: config.tagHeight,
+    width: config.width,
+    height: config.height,
     // color: PdfColor.fromHex('#FFAAAA'),
     // padding: const EdgeInsets.all(10),
     padding: const EdgeInsets.only(
       left: 0.6 * _cm,
       top: 0.4 * _cm,
-      //top: 0.6 * _cm,
     ),
-    margin: const EdgeInsets.only(
-      right: _tagHorizontalSpacing,
-      //bottom: 0.02 * _cm,
-      bottom: _tagVerticalSpacing,
+    margin: EdgeInsets.only(
+      right: config.horizontalSpacing,
+      bottom: config.verticalSpacing,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,24 +206,19 @@ String _zipCityState(Address address) {
   return "$zip / $cityState";
 }
 
-int _getTagsPerLine(
-  _Configuration config, [
-  double availableWidth = _contentWidth,
-]) {
-  var tagWidth = config.tagWidth;
+int _getTagsPerLine(_Configuration config, [double? availableWidth]) {
+  var tagWidth = config.width;
+  availableWidth ??= config.contentWidth;
   if (availableWidth < tagWidth) return 0;
-  var takenWidth = tagWidth + _tagHorizontalSpacing;
+  var takenWidth = tagWidth + config.horizontalSpacing;
   return 1 + _getTagsPerLine(config, availableWidth - takenWidth);
 }
 
-int _getTagsPerColumn(
-  _Configuration config, [
-  double? availableHeight,
-]) {
-  var tagHeight = config.tagHeight;
-  availableHeight ??= _contentHeight;
+int _getTagsPerColumn(_Configuration config, [double? availableHeight]) {
+  var tagHeight = config.height;
+  availableHeight ??= config.contentHeight;
   debugPrint('AvailableHeight: $availableHeight');
   if (availableHeight < tagHeight) return 0;
-  var takenHeight = tagHeight + _tagVerticalSpacing;
+  var takenHeight = tagHeight + config.verticalSpacing;
   return 1 + _getTagsPerColumn(config, availableHeight - takenHeight);
 }

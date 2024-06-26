@@ -66,6 +66,7 @@ class SettingsPane extends StatelessWidget {
         ),
         material.VerticalDivider(),
         Expanded(
+          flex: 2,
           child: TagMargins(),
         ),
       ],
