@@ -50,7 +50,13 @@ class _Configuration {
     required this.horizontalSpacing,
     required this.verticalSpacing,
     required this.margin,
-  });
+  }) {
+    logger.info('Horizontal margin: ${margin.toString()}');
+    logger.info('Tag width: $width');
+    logger.info('Tag height: $height');
+    logger.info('Tag horizontal spacing: $horizontalSpacing');
+    logger.info('Tag vertical spacing: $verticalSpacing');
+  }
 
   double get horizontalMargin => margin.left + margin.right;
 
@@ -78,18 +84,24 @@ Future<Uint8List> createTagsPdf({
       top: getTagTopMargin(),
     ),
   );
-  logger.info('Horizontal margin: ${configuration.margin.toString()}');
-  logger.info('Tag width: ${configuration.width}');
-  logger.info('Tag height: ${configuration.height}');
-  logger.info('Tag horizontal spacing: ${configuration.horizontalSpacing}');
-  logger.info('Tag vertical spacing: ${configuration.verticalSpacing}');
-  var doc = Document();
+
   var tagsPerLine = _getTagsPerLine(configuration);
-  logger.info('Tags per line: $tagsPerLine');
+  if (tagsPerLine != 2) {
+    logger.warn('Tags per line: $tagsPerLine');
+  } else {
+    logger.info('Tags per line: $tagsPerLine');
+  }
   var tagsPerColumn = _getTagsPerColumn(configuration);
-  logger.info('Tags per column: $tagsPerColumn');
+  if (tagsPerColumn != 11) {
+    logger.warn('Tags per column: $tagsPerColumn');
+  } else {
+    logger.info('Tags per column: $tagsPerColumn');
+  }
+
   var tagsPerPage = tagsPerColumn * tagsPerLine;
   logger.info('Tags per page: $tagsPerPage');
+
+  var doc = Document();
   var chuncks = tags.chunck(tagsPerPage);
   for (var chunck in chuncks) {
     var page = _createPage(
@@ -123,11 +135,18 @@ Page _createPage({
       var rows = <Row>[];
       for (var rowIndex = 0; rowIndex < tagsPerColumn; rowIndex++) {
         if (tags.isEmpty) break;
+
+        // Popping required row tags
         var tagsInRow = tags.take(tagsPerLine);
-        rows.add(Row(
-          children: tagsInRow.map((x) => _createTag(x, config)).toList(),
-        ));
         tags = tags.skip(tagsPerLine);
+
+        var isLastRow = rowIndex == tagsPerColumn - 1;
+
+        rows.add(Row(
+          children: tagsInRow.map((x) {
+            return _createTag(x, config, isLastRow);
+          }).toList(),
+        ));
       }
       return Column(
         children: rows,
@@ -137,7 +156,7 @@ Page _createPage({
   return page;
 }
 
-Container _createTag(PatientTag tag, _Configuration config) {
+Container _createTag(PatientTag tag, _Configuration config, bool isLastRow) {
   var address = tag.address ?? Address();
   return Container(
     width: config.width,
@@ -150,7 +169,7 @@ Container _createTag(PatientTag tag, _Configuration config) {
     ),
     margin: EdgeInsets.only(
       right: config.horizontalSpacing,
-      bottom: config.verticalSpacing,
+      bottom: isLastRow ? 0 : config.verticalSpacing,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
