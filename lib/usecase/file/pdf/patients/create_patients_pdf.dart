@@ -9,7 +9,6 @@ import '../../../../models/patient.dart';
 const double _cm = PdfPageFormat.cm;
 
 const double _totalWidth = 21.0 * _cm;
-// const double _totalHeight = 29.7 * _cm;
 
 const double _margin = _cm * 0.5;
 
@@ -81,13 +80,10 @@ Widget _createFields(Patient patient) {
       ),
       _createRow(
         children: [
-          // _createField(
-          //   title: 'CPF',
-          //   value: patient.cpf,
-          // ),
           _createField(
             title: 'Telefones',
             value: patient.phones?.join(', '),
+            valueMaxLines: 2,
           ),
           _createField(
             title: 'CEP',
@@ -98,26 +94,7 @@ Widget _createFields(Patient patient) {
             value: address?.district,
           ),
         ],
-        //getFlex: (index) => index == 0 ? 1 : 2,
       ),
-      // _createRow(
-      //   children: [
-      //     _createField(
-      //       title: 'CEP',
-      //       value: address?.zipCode,
-      //     ),
-      //     Spacer(),
-      //     // _createField(
-      //     //   title: 'Estado',
-      //     //   value: address?.state,
-      //     // ),
-      //     Spacer(),
-      //     // _createField(
-      //     //   title: 'Cidade',
-      //     //   value: address?.city,
-      //     // ),
-      //   ],
-      // ),
       _createRow(
         children: [
           _createField(

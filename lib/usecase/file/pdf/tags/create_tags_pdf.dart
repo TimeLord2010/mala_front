@@ -162,7 +162,6 @@ Container _createTag(PatientTag tag, _Configuration config, bool isLastRow) {
     width: config.width,
     height: config.height,
     // color: PdfColor.fromHex('#FFAAAA'),
-    // padding: const EdgeInsets.all(10),
     padding: const EdgeInsets.only(
       left: 0.6 * _cm,
       top: 0.4 * _cm,
