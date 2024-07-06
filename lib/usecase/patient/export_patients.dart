@@ -80,7 +80,7 @@ Future<void> exportPatients({
       );
     },
   );
-  encoder.close();
+  await encoder.close();
   await dir.delete(
     recursive: true,
   );

@@ -7,7 +7,8 @@ enum Activities {
   massageTherapy,
   doctor,
   health,
-  others;
+  others,
+  qualivida;
 
   @override
   String toString() {
@@ -30,6 +31,8 @@ enum Activities {
         return 'Saúde';
       case Activities.others:
         return 'Outros';
+      case Activities.qualivida:
+        return 'Qualivida';
     }
   }
 }
