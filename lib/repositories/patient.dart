@@ -47,6 +47,7 @@ class PatientRepository {
     return query.findAll();
   }
 
+  /// Fetches the patients who do not have the "remoteId" field set.
   Future<List<Patient>> findLocalPatients({
     required int skip,
     required int limit,

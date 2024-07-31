@@ -26,13 +26,13 @@ Future<void> postPatientsChanges({
   );
   if (changed == null) return;
   var insertedIds = response.changed?.inserted ?? [];
-  var newPatients = changed.where((x) => x.remoteId == null);
+  List<Patient> newPatients = changed.where((x) => x.remoteId == null).toList();
   if (insertedIds.length != newPatients.length) {
     throw Exception('Api did respond with right number of inserted ids');
   }
   for (var i = 0; i < insertedIds.length; i++) {
     var remoteId = insertedIds[i];
-    var patient = newPatients.elementAt(i);
+    var patient = newPatients[i];
     await assignRemoteIdToPatient(patient, remoteId);
     await updateRemotePatientPicture(patient);
   }

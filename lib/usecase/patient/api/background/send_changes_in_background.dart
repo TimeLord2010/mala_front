@@ -20,6 +20,7 @@ Future<void> sendChangesInBackground(
     );
   } catch (e) {
     stopWatch.lap(tag: 'Error');
+    rethrow;
   } finally {
     stopWatch.stop();
   }

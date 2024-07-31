@@ -11,7 +11,10 @@ String? getErrorMessage(Object obj) {
       var data = response.data;
       if (data is Map<String, dynamic>) {
         var msg = _getMessageFromMap(data);
-        if (msg != null) return msg;
+        if (msg != null) {
+          msg = msg.trim();
+          return msg;
+        }
         return data.prettyJSON;
       }
       if (data is String) {
