@@ -12,7 +12,9 @@ Future<void> signout() async {
   //   //await deleteUserFiles();
   // } else {
   // }
-  await updateLastSync(DateTime(2020));
+  try {
+    await updateLastSync(DateTime(2020));
+  } on Exception catch (_) {}
   logger.debug('Insering remote log "signed out"');
   unawaited(insertRemoteLog(
     message: 'Signing out',
