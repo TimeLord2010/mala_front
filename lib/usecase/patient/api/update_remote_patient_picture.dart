@@ -1,9 +1,13 @@
+import 'package:mala_front/data/features.dart';
 import 'package:mala_front/models/patient.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 
 import '../profile_picture/get_picture_file.dart';
 
 Future<void> updateRemotePatientPicture(Patient patient) async {
+  if (!Features.imageSuport) {
+    return;
+  }
   var api = PatientApiRepository();
   var remoteId = patient.remoteId;
   if (remoteId == null) {

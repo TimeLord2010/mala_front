@@ -34,7 +34,9 @@ Future<void> postPatientsChanges({
     var remoteId = insertedIds[i];
     var patient = newPatients[i];
     await assignRemoteIdToPatient(patient, remoteId);
-    await updateRemotePatientPicture(patient);
+    if (patient.hasPicture == true) {
+     await updateRemotePatientPicture(patient); 
+    }
   }
   var oldPatients = changed.where((x) => x.remoteId != null);
   for (var patient in oldPatients) {
