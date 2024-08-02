@@ -1,4 +1,4 @@
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/entities/patient.dart';
 
 import '../upsert_patient.dart';
 

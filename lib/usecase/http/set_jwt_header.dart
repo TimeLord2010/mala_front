@@ -1,5 +1,5 @@
-import 'package:mala_front/factories/http_client.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/http_client.dart';
+import 'package:mala_front/data/factories/logger.dart';
 
 void setJwtHeader(String? jwt) {
   var headers = dio.options.headers;

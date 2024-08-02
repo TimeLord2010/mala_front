@@ -1,5 +1,5 @@
-import 'package:mala_front/models/address.dart';
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/entities/address.dart';
+import 'package:mala_front/data/entities/patient.dart';
 
 class PatientTag {
   String name;

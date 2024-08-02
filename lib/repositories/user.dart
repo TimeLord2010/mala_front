@@ -1,8 +1,8 @@
-import 'package:mala_front/factories/http_client.dart';
-import 'package:mala_front/models/api_responses/login_response.dart';
+import 'package:mala_front/data/api_responses/login_response.dart';
+import 'package:mala_front/data/factories/http_client.dart';
 import 'package:vit_logger/vit_logger.dart';
 
-import '../models/user.dart';
+import '../data/entities/user.dart';
 
 class UserRepository {
   Future<LoginResponse> login(String email, String password) async {

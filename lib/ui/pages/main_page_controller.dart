@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/create_patient_repository.dart';
+import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_front/protocols/update_patients_from_server.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/error/is_no_internet_error.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
 import 'package:mala_front/usecase/patient/api/send_local_patients_to_server.dart';
-import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
 import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 
@@ -75,6 +76,10 @@ class MainPageController extends ChangeNotifier {
         await sendFailedBackgroundOperations();
         logger.info('Sent failed background operations');
         loadingDescription = 'Enviando pacientes criados enquanto offline';
+        var rep = createPatientRepository();
+        if (rep is) {
+
+        }
         await sendLocalPatientsToServer(
           context: context,
         );

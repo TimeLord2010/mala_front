@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:mala_front/factories/database_client.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/create_database_client.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/file/get_database_directory.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions_io.dart';

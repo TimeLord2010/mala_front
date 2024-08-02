@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/patient/profile_picture/get_picture_file.dart';
 
 Future<void> saveOrRemoveProfilePicture({

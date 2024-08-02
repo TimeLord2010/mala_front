@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/address.dart';
+import 'package:mala_front/data/entities/address.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/local_store/pdf/tag/dimensions/get_tag_height.dart';
 import 'package:mala_front/usecase/local_store/pdf/tag/dimensions/get_tag_width.dart';
 import 'package:mala_front/usecase/local_store/pdf/tag/margins/bottom/get_tag_bottom_margin.dart';
@@ -14,7 +14,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
-import '../../../../models/patient_tag.dart';
+import '../../../../data/entities/patient_tag.dart';
 
 const double _cm = PdfPageFormat.cm;
 

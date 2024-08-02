@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/models/patient_query.dart';
+import 'package:mala_front/data/entities/patient_query.dart';
 
 import '../../components/molecules/export_patients_pane.dart';
 

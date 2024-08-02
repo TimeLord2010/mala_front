@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mala_front/factories/http_client.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/http_client.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerProvider {

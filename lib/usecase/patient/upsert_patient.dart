@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
-import 'package:mala_front/factories/patient_repository.dart';
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/factories/create_patient_repository.dart';
 import 'package:mala_front/ui/protocols/modal/run_monitored_function.dart';
 import 'package:mala_front/usecase/patient/api/background/send_changes_in_background.dart';
 import 'package:mala_front/usecase/patient/profile_picture/save_or_remove_profile_picture.dart';

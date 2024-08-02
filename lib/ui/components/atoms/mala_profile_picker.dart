@@ -1,7 +1,7 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/ui/components/molecules/profile_picture_taker.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 

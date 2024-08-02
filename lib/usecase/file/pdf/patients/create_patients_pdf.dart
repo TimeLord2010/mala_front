@@ -4,7 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
-import '../../../../models/patient.dart';
+import '../../../../data/entities/patient.dart';
 
 const double _cm = PdfPageFormat.cm;
 

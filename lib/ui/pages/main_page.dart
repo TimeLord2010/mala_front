@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/protocols/sign_out.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';

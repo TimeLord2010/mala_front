@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:camera/camera.dart' as camera_package;
 import 'package:camera_universal/camera_universal.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/enums/camera_exception_reason.dart';
-import 'package:mala_front/models/errors/failed_to_change_camera.dart';
+import 'package:mala_front/data/enums/camera_exception_reason.dart';
+import 'package:mala_front/data/errors/failed_to_change_camera.dart';
+import 'package:mala_front/data/factories/logger.dart';
 
 Future<int?> changeCamera({
   required CameraController controller,

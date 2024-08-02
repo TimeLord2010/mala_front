@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/enums/local_keys.dart';
+import 'package:mala_front/data/enums/local_keys.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/http/set_jwt_header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

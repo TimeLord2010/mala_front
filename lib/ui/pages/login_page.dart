@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/ui/components/molecules/login_fields.dart';
 import 'package:mala_front/ui/pages/main_page.dart';
 import 'package:mala_front/usecase/user/is_authenticated.dart';

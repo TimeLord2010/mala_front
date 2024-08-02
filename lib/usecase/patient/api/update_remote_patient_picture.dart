@@ -1,5 +1,5 @@
-import 'package:mala_front/data/features.dart';
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/models/features.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 
 import '../profile_picture/get_picture_file.dart';

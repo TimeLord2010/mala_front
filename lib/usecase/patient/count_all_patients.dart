@@ -1,4 +1,4 @@
-import 'package:mala_front/factories/patient_repository.dart';
+import 'package:mala_front/data/factories/create_patient_repository.dart';
 
 /// Calculates the number os patients in the local storage.
 Future<int> countAllPatients() async {

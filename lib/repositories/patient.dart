@@ -1,17 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
-import 'package:mala_front/models/address.dart';
-import 'package:mala_front/models/patient.dart';
-import 'package:mala_front/models/patient_query.dart';
+import 'package:mala_front/data/entities/address.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/entities/patient_query.dart';
+import 'package:mala_front/data/interfaces/patient_interface.dart';
 import 'package:vit_logger/vit_logger.dart';
 
-class PatientRepository {
-  final Isar isar;
-
-  PatientRepository({
-    required this.isar,
-  });
-
+@Deprecated('Use LocalPatientRepository')
+class PatientRepository extends PatientInterface {
+  @override
   Future<List<Patient>> list(
     PatientQuery query, {
     int? skip,
@@ -47,24 +44,13 @@ class PatientRepository {
     return query.findAll();
   }
 
-  /// Fetches the patients who do not have the "remoteId" field set.
-  Future<List<Patient>> findLocalPatients({
-    required int skip,
-    required int limit,
-  }) {
-    var stopWatch = VitStopWatch('findLocalPatients');
-    var where = isar.patients.where();
-    var patients = where.remoteIdIsNull().offset(skip).limit(limit).findAll();
-    stopWatch.stop();
-    return patients;
-  }
-
   Future<int?> findIdByRemoteId(String remoteId) async {
     var where = isar.patients.where();
     var id = await where.remoteIdEqualTo(remoteId).idProperty().findFirst();
     return id;
   }
 
+  @override
   Future<int> count([PatientQuery? query]) async {
     if (query == null) {
       return isar.patients.count();
@@ -96,9 +82,21 @@ class PatientRepository {
     return patient;
   }
 
-  Future<void> delete(int patientId) async {
+  @override
+  Future<void> delete(dynamic id) async {
+    if (id is String) {
+      id = int.tryParse(id);
+    }
+    if (id is! int) {
+      throw ArgumentError('Patient id needs to be a int.');
+    }
     await isar.writeTxn(() async {
-      await isar.patients.delete(patientId);
+      await isar.patients.delete(id);
     });
+  }
+
+  @override
+  Future<Patient> upsert(Patient patient) {
+    return insert(patient);
   }
 }

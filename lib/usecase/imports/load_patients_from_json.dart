@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../models/patient.dart';
+import '../../data/entities/patient.dart';
 
 Future<List<Patient>> loadPatientsFromJson({
   required String filename,

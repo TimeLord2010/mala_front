@@ -1,6 +1,6 @@
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/material.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 
 import '../../../protocols/camera/change_camera.dart';
 

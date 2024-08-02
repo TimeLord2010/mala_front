@@ -1,5 +1,5 @@
-import 'package:mala_front/factories/local_store_repository.dart';
-import 'package:mala_front/models/index.dart';
+import 'package:mala_front/data/entities/index.dart';
+import 'package:mala_front/data/factories/local_store_repository.dart';
 
 double getTagValue(LocalKeys key, double defaultValue) {
   var rep = createLocalStoreRepository();

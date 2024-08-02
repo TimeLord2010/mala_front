@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:mala_front/usecase/file/pdf/patients/create_patients_pdf.dart';
 
-import '../../../../models/patient.dart';
+import '../../../../data/entities/patient.dart';
 import '../../pick_directory.dart';
 
 Future<void> savePatientsPdf({

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/enums/local_keys.dart';
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/enums/local_keys.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
 import 'package:mala_front/usecase/patient/find_patient_by_id.dart';

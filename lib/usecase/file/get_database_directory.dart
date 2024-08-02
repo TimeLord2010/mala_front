@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<Directory> getDatabaseDirectory() async {

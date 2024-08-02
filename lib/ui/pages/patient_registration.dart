@@ -2,7 +2,7 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/models/index.dart';
+import 'package:mala_front/data/entities/index.dart';
 import 'package:mala_front/ui/components/index.dart';
 import 'package:mala_front/usecase/index.dart';
 

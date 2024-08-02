@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 

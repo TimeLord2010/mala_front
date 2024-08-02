@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/factories/logger.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/ui/components/index.dart';
 import 'package:mala_front/ui/protocols/modal/show_modal.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';

@@ -1,6 +1,6 @@
-import 'package:mala_front/factories/patient_repository.dart';
-import 'package:mala_front/models/patient.dart';
-import 'package:mala_front/models/patient_query.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/entities/patient_query.dart';
+import 'package:mala_front/data/factories/create_patient_repository.dart';
 
 Future<List<Patient>> listPatients({
   required PatientQuery patientQuery,

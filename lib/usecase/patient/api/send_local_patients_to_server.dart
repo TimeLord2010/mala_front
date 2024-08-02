@@ -1,29 +1,31 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:mala_front/factories/patient_repository.dart';
-import 'package:mala_front/usecase/logs/insert_remote_log.dart';
-import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
+import 'package:mala_front/data/interfaces/patient_interface.dart';
+import 'package:mala_front/repositories/hybrid_patient_repository.dart';
+import 'package:mala_front/ui/components/index.dart';
+import 'package:mala_front/ui/protocols/modal/show_modal.dart';
+import 'package:mala_front/usecase/error/get_error_message.dart';
 
+///
 Future<void> sendLocalPatientsToServer({
+  required PatientInterface rep,
   BuildContext? context,
 }) async {
-  var patientsRep = await createPatientRepository();
-  var limit = 100;
-  while (true) {
-    var patients = await patientsRep.findLocalPatients(skip: 0, limit: limit);
-    if (patients.isEmpty) break;
-    await postPatientsChanges(
-      changed: patients,
-      updateFromServer: false,
-      modalContext: context,
-    );
-    unawaited(insertRemoteLog(
-      message: 'Sending ${patients.length} local patients',
-      context: 'Send local patients to server',
-      extras: {
-        'creationDates': patients.map((x) => x.createdAt).toList(),
-      },
-    ));
+  if (rep is HybridPatientRepository) {
+    try {
+      await rep.sendAllToApi();
+    } on Exception catch (e) {
+      var msg = getErrorMessage(e) ?? 'Falha na sincronização';
+      if (context != null) {
+        await showModal(
+          context: context,
+          title: 'Falha no envio de patientes locais para a API',
+          contentBuilder: (context) {
+            return MalaText(msg);
+          },
+        );
+      }
+    }
   }
 }

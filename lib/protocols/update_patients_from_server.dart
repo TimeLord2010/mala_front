@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
+import 'package:mala_front/data/api_responses/get_patient_changes_response.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/repositories/stop_watch_events.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
@@ -14,8 +14,8 @@ import 'package:mala_front/usecase/patient/find_patient_by_remote_id.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 
-import '../../local_store/get_local_last_sync.dart';
-import '../../number/average.dart';
+import '../usecase/local_store/get_local_last_sync.dart';
+import '../usecase/number/average.dart';
 
 Future<void> updatePatientsFromServer({
   BuildContext? context,

@@ -1,4 +1,4 @@
-import 'package:mala_front/models/enums/local_keys.dart';
+import 'package:mala_front/data/enums/local_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStoreRepository {

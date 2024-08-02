@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:mala_front/models/user.dart';
+import 'package:mala_front/data/entities/user.dart';
 import 'package:mala_front/repositories/user.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/user/update_jwt.dart';

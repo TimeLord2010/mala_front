@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/address.dart';
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/entities/address.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/file/get_database_directory.dart';
 
 Isar? _isar;

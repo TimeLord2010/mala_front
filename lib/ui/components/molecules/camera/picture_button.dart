@@ -1,8 +1,8 @@
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/enums/camera_exception_reason.dart';
-import 'package:mala_front/models/errors/failed_to_take_picture.dart';
+import 'package:mala_front/data/enums/camera_exception_reason.dart';
+import 'package:mala_front/data/errors/failed_to_take_picture.dart';
+import 'package:mala_front/data/factories/logger.dart';
 
 import '../../../theme/colors.dart';
 

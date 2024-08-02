@@ -1,4 +1,4 @@
-import '../user.dart';
+import '../entities/user.dart';
 
 class LoginResponse {
   final User user;

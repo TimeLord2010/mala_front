@@ -1,6 +1,6 @@
-import 'package:mala_front/factories/local_store_repository.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/index.dart';
+import 'package:mala_front/data/entities/index.dart';
+import 'package:mala_front/data/factories/local_store_repository.dart';
+import 'package:mala_front/data/factories/logger.dart';
 
 /// Generic tag value setter.
 Future<void> setTagValue({

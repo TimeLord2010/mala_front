@@ -1,6 +1,6 @@
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
-import '../patient.dart';
+import '../entities/patient.dart';
 
 class GetPatientChangesResponse {
   List<Patient> changed;

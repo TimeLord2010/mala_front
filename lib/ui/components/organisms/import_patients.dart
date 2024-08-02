@@ -3,7 +3,7 @@ import 'package:mala_front/ui/components/atoms/file_system_picker.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/usecase/imports/import_patients.dart';
 
-import '../../../models/patient.dart';
+import '../../../data/entities/patient.dart';
 
 class ImportPatients extends StatefulWidget {
   const ImportPatients({super.key});

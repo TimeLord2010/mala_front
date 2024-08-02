@@ -1,5 +1,5 @@
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
+import 'package:mala_front/data/errors/failed_to_refresh_jwt.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/repositories/user.dart';
 import 'package:mala_front/usecase/local_store/get_local_jwt.dart';
 import 'package:mala_front/usecase/user/update_jwt.dart';

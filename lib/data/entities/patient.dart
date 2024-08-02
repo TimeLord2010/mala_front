@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:mala_front/models/address.dart';
+import 'package:mala_front/data/entities/address.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 part 'patient.g.dart';

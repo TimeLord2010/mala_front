@@ -1,7 +1,7 @@
-import 'package:mala_front/factories/create_api_synchonizer.dart';
+import 'package:mala_front/data/factories/create_api_synchonizer.dart';
 import 'package:vit_logger/vit_logger.dart';
 
-import '../../../../models/patient.dart';
+import '../../../../data/entities/patient.dart';
 
 /// Sends api call to send update or insert of new patient.
 ///

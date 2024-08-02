@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:mala_front/protocols/update_patients_from_server.dart';
 import 'package:mala_front/repositories/patient_api.dart';
 import 'package:mala_front/usecase/patient/api/assign_remote_id_to_patient.dart';
-import 'package:mala_front/usecase/patient/api/update_patients_from_server.dart';
 import 'package:mala_front/usecase/patient/api/update_remote_patient_picture.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 
-import '../../../models/patient.dart';
+import '../../../data/entities/patient.dart';
 
 Future<void> postPatientsChanges({
   List<Patient>? changed,
@@ -35,7 +35,7 @@ Future<void> postPatientsChanges({
     var patient = newPatients[i];
     await assignRemoteIdToPatient(patient, remoteId);
     if (patient.hasPicture == true) {
-     await updateRemotePatientPicture(patient); 
+      await updateRemotePatientPicture(patient);
     }
   }
   var oldPatients = changed.where((x) => x.remoteId != null);

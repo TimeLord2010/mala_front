@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/factories/http_client.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/api_responses/get_patient_changes_response.dart';
-import 'package:mala_front/models/api_responses/post_patient_changes_response.dart';
-import 'package:mala_front/models/patient.dart';
+import 'package:mala_front/data/api_responses/get_patient_changes_response.dart';
+import 'package:mala_front/data/api_responses/post_patient_changes_response.dart';
+import 'package:mala_front/data/entities/patient.dart';
+import 'package:mala_front/data/factories/http_client.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions_io.dart';
 import 'package:vit_logger/vit_logger.dart';

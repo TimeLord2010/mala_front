@@ -1,4 +1,4 @@
-import 'package:mala_front/models/address.dart';
+import 'package:mala_front/data/entities/address.dart';
 import 'package:search_cep/search_cep.dart';
 
 Future<Address?> searchAddress(String cep) async {

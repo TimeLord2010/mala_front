@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
-import 'package:mala_front/factories/logger.dart';
-import 'package:mala_front/models/patient_query.dart';
+import 'package:mala_front/data/entities/patient_query.dart';
+import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/usecase/date/get_current_date_numbers.dart';
 import 'package:mala_front/usecase/patient/count_patients.dart';
 import 'package:mala_front/usecase/patient/list_patients.dart';

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:mala_front/models/errors/failed_to_refresh_jwt.dart';
+import 'package:mala_front/data/errors/failed_to_refresh_jwt.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 String? getErrorMessage(Object obj) {
