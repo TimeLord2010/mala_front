@@ -19,7 +19,7 @@ Future<Patient> upsertPatient(
   var patientId = patient.id;
   var stopWatch = VitStopWatch('upsertPatient:$patientId');
   var rep = await createPatientRepository();
-  var result = await rep.insert(patient);
+  var result = await rep.upsert(patient);
   if (!ignorePicture) {
     await saveOrRemoveProfilePicture(
       patientId: result.id,

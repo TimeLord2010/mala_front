@@ -6,11 +6,10 @@ import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/data/factories/operation_permission.dart';
 import 'package:mala_front/ui/protocols/modal/run_monitored_function.dart';
 import 'package:mala_front/usecase/patient/api/background/send_deletion_in_background.dart';
-import 'package:mala_front/usecase/patient/find_patient_by_id.dart';
 import 'package:vit_logger/vit_logger.dart';
 
 Future<void> deletePatient(
-  int patientId, {
+  String patientId, {
   required BuildContext? context,
   bool sendDeletionToServer = false,
 }) async {
@@ -23,7 +22,7 @@ Future<void> deletePatient(
   var stopWatch = VitStopWatch('deletePatient');
   try {
     var rep = await createPatientRepository();
-    var patient = await findPatientById(patientId);
+    var patient = await rep.getById(patientId);
     if (patient == null) {
       return;
     }
@@ -45,7 +44,7 @@ Future<void> deletePatient(
       //   deleted: [remoteId],
       // );
     }
-    await rep.delete(patientId);
+    await rep.delete(patient);
   } finally {
     stopWatch.stop();
   }
