@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_front/data/factories/create_patient_repository.dart';
 import 'package:mala_front/data/factories/logger.dart';
-import 'package:mala_front/protocols/update_patients_from_server.dart';
+import 'package:mala_front/repositories/patient_repository/hybrid_patient_repository.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/error/is_no_internet_error.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
-import 'package:mala_front/usecase/patient/api/send_local_patients_to_server.dart';
 import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 
@@ -63,26 +62,25 @@ class MainPageController extends ChangeNotifier {
         await refreshJwt();
         loadingDescription = 'Atualizando pacientes a partir do servidor';
         logger.info('Refreshed JWT');
-        await updatePatientsFromServer(
-          updater: (dt) {
-            loadingDescription = 'Atualizando pacientes: $dt';
-            patientUpdater?.call();
-          },
-          didCancel: () => !canProceed(),
-        );
+        var rep = await createPatientRepository();
+        if (rep is HybridPatientRepository) {
+          await rep.updatePatientsFromServer(
+            updater: (dt) {
+              loadingDescription = 'Atualizando pacientes: $dt';
+              patientUpdater?.call();
+            },
+            didCancel: () => !canProceed(),
+          );
+        }
         if (!canProceed()) return;
         logger.info('Updated patients from server');
         loadingDescription = 'Enviando mudanças pendentes para o servidor';
         await sendFailedBackgroundOperations();
         logger.info('Sent failed background operations');
         loadingDescription = 'Enviando pacientes criados enquanto offline';
-        var rep = createPatientRepository();
-        if (rep is) {
-
+        if (rep is HybridPatientRepository) {
+          await rep.sendAllToApi();
         }
-        await sendLocalPatientsToServer(
-          context: context,
-        );
         logger.info('Sent local patients to server');
         patientUpdater?.call();
       } catch (e, stack) {

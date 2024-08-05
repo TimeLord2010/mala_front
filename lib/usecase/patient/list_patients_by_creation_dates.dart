@@ -7,8 +7,6 @@ Future<Iterable<Patient>> listPatientsByCreation({
 }) async {
   if (createdAts.isEmpty) return [];
   var rep = await createPatientRepository();
-  var patients = await rep.listUsingCreatedAts(
-    createdAts: createdAts,
-  );
+  var patients = await rep.listByCreation(createdAts);
   return patients;
 }

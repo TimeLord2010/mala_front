@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:mala_front/protocols/update_patients_from_server.dart';
+import 'package:mala_front/data/factories/create_patient_repository.dart';
 import 'package:mala_front/repositories/patient_api.dart';
+import 'package:mala_front/repositories/patient_repository/hybrid_patient_repository.dart';
 import 'package:mala_front/usecase/patient/api/assign_remote_id_to_patient.dart';
 import 'package:mala_front/usecase/patient/api/update_remote_patient_picture.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
@@ -15,9 +16,10 @@ Future<void> postPatientsChanges({
   BuildContext? modalContext,
 }) async {
   if (updateFromServer) {
-    await updatePatientsFromServer(
-      context: modalContext,
-    );
+    var rep = await createPatientRepository();
+    if (rep is HybridPatientRepository) {
+      await rep.updatePatientsFromServer();
+    }
   }
   var api = PatientApiRepository();
   var response = await api.postChanges(

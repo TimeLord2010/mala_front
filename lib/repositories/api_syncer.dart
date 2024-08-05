@@ -29,7 +29,7 @@ class ApiSynchronizer {
     for (var patientId in pendingUpdate) {
       var id = int.parse(patientId);
       logger.info('Sending pending upsert: $id');
-      var patient = await findPatientById(id);
+      var patient = await findPatientById(id.toString());
       if (patient == null) continue;
       await upsertPatient(patient);
       await Future.delayed(const Duration(milliseconds: 500));

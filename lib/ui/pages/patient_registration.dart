@@ -490,8 +490,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
             child: const Text('Deletar'),
             onPressed: () async {
               await deletePatient(
-                widget.patient!.id,
-                sendDeletionToServer: true,
+                widget.patient!,
                 context: widget.modalContext,
               );
               Navigator.pop(context, "DEL");
