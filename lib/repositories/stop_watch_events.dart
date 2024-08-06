@@ -1,3 +1,4 @@
+/// Used the calculate the elapsed time on multiple call of the given functions.
 class StopWatchEvents {
   List<Duration> durations = [];
 
