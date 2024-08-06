@@ -14,7 +14,8 @@ import 'package:mala_front/usecase/local_store/get_local_last_sync.dart';
 import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/number/average.dart';
-import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
+import 'package:mala_front/usecase/patient/api/assign_remote_id_to_patient.dart';
+import 'package:mala_front/usecase/patient/api/update_remote_patient_picture.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
 import 'package:mala_front/usecase/user/update_last_sync.dart';
 
@@ -65,8 +66,6 @@ class HybridPatientRepository extends PatientInterface<String> {
       if (patients.isEmpty) break;
       await postPatientsChanges(
         changed: patients,
-        updateFromServer: false,
-        modalContext: null,
       );
       unawaited(insertRemoteLog(
         message: 'Sending ${patients.length} local patients',
@@ -132,7 +131,7 @@ class HybridPatientRepository extends PatientInterface<String> {
       if (lastServerDate != null) {
         await updateLastSync(lastServerDate!);
       }
-      return null;
+      return;
     }
 
     Map<String, dynamic> getExtras() {
@@ -241,15 +240,7 @@ class HybridPatientRepository extends PatientInterface<String> {
   Future<void> postPatientsChanges({
     List<Patient>? changed,
     List<String>? deleted,
-    bool updateFromServer = true,
-    BuildContext? modalContext,
   }) async {
-    if (updateFromServer) {
-      var rep = await createPatientRepository();
-      if (rep is HybridPatientRepository) {
-        await rep.updatePatientsFromServer();
-      }
-    }
     var api = PatientApiRepository();
     var response = await api.postChanges(
       changed: changed,
@@ -276,7 +267,7 @@ class HybridPatientRepository extends PatientInterface<String> {
         patient,
         ignorePicture: true,
         syncWithServer: false,
-        context: modalContext,
+        context: null,
       );
       await updateRemotePatientPicture(patient);
     }

@@ -491,6 +491,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
             onPressed: () async {
               await deletePatient(
                 widget.patient!,
+                context: null,
               );
               Navigator.pop(context, "DEL");
             },

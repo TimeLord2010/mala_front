@@ -3,16 +3,17 @@ import 'dart:async';
 import 'package:mala_front/data/entities/patient.dart';
 import 'package:mala_front/data/enums/local_keys.dart';
 import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_front/repositories/patient_repository/hybrid_patient_repository.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:mala_front/usecase/patient/api/post_patients_changes.dart';
-import 'package:mala_front/usecase/patient/find_patient_by_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiSynchronizer {
   final SharedPreferences preferences;
   final FutureOr<void> Function(String context, Object error) errorReporter;
+  final HybridPatientRepository hybridPatientRepository;
 
   ApiSynchronizer({
+    required this.hybridPatientRepository,
     required this.preferences,
     required this.errorReporter,
   });
@@ -29,9 +30,11 @@ class ApiSynchronizer {
     for (var patientId in pendingUpdate) {
       var id = int.parse(patientId);
       logger.info('Sending pending upsert: $id');
-      var patient = await findPatientById(id.toString());
+      var rep = hybridPatientRepository.localRepository;
+      var patient = await rep.getById(id);
       if (patient == null) continue;
-      await upsertPatient(patient);
+      var remoteRep = hybridPatientRepository.onlineRepository;
+      await remoteRep.upsert(patient);
       await Future.delayed(const Duration(milliseconds: 500));
     }
   }
@@ -49,9 +52,7 @@ class ApiSynchronizer {
       key: isLocal ? null : _updateKey,
       throwOnError: throwOnError,
       function: () async {
-        await postPatientsChanges(
-          changed: [patient],
-        );
+        await hybridPatientRepository.onlineRepository.upsert(patient);
       },
     );
   }
@@ -65,9 +66,7 @@ class ApiSynchronizer {
       key: _deleteKey,
       throwOnError: throwOnError,
       function: () async {
-        await postPatientsChanges(
-          deleted: [patientId],
-        );
+        await hybridPatientRepository.onlineRepository.deleteById(patientId);
       },
     );
   }
