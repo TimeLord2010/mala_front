@@ -11,7 +11,10 @@ Future<void> sendChangesInBackground(
   Patient patient, {
   bool throwOnError = false,
 }) async {
-  var rep = createApiSynchonizer();
+  var rep = await createApiSynchonizer();
+  if (rep == null) {
+    return;
+  }
   var stopWatch = VitStopWatch('Sending patient to server in background');
   try {
     await rep.upsertPatient(

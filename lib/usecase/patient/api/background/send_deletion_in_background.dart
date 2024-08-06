@@ -8,7 +8,10 @@ Future<void> sendDeletionInBackground(
   String patientId, {
   bool throwOnError = false,
 }) async {
-  var rep = createApiSynchonizer();
+  var rep = await createApiSynchonizer();
+  if (rep == null) {
+    return;
+  }
   await rep.deletePatient(
     patientId,
     throwOnError: throwOnError,
