@@ -8,7 +8,6 @@ import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/error/is_no_internet_error.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
-import 'package:mala_front/usecase/patient/count_all_patients.dart';
 import 'package:mala_front/usecase/user/refresh_jwt.dart';
 
 class MainPageController extends ChangeNotifier {
@@ -48,20 +47,17 @@ class MainPageController extends ChangeNotifier {
           logger.warn('LOGED OUT, CANNOT PROCEED');
           return false;
         }
-        // if (!mounted) {
-        //   logger.warn('NOT MOUNTED, CANNOT PROCEED');
-        //   return false;
-        // }
         logger.info('CAN PROCEED');
         return true;
       }
 
       try {
-        var allCount = await countAllPatients();
-        logger.info('All patients count: $allCount');
+        // Refresh JWT
         await refreshJwt();
         loadingDescription = 'Atualizando pacientes a partir do servidor';
         logger.info('Refreshed JWT');
+
+        // Fetch patient changes from server
         var rep = await createPatientRepository();
         if (rep is HybridPatientRepository) {
           await rep.updatePatientsFromServer(
@@ -75,13 +71,19 @@ class MainPageController extends ChangeNotifier {
         if (!canProceed()) return;
         logger.info('Updated patients from server');
         loadingDescription = 'Enviando mudanças pendentes para o servidor';
-        await sendFailedBackgroundOperations();
-        logger.info('Sent failed background operations');
-        loadingDescription = 'Enviando pacientes criados enquanto offline';
+        patientUpdater?.call();
+
+        // Sending new patients to server
         if (rep is HybridPatientRepository) {
           await rep.sendAllToApi();
         }
         logger.info('Sent local patients to server');
+        patientUpdater?.call();
+
+        // Retring failed updates to server
+        await sendFailedBackgroundOperations();
+        logger.info('Sent failed background operations');
+        loadingDescription = 'Enviando pacientes criados enquanto offline';
         patientUpdater?.call();
       } catch (e, stack) {
         var msg = getErrorMessage(e);

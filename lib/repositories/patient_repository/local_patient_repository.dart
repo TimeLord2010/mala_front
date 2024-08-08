@@ -34,9 +34,7 @@ class LocalPatientRepository extends PatientInterface<int> {
   @override
   Future<void> delete(Patient patient) async {
     var id = getId(patient);
-    await isar.writeTxn(() async {
-      await isar.patients.delete(id);
-    });
+    await deleteById(id);
   }
 
   @override
@@ -132,9 +130,10 @@ class LocalPatientRepository extends PatientInterface<int> {
   }
 
   @override
-  Future<void> deleteById(int id) {
-    // TODO: implement deleteById
-    throw UnimplementedError();
+  Future<void> deleteById(int id) async {
+    await isar.writeTxn(() async {
+      await isar.patients.delete(id);
+    });
   }
 
   Future<List<Patient>> importPatients({
