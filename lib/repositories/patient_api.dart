@@ -12,24 +12,9 @@ import 'package:vit_dart_extensions/vit_dart_extensions_io.dart';
 import 'package:vit_logger/vit_logger.dart';
 
 class PatientApiRepository {
-  Future<GetPatientChangesResponse> getServerChanges({
-    int? skip,
-    int? limit,
-    DateTime? date,
-  }) async {
+  Future<GetPatientChangesResponse> getServerChanges() async {
     var stopWatch = VitStopWatch('api:getServerChanges');
-    if (date != null) {
-      stopWatch.lap(tag: date.toIso8601String());
-    }
-    Map<String, dynamic> query = {
-      ...(skip == null) ? {} : {'skip': skip},
-      ...(limit == null) ? {} : {'limit': limit},
-      ...(date == null) ? {} : {'date': date.toUtc().toIso8601String()},
-    };
-    var response = await dio.get(
-      '/patient/sync',
-      queryParameters: query,
-    );
+    var response = await dio.get('/patient/sync');
     Map<String, dynamic> body = response.data;
     stopWatch.stop();
     return GetPatientChangesResponse.fromMap(body);

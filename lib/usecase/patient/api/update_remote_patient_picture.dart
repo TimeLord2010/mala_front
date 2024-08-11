@@ -4,6 +4,7 @@ import 'package:mala_front/repositories/patient_api.dart';
 
 import '../profile_picture/get_picture_file.dart';
 
+/// Update patient picture on the API.
 Future<void> updateRemotePatientPicture(Patient patient) async {
   if (!Features.imageSuport) {
     return;

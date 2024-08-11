@@ -10,14 +10,11 @@ import 'package:mala_front/repositories/patient_repository/local_patient_reposit
 import 'package:mala_front/repositories/patient_repository/online_patient_repository.dart';
 import 'package:mala_front/repositories/stop_watch_events.dart';
 import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:mala_front/usecase/local_store/get_local_last_sync.dart';
-import 'package:mala_front/usecase/local_store/update_local_last_sync.dart';
 import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 import 'package:mala_front/usecase/number/average.dart';
 import 'package:mala_front/usecase/patient/api/assign_remote_id_to_patient.dart';
 import 'package:mala_front/usecase/patient/api/update_remote_patient_picture.dart';
 import 'package:mala_front/usecase/patient/upsert_patient.dart';
-import 'package:mala_front/usecase/user/update_last_sync.dart';
 
 class HybridPatientRepository extends PatientInterface<String> {
   final LocalPatientRepository localRepository;
@@ -84,31 +81,12 @@ class HybridPatientRepository extends PatientInterface<String> {
     var begin = DateTime.now();
     var pageSize = 150;
 
-    final count = await localRepository.count();
-    if (count == 0) {
-      // Resetando a data para o inicio da aplicação para pegar todos os registros
-      await updateLocalLastSync(DateTime(2020));
-    }
-
-    var scannedDates = <DateTime>{};
     var eventTimes = StopWatchEvents();
 
     Future<GetPatientChangesResponse> fetch() async {
-      var lastSync = getLocalLastSync() ?? DateTime(2020);
-      if (scannedDates.contains(lastSync)) {
-        throw Exception('Tried to scan the same date: ${lastSync.toIso8601String()}');
-      }
-      scannedDates.add(lastSync);
-      logger.info('Last sync: ${lastSync.toIso8601String()}.');
       var newPatients = await eventTimes.add(() async {
         var patientsRep = PatientApiRepository();
-        return await patientsRep
-            .getServerChanges(
-              limit: pageSize,
-              skip: 0,
-              date: lastSync,
-            )
-            .timeout(const Duration(seconds: 6));
+        return await patientsRep.getServerChanges().timeout(const Duration(seconds: 6));
       });
       return newPatients;
     }
@@ -124,20 +102,9 @@ class HybridPatientRepository extends PatientInterface<String> {
       }
     }
 
-    Future<void> updateSavedLastSync() async {
-      if (didCancel != null && didCancel()) {
-        return;
-      }
-      if (lastServerDate != null) {
-        await updateLastSync(lastServerDate!);
-      }
-      return;
-    }
-
     Map<String, dynamic> getExtras() {
       var inMilli = eventTimes.inMilli;
       return {
-        'lastServerDate': lastServerDate?.toIso8601String(),
         'ApiDelays': inMilli,
         'ApiDelayAvg': average(inMilli),
         'elapsed': '${DateTime.now().difference(begin).inSeconds}s',
@@ -191,7 +158,6 @@ class HybridPatientRepository extends PatientInterface<String> {
         // } else {
         //   await updateSavedLastSync();
         // }
-        await updateSavedLastSync();
         if (didCancel != null) {
           if (!didCancel()) updater?.call(lastServerDate?.toIso8601String());
         } else {
@@ -214,8 +180,6 @@ class HybridPatientRepository extends PatientInterface<String> {
         extras: getExtras(),
       ));
       rethrow;
-    } finally {
-      await updateSavedLastSync();
     }
   }
 
@@ -235,52 +199,5 @@ class HybridPatientRepository extends PatientInterface<String> {
     var localId = localRepository.getId(id);
     await localRepository.deleteById(localId);
     await onlineRepository.deleteById(id);
-  }
-
-  Future<void> postPatientsChanges({
-    List<Patient>? changed,
-    List<String>? deleted,
-  }) async {
-    var api = PatientApiRepository();
-    var response = await api.postChanges(
-      changed: changed,
-      deleted: deleted,
-    );
-    if (changed == null) return;
-    var insertedIds = response.changed?.inserted ?? [];
-    List<Patient> newPatients = changed.where((x) => x.remoteId == null).toList();
-    if (insertedIds.length != newPatients.length) {
-      throw Exception('Api did respond with right number of inserted ids');
-    }
-    for (var i = 0; i < insertedIds.length; i++) {
-      var remoteId = insertedIds[i];
-      var patient = newPatients[i];
-      await assignRemoteIdToPatient(patient, remoteId);
-      if (patient.hasPicture == true) {
-        await updateRemotePatientPicture(patient);
-      }
-    }
-    var oldPatients = changed.where((x) => x.remoteId != null);
-    for (var patient in oldPatients) {
-      patient.uploadedAt = DateTime.now();
-      await upsertPatient(
-        patient,
-        ignorePicture: true,
-        syncWithServer: false,
-        context: null,
-      );
-      await updateRemotePatientPicture(patient);
-    }
-    if (changed.isNotEmpty) {
-      var last = changed.lastWhere(
-        (x) => x.uploadedAt != null,
-        orElse: () => Patient(),
-      );
-      if (last.isEmpty) {
-        return;
-      }
-      var uploadedAt = last.uploadedAt!;
-      await updateLastSync(uploadedAt);
-    }
   }
 }

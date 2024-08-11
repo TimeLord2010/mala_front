@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mala_front/data/factories/http_client.dart';
 import 'package:mala_front/data/factories/logger.dart';
@@ -25,7 +26,7 @@ class ServerProvider {
       }
 
       // Assume default values
-      var s = 'http://3.220.73.81:49152';
+      var s = kDebugMode ? 'http://localhost:49152' : 'http://3.220.73.81:49152';
       logger.info('Assumed ip: $s');
       return s;
     }
