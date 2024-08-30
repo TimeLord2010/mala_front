@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:mala_front/usecase/file/pdf/patients/create_patients_pdf.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:printing/printing.dart';
-
-import '../../../../data/entities/patient.dart';
 
 Future<void> printPatientsPdf({
   required List<Patient> patients,

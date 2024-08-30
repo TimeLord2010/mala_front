@@ -1,7 +1,7 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_api/mala_api.dart';
 
-import '../../../data/enums/activities.dart';
 import '../atoms/mala_check_box.dart';
 import 'activities_selector.dart';
 import 'labeled_text_box.dart';

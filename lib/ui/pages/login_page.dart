@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/login_fields.dart';
 import 'package:mala_front/ui/pages/main_page.dart';
-import 'package:mala_front/usecase/user/is_authenticated.dart';
-import 'package:mala_front/usecase/user/login_user.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
@@ -77,7 +75,8 @@ class _LoginPageState extends State<LoginPage> {
                         onLogin: (email, password) async {
                           logger.info('Login');
                           await loginUser(email, password);
-                          await context.navigator.pushMaterial(MainPage.create());
+                          await context.navigator
+                              .pushMaterial(MainPage.create());
                         },
                       ),
                     ),

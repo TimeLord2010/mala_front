@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/login_configuration.dart';
-import 'package:mala_front/usecase/error/get_error_message.dart';
 
 import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
@@ -87,7 +86,9 @@ class _LoginFieldsState extends State<LoginFields> {
                 _password(),
                 const SizedBox(height: 20),
                 AnimatedCrossFade(
-                  crossFadeState: enteredPassword ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                  crossFadeState: enteredPassword
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
                   duration: const Duration(milliseconds: 300),
                   firstChild: _loginButton(),
                   secondChild: const SizedBox.shrink(),
@@ -140,7 +141,8 @@ class _LoginFieldsState extends State<LoginFields> {
 
   AnimatedCrossFade _password() {
     return AnimatedCrossFade(
-      crossFadeState: enteredEmail ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      crossFadeState:
+          enteredEmail ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       duration: const Duration(milliseconds: 400),
       firstChild: LabeledTextBox(
         label: 'Senha',

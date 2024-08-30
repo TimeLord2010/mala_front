@@ -2,9 +2,8 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/data/entities/index.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/index.dart';
-import 'package:mala_front/usecase/index.dart';
 
 class PatientRegistration extends StatefulWidget {
   PatientRegistration({
@@ -147,7 +146,9 @@ class _PatientRegistrationState extends State<PatientRegistration> {
               ].separatedBy(const SizedBox(width: 10)),
             ),
           ),
-          title: Text(widget.patient == null ? 'Cadastrar novo paciente' : 'Editar cadastro'),
+          title: Text(widget.patient == null
+              ? 'Cadastrar novo paciente'
+              : 'Editar cadastro'),
         ),
         content: SingleChildScrollView(
           child: Padding(
@@ -438,7 +439,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
   void save() async {
     var phonesStr = widget.phonesController.text;
-    var phones = phonesStr.split(',').map((x) => x.trim()).where((x) => x != '');
+    var phones =
+        phonesStr.split(',').map((x) => x.trim()).where((x) => x != '');
     var patient = Patient(
       name: widget.nameController.text,
       cpf: widget.cpfController.text,
@@ -472,7 +474,6 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     await upsertPatient(
       patient,
       pictureData: pictureData,
-      context: widget.modalContext,
     );
     context.navigator.pop();
   }
@@ -491,7 +492,6 @@ class _PatientRegistrationState extends State<PatientRegistration> {
             onPressed: () async {
               await deletePatient(
                 widget.patient!,
-                context: null,
               );
               Navigator.pop(context, "DEL");
             },

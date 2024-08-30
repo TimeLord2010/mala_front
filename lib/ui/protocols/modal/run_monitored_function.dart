@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/index.dart';
 import 'package:mala_front/ui/protocols/modal/show_modal.dart';
-import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:mala_front/usecase/logs/insert_remote_log.dart';
 
 /// Executes the given function [func] and if it errors, an modal is shown.
 Future<bool> runMonitoredFunction({

@@ -22,28 +22,26 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   get_it: ^7.7.0
-  image_compression_flutter: ^1.0.4
-  isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   mask: ^1.0.5
   mask_text_input_formatter: ^2.8.0
   package_info_plus: ^4.2.0
   path_provider: ^2.1.0
-  pdf: ^3.10.4
-  printing: ^5.12.0
+  printing: ^5.13.2
   provider: ^6.1.2
-  search_cep: ^4.0.2
   shared_preferences: ^2.2.1
   system_info2: ^4.0.0
-  vit_dart_extensions: ^1.8.1
   vit_logger: ^2.0.1
   wave: ^0.2.2
+  mala_api:
+    git:
+      url: git@github.com:TimeLord2010/mala_api.git
+  image_compression_flutter: ^1.0.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  isar_generator: ^3.1.0+1
   build_runner: ^2.4.6
   flutter_launcher_icons: ^0.13.1
 

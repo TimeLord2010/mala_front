@@ -1,1 +1,0 @@
-class MissingLocalJwt implements Exception {}

@@ -1,7 +1,7 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/pages/login_page.dart';
-import 'package:mala_front/usecase/user/sign_out.dart';
 
 Future<void> askSignOut(
   BuildContext context, {

@@ -1,8 +1,7 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/entities/patient_query.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/atoms/file_system_picker.dart';
-import 'package:mala_front/usecase/patient/export_patients.dart';
 
 class ExportPatientsPane extends StatefulWidget {
   const ExportPatientsPane({

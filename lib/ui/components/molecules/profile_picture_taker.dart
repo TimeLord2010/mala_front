@@ -6,14 +6,13 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:camera/camera.dart' as camera_package;
 import 'package:camera_universal/camera_universal.dart';
 import 'package:flutter/material.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/data/errors/camera_exception.dart' as model;
-import 'package:mala_front/data/factories/logger.dart';
 import 'package:mala_front/ui/components/molecules/camera/processing_picture_overlay.dart';
 import 'package:mala_front/ui/components/organisms/picture_taker_control_panel.dart';
 import 'package:mala_front/ui/protocols/camera/get_camera_count.dart';
 import 'package:mala_front/ui/protocols/invert_axis.dart';
 import 'package:mala_front/ui/theme/text_styles/error_text_style.dart';
-import 'package:mala_front/usecase/error/get_error_message.dart';
 import 'package:mala_front/usecase/file/compress_image.dart';
 
 import '../../theme/colors.dart';

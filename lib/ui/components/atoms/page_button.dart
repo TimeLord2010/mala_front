@@ -16,8 +16,8 @@ class PageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var buttonStyle = ButtonStyle(
-      shape: ButtonState.all(const CircleBorder()),
+    var buttonStyle = const ButtonStyle(
+      shape: WidgetStatePropertyAll(CircleBorder()),
     );
     var container = MouseRegion(
       cursor: SystemMouseCursors.click,

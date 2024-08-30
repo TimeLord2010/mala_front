@@ -1,14 +1,7 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/factories/create_patient_repository.dart';
-import 'package:mala_front/data/factories/logger.dart';
-import 'package:mala_front/repositories/patient_repository/hybrid_patient_repository.dart';
-import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:mala_front/usecase/error/is_no_internet_error.dart';
-import 'package:mala_front/usecase/logs/insert_remote_log.dart';
-import 'package:mala_front/usecase/patient/api/background/send_failed_background_operations.dart';
-import 'package:mala_front/usecase/user/refresh_jwt.dart';
+import 'package:mala_api/mala_api.dart';
 
 class MainPageController extends ChangeNotifier {
   final BuildContext context;

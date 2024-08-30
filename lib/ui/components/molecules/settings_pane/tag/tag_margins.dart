@@ -1,13 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/settings_pane/tag/tag_fields.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/bottom/get_tag_bottom_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/bottom/set_tag_bottom_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/left/get_tag_left_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/left/set_tag_left_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/right/get_tag_right_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/right/set_tag_right_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/top/get_tag_top_margin.dart';
-import 'package:mala_front/usecase/local_store/pdf/tag/margins/top/set_tag_top_margin.dart';
 
 class TagMargins extends StatelessWidget {
   /// Configuration for the tag page margins

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mala_api/mala_api.dart';
 
-import '../../../data/enums/activities.dart';
 import '../atoms/mala_check_box.dart';
 
 class ActivitiesSelector extends StatefulWidget {

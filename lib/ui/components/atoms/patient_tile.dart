@@ -2,19 +2,12 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:badges/badges.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/entities/patient.dart';
-import 'package:mala_front/data/factories/logger.dart';
-import 'package:mala_front/data/factories/patients_semaphore.dart';
-import 'package:mala_front/repositories/patient_api.dart';
-import 'package:mala_front/repositories/patients_semaphore.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/atoms/mala_profile_picker.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
-import 'package:mala_front/usecase/error/get_error_message.dart';
-import 'package:mala_front/usecase/index.dart';
-import 'package:mala_front/usecase/logs/insert_remote_log.dart';
-import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 
 class PatientTile extends StatefulWidget {
   const PatientTile({
@@ -76,7 +69,8 @@ class _PatientTileState extends State<PatientTile> {
         return;
       }
 
-      debugPrint('Loading picture from api. Has picture: ${patient.hasPicture}');
+      debugPrint(
+          'Loading picture from api. Has picture: ${patient.hasPicture}');
 
       var rep = PatientApiRepository();
       var remoteId = patient.remoteId;
@@ -99,7 +93,6 @@ class _PatientTileState extends State<PatientTile> {
           patient,
           ignorePicture: true,
           syncWithServer: false,
-          context: widget.modalContext,
         );
         return;
       }

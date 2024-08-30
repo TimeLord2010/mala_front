@@ -1,9 +1,8 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/profile_picture_taker.dart';
-import 'package:mala_front/usecase/error/get_error_message.dart';
 
 class MalaProfilePicker extends StatelessWidget {
   const MalaProfilePicker({
@@ -56,7 +55,8 @@ class MalaProfilePicker extends StatelessWidget {
         onForegroundImageError: imageProvider2 == null
             ? null
             : (exception, stackTrace) {
-                logger.error('Failed to load image: ${getErrorMessage(exception)}');
+                logger.error(
+                    'Failed to load image: ${getErrorMessage(exception)}');
                 onRenderError?.call();
               },
         child: _child(),

@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/protocols/sign_out.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
@@ -74,7 +74,8 @@ class MainPage extends StatelessWidget {
             : null,
       ),
       pane: NavigationPane(
-        displayMode: isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.compact,
+        displayMode:
+            isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.compact,
         size: const NavigationPaneSize(
           openMaxWidth: 200,
         ),

@@ -1,9 +1,6 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_front/data/entities/patient_query.dart';
-import 'package:mala_front/data/entities/patient_tag.dart';
-import 'package:mala_front/data/enums/activities.dart';
-import 'package:mala_front/data/factories/logger.dart';
+import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
@@ -12,10 +9,6 @@ import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
 import 'package:mala_front/usecase/file/pdf/patients/print_patients_pdf.dart';
 import 'package:mala_front/usecase/file/pdf/tags/print_tags_pdf.dart';
-import 'package:mala_front/usecase/patient/count_patients.dart';
-import 'package:mala_front/usecase/patient/list_patients.dart';
-
-import '../../../data/entities/patient.dart';
 
 class PatientExplorer extends StatefulWidget {
   PatientExplorer({
