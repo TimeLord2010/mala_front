@@ -52,7 +52,12 @@ class MainPageController extends ChangeNotifier {
           await showDialog<String>(
             context: context,
             builder: (context) {
+              const width = 550.0;
               return ContentDialog(
+                constraints: const BoxConstraints(
+                  minWidth: width,
+                  maxWidth: width,
+                ),
                 title: const Text('Erro na sincronização de registros'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,

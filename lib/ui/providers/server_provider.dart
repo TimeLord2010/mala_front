@@ -24,10 +24,10 @@ class ServerProvider {
       }
 
       // Assume default values
-      var s =
-          kDebugMode ? 'http://localhost:49152' : 'http://3.220.73.81:49152';
-      logger.info('Assumed ip: $s');
-      return s;
+      var host = kDebugMode ? 'localhost' : '3.220.73.81';
+      var address = 'http://$host:49152';
+      logger.info('Assumed ip: $address');
+      return address;
     }
 
     final value = generateValue();

@@ -41,7 +41,9 @@ class _PatientTileState extends State<PatientTile> {
           widget.patient,
           onDataLoad: (data) {
             if (!mounted) return;
-            setState(() => pictureData = data);
+            setState(() {
+              pictureData = data;
+            });
           },
         );
       },
