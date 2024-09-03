@@ -23,7 +23,7 @@ Future<void> askSignOut(
             child: const Text('Sair'),
             onPressed: () async {
               Navigator.pop(con, 'User deleted file');
-              await signout();
+              await MalaApi.user.logout();
               if (onSignOut != null) onSignOut();
               context.navigator.pop();
               if (!context.navigator.canPop()) {

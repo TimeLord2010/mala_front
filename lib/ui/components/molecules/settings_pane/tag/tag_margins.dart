@@ -10,29 +10,29 @@ class TagMargins extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
         Expanded(
           child: TagFields(
             title: 'Margens da página',
             topLabel: 'Esquerda',
             bottomLabel: 'Direita',
-            topGetter: getTagLeftMargin,
-            topSetter: setTagLeftMargin,
-            bottomGetter: getTagRightMargin,
-            bottomSetter: setTagRightMargin,
+            topGetter: () => MalaApi.tagPdfConfig.tagLeftMargin,
+            topSetter: MalaApi.tagPdfConfig.setTagLeftMargin,
+            bottomGetter: () => MalaApi.tagPdfConfig.tagRightMargin,
+            bottomSetter: MalaApi.tagPdfConfig.setTagRightMargin,
           ),
         ),
-        SizedBox(width: 5),
+        const SizedBox(width: 5),
         Expanded(
           child: TagFields(
             title: '',
             topLabel: 'Cima',
             bottomLabel: 'Baixo',
-            topGetter: getTagTopMargin,
-            topSetter: setTagTopMargin,
-            bottomGetter: getTagBottomMargin,
-            bottomSetter: setTagBottomMargin,
+            topGetter: () => MalaApi.tagPdfConfig.tagTopMargin,
+            topSetter: MalaApi.tagPdfConfig.setTagTopMargin,
+            bottomGetter: () => MalaApi.tagPdfConfig.tagBottomMargin,
+            bottomSetter: MalaApi.tagPdfConfig.setTagBottomMargin,
           ),
         ),
       ],

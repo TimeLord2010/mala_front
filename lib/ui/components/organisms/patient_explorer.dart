@@ -7,8 +7,6 @@ import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
-import 'package:mala_front/usecase/file/pdf/patients/print_patients_pdf.dart';
-import 'package:mala_front/usecase/file/pdf/tags/print_tags_pdf.dart';
 
 class PatientExplorer extends StatefulWidget {
   PatientExplorer({
@@ -197,12 +195,12 @@ class _PatientExplorerState extends State<PatientExplorer> {
           icon: const Icon(FluentIcons.tag),
           label: const Text('Etiquetas'),
           onPressed: () async {
-            var patients = await listPatients(
-              patientQuery: query,
+            var patients = await MalaApi.patient.list(
+              query: query,
               limit: 5000,
             );
             var tags = patients.map(PatientTag.fromPatient);
-            await printTagsPdf(
+            await MalaApi.pdf.printTags(
               tags: tags,
             );
           },
@@ -211,11 +209,11 @@ class _PatientExplorerState extends State<PatientExplorer> {
           icon: const Icon(FluentIcons.print),
           label: const Text('Lista de pacientes'),
           onPressed: () async {
-            var patients = await listPatients(
-              patientQuery: query,
+            var patients = await MalaApi.patient.list(
+              query: query,
               limit: 5000,
             );
-            await printPatientsPdf(
+            await MalaApi.pdf.printInfo(
               patients: patients,
             );
           },
@@ -229,13 +227,13 @@ class _PatientExplorerState extends State<PatientExplorer> {
     currentPage = page;
     var patientQuery = query;
     if (shouldCount) {
-      var count = await countPatients(patientQuery);
+      var count = await MalaApi.patient.count(patientQuery);
       //pages = count ~/ pageSize;
       this.count = count;
       logger.info('Count: $count, Pages: $pages');
     }
-    patientsFuture = listPatients(
-      patientQuery: patientQuery,
+    patientsFuture = MalaApi.patient.list(
+      query: patientQuery,
       skip: currentPage * pageSize,
       limit: pageSize,
     );

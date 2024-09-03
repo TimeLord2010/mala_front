@@ -10,14 +10,14 @@ class TagDimensions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const TagFields(
+    return TagFields(
       title: 'Dimensões',
       topLabel: 'Largura',
       bottomLabel: 'Altura',
-      topGetter: getTagWidth,
-      topSetter: setTagWidth,
-      bottomGetter: getTagHeight,
-      bottomSetter: setTagHeight,
+      topGetter: () => MalaApi.tagPdfConfig.tagWidth,
+      topSetter: MalaApi.tagPdfConfig.setTagWidth,
+      bottomGetter: () => MalaApi.tagPdfConfig.tagHeight,
+      bottomSetter: MalaApi.tagPdfConfig.setTagHeight,
     );
   }
 }

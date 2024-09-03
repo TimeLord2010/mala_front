@@ -32,90 +32,25 @@ class _PatientTileState extends State<PatientTile> {
   void initState() {
     super.initState();
     int patientId = widget.patient.id;
-    unawaited(patientsSemaphore
+    unawaited(MalaApi.patient.semaphore
         .lockWhile(
       patientId: patientId,
       task: PatientTask.pictureLoad,
-      func: _loadPicture,
+      func: () async {
+        await MalaApi.patient.loadPicture(
+          widget.patient,
+          onDataLoad: (data) {
+            if (!mounted) return;
+            setState(() => pictureData = data);
+          },
+        );
+      },
     )
         .then((ranTask) {
       if (!ranTask) {
         logger.warn('Picture load and save aborted for $patientId');
       }
     }));
-  }
-
-  Future<void> _loadPicture() async {
-    try {
-      var data = loadProfilePicture(widget.patient.id);
-      setState(() {
-        pictureData = data;
-      });
-
-      // Ensuring there is not picture.
-
-      var resolvedData = await data;
-
-      // If local data is found, then check is aborted.
-      if (resolvedData != null) {
-        return;
-      }
-
-      var patient = widget.patient;
-      var mayHavePicture = patient.hasPicture != false;
-
-      // If the record signals there is not picture, then we trust it.
-      if (!mayHavePicture) {
-        return;
-      }
-
-      debugPrint(
-          'Loading picture from api. Has picture: ${patient.hasPicture}');
-
-      var rep = PatientApiRepository();
-      var remoteId = patient.remoteId;
-
-      // When can only talk to the backend if we have the remoteId.
-      if (remoteId == null) {
-        return;
-      }
-
-      // Loading picture from server
-      var apiData = await rep.getPicture(remoteId);
-
-      if (apiData == null) {
-        // No data found after all.
-        logger.warn('Updating local patient $remoteId to flag no picture');
-        patient.hasPicture = false;
-
-        // Fixing the server to flag patient has no picture.
-        await upsertPatient(
-          patient,
-          ignorePicture: true,
-          syncWithServer: false,
-        );
-        return;
-      }
-
-      if (mounted) {
-        setState(() {
-          pictureData = Future.value(apiData);
-        });
-      }
-      await saveOrRemoveProfilePicture(
-        patientId: patient.id,
-        data: apiData,
-      );
-    } catch (e, stack) {
-      unawaited(insertRemoteLog(
-        context: 'Carregando imagem de paciente',
-        message: getErrorMessage(e) ?? 'Falha ao carregar imagem de paciente',
-        stack: stack.toString(),
-        extras: {
-          'id': widget.patient.remoteId,
-        },
-      ));
-    }
   }
 
   @override
@@ -140,10 +75,7 @@ class _PatientTileState extends State<PatientTile> {
             return MalaProfilePicker(
               bytes: value,
               onRenderError: () {
-                unawaited(saveOrRemoveProfilePicture(
-                  patientId: widget.patient.id,
-                  data: null,
-                ));
+                unawaited(MalaApi.patient.savePicture(widget.patient.id, null));
               },
             );
           },

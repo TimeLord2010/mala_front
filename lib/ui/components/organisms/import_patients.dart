@@ -64,17 +64,11 @@ class _ImportPatientsState extends State<ImportPatients> {
 
   void _loadPatients() async {
     addedPatients.clear();
-    var rep = await createPatientRepository();
-    var localRep = switch (rep) {
-      LocalPatientRepository l => l,
-      HybridPatientRepository h => h.localRepository,
-      _ => null,
-    };
-    if (localRep == null) {
-      return;
-    }
-    var added = await localRep.importPatients(
-      zipFileName: path!,
+    var added = await MalaApi.file.import(
+      path!,
+      onProgress: (progress) {
+        logger.info('Import progress: $progress');
+      },
     );
     setState(() {
       addedPatients = added;

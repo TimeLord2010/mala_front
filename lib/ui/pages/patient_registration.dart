@@ -103,7 +103,12 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   void _loadPic() async {
     var patient = widget.patient;
     if (patient == null) return;
-    pictureData = await loadProfilePicture(patient.id);
+    await MalaApi.patient.loadPicture(
+      patient,
+      onDataLoad: (data) async {
+        pictureData = await data;
+      },
+    );
   }
 
   @override
@@ -429,7 +434,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   }
 
   void searchByCep() async {
-    var found = await searchAddress(widget.zipCodeController.text);
+    var cep = widget.zipCodeController.text;
+    var found = await MalaApi.patient.searchCep(cep);
     if (found == null) return;
     widget.stateController.text = found.state ?? '';
     widget.cityController.text = found.city ?? '';
@@ -471,10 +477,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     if (widget.patient != null) {
       patient.id = widget.patient!.id;
     }
-    await upsertPatient(
-      patient,
-      pictureData: pictureData,
-    );
+    await MalaApi.patient.upsert(patient, pictureData);
     context.navigator.pop();
   }
 
@@ -490,9 +493,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
           Button(
             child: const Text('Deletar'),
             onPressed: () async {
-              await deletePatient(
-                widget.patient!,
-              );
+              await MalaApi.patient.delete(widget.patient!);
               Navigator.pop(context, "DEL");
             },
           ),

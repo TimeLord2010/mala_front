@@ -10,14 +10,15 @@ class TagSpacings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const TagFields(
+    var config = MalaApi.tagPdfConfig;
+    return TagFields(
       title: 'Espaçamentos',
       topLabel: 'Horizontal',
       bottomLabel: 'Vertical',
-      topGetter: getTagHorizontalSpacing,
-      topSetter: setTagHorizontalSpacing,
-      bottomGetter: getTagVerticalSpacing,
-      bottomSetter: setTagVerticalSpacing,
+      topGetter: () => config.tagHorizontalSpacing,
+      topSetter: config.setTagHorizontalSpacing,
+      bottomGetter: () => config.tagVerticalSpacing,
+      bottomSetter: config.setTagVerticalSpacing,
     );
   }
 }

@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     if (hasCheckedLogin) return;
     hasCheckedLogin = true;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      var authed = isAuthenticated();
+      var authed = MalaApi.user.isLogged;
       if (authed) {
         unawaited(context.navigator.pushMaterial(MainPage.create()));
       }
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: LoginFields(
                         onLogin: (email, password) async {
                           logger.info('Login');
-                          await loginUser(email, password);
+                          await MalaApi.user.login(email, password);
                           await context.navigator
                               .pushMaterial(MainPage.create());
                         },

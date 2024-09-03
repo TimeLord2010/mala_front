@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mala_api/mala_api.dart';
@@ -38,9 +37,7 @@ class ServerProvider {
 
   void refreshHttpClient(String value) {
     logger.info('Refreshed http client: $value');
-    dio = Dio(BaseOptions(
-      baseUrl: value,
-    ));
+    Configuration.updateUrl(value);
   }
 
   void updateServer(String address) {

@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
 import 'package:mala_front/ui/providers/server_provider.dart';
@@ -83,7 +82,7 @@ class _LoginConfigurationState extends State<LoginConfiguration> {
         if (deletingCache) return;
         deletingCache = true;
         try {
-          await deleteUserFiles();
+          //await deleteUserFiles();
         } finally {
           deletingCache = false;
         }

@@ -75,7 +75,7 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
                 : () async {
                     if (path.isEmpty) return;
                     progress = 0.0001;
-                    await exportPatients(
+                    await MalaApi.file.export(
                       query: widget.query,
                       outputDir: path,
                       onProgress: ({
@@ -87,10 +87,6 @@ class _ExportPatientsPaneState extends State<ExportPatientsPane> {
                         eventMessage = message ?? '';
                         this.progress = progress;
                       },
-                      // (total, processed) {
-                      //   debugPrint('$processed/$total');
-                      //   progress = processed / total;
-                      // },
                     );
                     progress = 1;
                     context.navigator.pop();
