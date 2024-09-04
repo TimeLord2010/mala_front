@@ -1,4 +1,4 @@
-package com.vit.mala_front
+package com.example.mala_front
 
 import io.flutter.embedding.android.FlutterActivity
 
