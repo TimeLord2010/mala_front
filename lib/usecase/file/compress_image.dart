@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:image_compression_flutter/image_compression_flutter.dart';
+import 'package:image_compression/image_compression.dart';
 
 Future<CompressionResult> compressImage(
   File file, {
@@ -15,14 +15,10 @@ Future<CompressionResult> compressImage(
     return CompressionResult.fromFile(file, content);
   }
   var config = Configuration(
-    outputType: ImageOutputType.jpg,
-
-    // can only be true for Android and iOS while using ImageOutputType.jpg
-    //or ImageOutputType.pngÏ
-    useJpgPngNativeCompressor: true,
+    outputType: OutputType.jpg,
 
     // set quality between 0-100
-    quality: quality,
+    jpgQuality: quality,
   );
 
   final input = ImageFile(
@@ -30,7 +26,7 @@ Future<CompressionResult> compressImage(
     rawBytes: content,
   );
   final param = ImageFileConfiguration(input: input, config: config);
-  final output = await compressor.compress(param);
+  final output = await compressInQueue(param);
 
   return CompressionResult(
     input: file,
