@@ -34,7 +34,7 @@ dependencies:
   wave: ^0.2.2
   mala_api:
     git:
-      url: git@github.com:TimeLord2010/mala_api.git
+      url: https://github.com/TimeLord2010/mala_api.git
   image_compression: ^1.0.5
 
 dev_dependencies:
