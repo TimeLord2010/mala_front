@@ -49,6 +49,7 @@ class _LoginConfigurationState extends State<LoginConfiguration> {
               child: LabeledTextBox(
                 label: 'Endereço do servidor',
                 controller: serverController,
+                useMaterial: true,
               ),
             ),
             const SizedBox(width: 5),

@@ -306,10 +306,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "99e066ce75c89d6b29903d788a7bb9369cf754f7b24bf70bf4b6d6d6b26853b9"
+      sha256: "7856d364b589d1f08986e140938578ed36ed948581fbc3bc9aef1805039ac5ab"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.6"
+    version: "2.3.7"
   dartz:
     dependency: transitive
     description:
@@ -530,6 +530,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0+1"
+  isar_flutter_libs:
+    dependency: transitive
+    description:
+      name: isar_flutter_libs
+      sha256: bc6768cc4b9c61aabff77152e7f33b4b17d2fc93134f7af1c3dd51500fe8d5e8
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0+1"
   js:
     dependency: transitive
     description:
@@ -599,7 +607,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "8e59c702a626280d468ea521673660237523ce7b"
+      resolved-ref: ffecadc319e4bea97241643c9585a7617b01424d
       url: "https://github.com/TimeLord2010/mala_api.git"
     source: git
     version: "1.0.0"
@@ -804,7 +812,7 @@ packages:
     source: hosted
     version: "1.5.1"
   printing:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: printing
       sha256: de1889f30b34029fc46e5de6a9841498850b23d32942a9ee810ca36b0cb1b234
@@ -1044,10 +1052,10 @@ packages:
     dependency: transitive
     description:
       name: vit_dart_extensions
-      sha256: "22ec55c86e5c93aa7f02c6ce9f03d311e340bd8344eb157dad908ccbe17964d9"
+      sha256: "9920f677adc482ecd6fa3551093019690f70fd9aa0d876f5856294bb68acd87d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.4.0"
   vit_logger:
     dependency: "direct main"
     description:
@@ -1132,10 +1140,10 @@ packages:
     dependency: transitive
     description:
       name: xml2json
-      sha256: "52b7c8d350fdce09545b058982c26689ee89f1eb188cc9910d585665bfe27bc0"
+      sha256: dbe79a85d902674d95c7608c8048355ce2ec5846640da1c0f91389ccdad5b5a8
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.3"
+    version: "6.2.4"
   yaml:
     dependency: transitive
     description:

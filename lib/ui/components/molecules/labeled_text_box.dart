@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 
 class LabeledTextBox extends StatelessWidget {
@@ -9,8 +10,9 @@ class LabeledTextBox extends StatelessWidget {
     this.placeholder,
     this.onChanged,
     this.onSubmitted,
-    this.isPassword = false,
     TextEditingController? controller,
+    this.useMaterial = false,
+    this.isPassword = false,
   }) : controller = controller ?? TextEditingController();
 
   final String label;
@@ -20,28 +22,46 @@ class LabeledTextBox extends StatelessWidget {
   final bool isPassword;
   final void Function(String value)? onChanged;
   final void Function(String value)? onSubmitted;
+  final bool useMaterial;
 
   @override
   Widget build(BuildContext context) {
     var infoLabel = InfoLabel(
       label: label,
-      child: TextBox(
-        controller: controller,
-        onChanged: onChanged,
-        inputFormatters: formaters,
-        // scrollPhysics: const ClampingScrollPhysics(),
-        placeholder: placeholder,
-        placeholderStyle: TextStyle(
-          color: Colors.grey[80],
-        ),
-        obscureText: isPassword,
-        onSubmitted: onSubmitted,
-      ),
+      child: _textbox(),
     );
     return LimitedBox(
       //maxHeight: 58,
       maxWidth: 200,
       child: infoLabel,
+    );
+  }
+
+  Widget _textbox() {
+    var placeholderStyle = TextStyle(
+      color: Colors.grey[80],
+    );
+    if (useMaterial) {
+      return material.TextField(
+        controller: controller,
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+        obscureText: isPassword,
+        decoration: material.InputDecoration(
+          hintText: placeholder,
+          hintStyle: placeholderStyle,
+        ),
+      );
+    }
+    return TextBox(
+      controller: controller,
+      onChanged: onChanged,
+      inputFormatters: formaters,
+      // scrollPhysics: const ClampingScrollPhysics(),
+      placeholder: placeholder,
+      placeholderStyle: placeholderStyle,
+      obscureText: isPassword,
+      onSubmitted: onSubmitted,
     );
   }
 }
