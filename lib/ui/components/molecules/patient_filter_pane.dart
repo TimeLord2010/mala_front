@@ -42,33 +42,20 @@ class PatientFilterPane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var width = constraints.maxWidth;
+        return _content(width);
+      },
+    );
+  }
+
+  Column _content(double maxWidth) {
     return Column(
       children: [
-        Row(
-          children: [
-            LabeledTextBox(
-              label: 'Nome',
-              controller: nameController,
-            ),
-            LabeledTextBox(
-              label: 'Endereço',
-              controller: streetController,
-            ),
-            LabeledTextBox(
-              label: 'Bairro',
-              controller: districtController,
-            ),
-          ]
-              .map((x) {
-                return Expanded(
-                  child: x,
-                );
-              })
-              .toList()
-              .separatedBy(const SizedBox(width: 5)),
-        ),
+        _nameAndAddressFilter(maxWidth),
         const SizedBox(height: 15),
-        _dateFilter(),
+        _dateFilter(maxWidth),
         const SizedBox(height: 15),
         _activityFilter(),
         const SizedBox(height: 10),
@@ -89,6 +76,63 @@ class PatientFilterPane extends StatelessWidget {
     );
   }
 
+  Widget _nameAndAddressFilter(double width) {
+    if (width < 400) {
+      return Column(
+        children: [
+          _nameFilter(),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              Expanded(
+                child: _addressFilter(),
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: _districtFilter(),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        _nameFilter(),
+        _addressFilter(),
+        _districtFilter(),
+      ]
+          .map((x) {
+            return Expanded(
+              child: x,
+            );
+          })
+          .toList()
+          .separatedBy(const SizedBox(width: 5)),
+    );
+  }
+
+  LabeledTextBox _districtFilter() {
+    return LabeledTextBox(
+      label: 'Bairro',
+      controller: districtController,
+    );
+  }
+
+  LabeledTextBox _addressFilter() {
+    return LabeledTextBox(
+      label: 'Endereço',
+      controller: streetController,
+    );
+  }
+
+  LabeledTextBox _nameFilter() {
+    return LabeledTextBox(
+      label: 'Nome',
+      controller: nameController,
+    );
+  }
+
   Column _activityFilter() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,45 +146,63 @@ class PatientFilterPane extends StatelessWidget {
     );
   }
 
-  Row _dateFilter() {
+  Widget _dateFilter(double width) {
+    if (width < 400) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ageFilter(),
+          const SizedBox(height: 15),
+          _birthDatesFilter(),
+        ],
+      );
+    }
     return Row(
       children: [
         Expanded(
-          child: InfoLabel(
-            label: 'Idade',
-            child: Row(
-              children: [
-                NumberBox(
-                  onChanged: onMinAgeChange,
-                  value: minAge,
-                  min: 0,
-                  mode: SpinButtonPlacementMode.none,
-                ),
-                NumberBox(
-                  onChanged: onMaxAgeChange,
-                  value: maxAge,
-                  min: 0,
-                  mode: SpinButtonPlacementMode.none,
-                ),
-              ]
-                  .map((x) {
-                    return Expanded(child: x);
-                  })
-                  .toList()
-                  .separatedBy(const SizedBox(width: 5)),
-            ),
-          ),
+          child: _ageFilter(),
         ),
         Expanded(
-          child: Center(
-            child: MalaCheckBox(
-              label: 'Aniversariantes do mês',
-              checked: monthBirthDay,
-              onCheck: onMonthBirthDayChange,
-            ),
-          ),
+          child: _birthDatesFilter(),
         ),
       ].separatedBy(const SizedBox(width: 10)),
+    );
+  }
+
+  Center _birthDatesFilter() {
+    return Center(
+      child: MalaCheckBox(
+        label: 'Aniversariantes do mês',
+        checked: monthBirthDay,
+        onCheck: onMonthBirthDayChange,
+      ),
+    );
+  }
+
+  InfoLabel _ageFilter() {
+    return InfoLabel(
+      label: 'Idade',
+      child: Row(
+        children: [
+          NumberBox(
+            onChanged: onMinAgeChange,
+            value: minAge,
+            min: 0,
+            mode: SpinButtonPlacementMode.none,
+          ),
+          NumberBox(
+            onChanged: onMaxAgeChange,
+            value: maxAge,
+            min: 0,
+            mode: SpinButtonPlacementMode.none,
+          ),
+        ]
+            .map((x) {
+              return Expanded(child: x);
+            })
+            .toList()
+            .separatedBy(const SizedBox(width: 5)),
+      ),
     );
   }
 }

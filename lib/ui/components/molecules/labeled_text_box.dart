@@ -42,14 +42,16 @@ class LabeledTextBox extends StatelessWidget {
       color: Colors.grey[80],
     );
     if (useMaterial) {
-      return material.TextField(
-        controller: controller,
-        onChanged: onChanged,
-        onSubmitted: onSubmitted,
-        obscureText: isPassword,
-        decoration: material.InputDecoration(
-          hintText: placeholder,
-          hintStyle: placeholderStyle,
+      return material.Material(
+        child: material.TextField(
+          controller: controller,
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+          obscureText: isPassword,
+          decoration: material.InputDecoration(
+            hintText: placeholder,
+            hintStyle: placeholderStyle,
+          ),
         ),
       );
     }
