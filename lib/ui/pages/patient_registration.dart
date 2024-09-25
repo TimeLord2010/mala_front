@@ -87,6 +87,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     });
   }
 
+  bool isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -138,15 +140,18 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       await _delete(context);
                     },
                   ),
-                IconButton(
-                  icon: const Icon(
-                    FluentIcons.save,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    save();
-                  },
-                ),
+                if (!isSaving)
+                  IconButton(
+                    icon: const Icon(
+                      FluentIcons.save,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      save();
+                    },
+                  )
+                else
+                  const ProgressRing(),
                 const SizedBox(width: 5),
               ].separatedBy(const SizedBox(width: 10)),
             ),
@@ -444,41 +449,50 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   }
 
   void save() async {
-    var phonesStr = widget.phonesController.text;
-    var phones =
-        phonesStr.split(',').map((x) => x.trim()).where((x) => x != '');
-    var patient = Patient(
-      name: widget.nameController.text,
-      cpf: widget.cpfController.text,
-      motherName: widget.motherController.text,
-      yearOfBirth: selectedBirth?.year,
-      monthOfBirth: selectedBirth?.month,
-      dayOfBirth: selectedBirth?.day,
-      phones: phones.toList(),
-      observation: widget.observationController.text,
-      activitiesId: selectedActivities.map((x) => x.index).toList(),
-      createdAt: widget.patient?.createdAt ?? DateTime.now(),
-      updatedAt: DateTime.now(),
-      remoteId: widget.patient?.remoteId,
-      uploadedAt: widget.patient?.uploadedAt,
-    );
-    if (widget.patient == null && pictureData == null) {
-      patient.hasPicture = false;
+    if (isSaving) {
+      return;
     }
-    patient.address.value = Address(
-      zipCode: widget.zipCodeController.text,
-      state: widget.stateController.text,
-      city: widget.cityController.text,
-      district: widget.districtController.text,
-      street: widget.streetController.text,
-      number: widget.numberController.text,
-      complement: widget.complementController.text,
-    );
-    if (widget.patient != null) {
-      patient.id = widget.patient!.id;
+    isSaving = true;
+    try {
+      var phonesStr = widget.phonesController.text;
+      var phones =
+          phonesStr.split(',').map((x) => x.trim()).where((x) => x != '');
+      var patient = Patient(
+        name: widget.nameController.text,
+        cpf: widget.cpfController.text,
+        motherName: widget.motherController.text,
+        yearOfBirth: selectedBirth?.year,
+        monthOfBirth: selectedBirth?.month,
+        dayOfBirth: selectedBirth?.day,
+        phones: phones.toList(),
+        observation: widget.observationController.text,
+        activitiesId: selectedActivities.map((x) => x.index).toList(),
+        createdAt: widget.patient?.createdAt ?? DateTime.now(),
+        updatedAt: DateTime.now(),
+        remoteId: widget.patient?.remoteId,
+        uploadedAt: widget.patient?.uploadedAt,
+      );
+      if (widget.patient == null && pictureData == null) {
+        patient.hasPicture = false;
+      }
+      patient.address.value = Address(
+        zipCode: widget.zipCodeController.text,
+        state: widget.stateController.text,
+        city: widget.cityController.text,
+        district: widget.districtController.text,
+        street: widget.streetController.text,
+        number: widget.numberController.text,
+        complement: widget.complementController.text,
+      );
+      if (widget.patient != null) {
+        patient.id = widget.patient!.id;
+      }
+      await MalaApi.patient.upsert(patient, pictureData);
+      context.navigator.pop();
+    } finally {
+      isSaving = false;
+      if (mounted) setState(() {});
     }
-    await MalaApi.patient.upsert(patient, pictureData);
-    context.navigator.pop();
   }
 
   Future<void> _delete(BuildContext context) async {
