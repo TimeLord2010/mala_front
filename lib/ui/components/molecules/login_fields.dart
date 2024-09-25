@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/login_configuration.dart';
 
+import '../../pages/main_page.dart';
 import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
 
@@ -92,6 +94,12 @@ class _LoginFieldsState extends State<LoginFields> {
                   duration: const Duration(milliseconds: 300),
                   firstChild: _loginButton(),
                   secondChild: const SizedBox.shrink(),
+                ),
+                Button(
+                  child: const Text('Continuar sem login'),
+                  onPressed: () async {
+                    await context.navigator.pushMaterial(MainPage.create());
+                  },
                 ),
               ],
             );

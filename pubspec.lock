@@ -607,7 +607,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "1cc232fbc1a5acc99ef3ed77988550b95beafa73"
+      resolved-ref: "338898e0225ea4b7b0e50c6d4335ddb4f93d40d1"
       url: "https://github.com/TimeLord2010/mala_api.git"
     source: git
     version: "1.0.0"
