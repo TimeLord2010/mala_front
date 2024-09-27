@@ -146,9 +146,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                       FluentIcons.save,
                       size: 20,
                     ),
-                    onPressed: () {
-                      save();
-                    },
+                    onPressed: () => save(),
                   )
                 else
                   const ProgressRing(),
