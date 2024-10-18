@@ -27,6 +27,7 @@ class PatientTile extends StatefulWidget {
 
 class _PatientTileState extends State<PatientTile> {
   Future<Uint8List?> pictureData = Future.value(null);
+  StreamSubscription<Patient>? subscription;
 
   @override
   void initState() {
@@ -53,6 +54,33 @@ class _PatientTileState extends State<PatientTile> {
         logger.warn('Picture load and save aborted for $patientId');
       }
     }));
+
+    if (widget.patient.remoteId == null) {
+      var stream =
+          PatientModule.patientUploadController.stream.asBroadcastStream();
+      subscription = stream.listen(null);
+      subscription?.onData((uploadedPatient) async {
+        var remoteId = uploadedPatient.remoteId;
+        if (remoteId == null) {
+          return;
+        }
+        logger.info('Received uploaded patient notification');
+        if (uploadedPatient.id == widget.patient.id) {
+          widget.patient.remoteId = remoteId;
+          if (mounted) {
+            setState(() {});
+          }
+          await subscription?.cancel();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(subscription?.cancel());
+    subscription = null;
+    super.dispose();
   }
 
   @override
