@@ -36,6 +36,7 @@ class ServerProvider {
   }
 
   void refreshHttpClient(String value) {
+    value = value.trim();
     logger.info('Refreshed http client: $value');
     Configuration.updateUrl(value);
   }
@@ -43,5 +44,6 @@ class ServerProvider {
   void updateServer(String address) {
     refreshHttpClient(address);
     unawaited(_sp.setString('server', address));
+    _ip = address;
   }
 }
