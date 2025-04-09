@@ -470,9 +470,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         remoteId: widget.patient?.remoteId,
         uploadedAt: widget.patient?.uploadedAt,
       );
+
       if (widget.patient == null && pictureData == null) {
         patient.hasPicture = false;
       }
+
       patient.address.value = Address(
         zipCode: widget.zipCodeController.text,
         state: widget.stateController.text,
