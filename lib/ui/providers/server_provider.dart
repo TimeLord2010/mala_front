@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mala_api/mala_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,8 +23,10 @@ class ServerProvider {
       }
 
       // Assume default values
-      var host = kDebugMode ? 'localhost' : '3.220.73.81';
-      var address = 'http://$host:49152';
+      var lambdaAddress =
+          'https://aj18h1vzgh.execute-api.us-east-1.amazonaws.com/Prod/';
+      var address = lambdaAddress;
+      // var address = kDebugMode ? 'http://localhost:49152' : lambdaAddress;
       logger.info('Assumed ip: $address');
       return address;
     }
