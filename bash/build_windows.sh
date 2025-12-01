@@ -1,4 +1,4 @@
-flutter build windows --release
+flutter build windows --release || exit -1
 
 source_folder="./build/windows/x64/runner/Release"
 # source_folder="./build/windows/runner/Release"
