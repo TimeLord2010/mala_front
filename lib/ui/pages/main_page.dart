@@ -77,7 +77,7 @@ class MainPage extends StatelessWidget {
       ),
       pane: NavigationPane(
         displayMode:
-            isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.compact,
+            isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.minimal,
         size: const NavigationPaneSize(
           openMaxWidth: 200,
         ),
