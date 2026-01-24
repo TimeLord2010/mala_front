@@ -26,7 +26,7 @@ class PatientRegistration extends StatefulWidget {
     } else {
       cpfController.text = p.cpf ?? '';
     }
-    var address = p.address.value;
+    var address = p.address;
     if (address == null) {
       debugPrint('Address was null');
       return;
@@ -475,7 +475,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         patient.hasPicture = false;
       }
 
-      patient.address.value = Address(
+      patient.address = Address(
         zipCode: widget.zipCodeController.text,
         state: widget.stateController.text,
         city: widget.cityController.text,
