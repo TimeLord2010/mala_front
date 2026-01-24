@@ -4,6 +4,8 @@ import 'package:mala_api/mala_api.dart';
 
 import '../../../protocols/camera/change_camera.dart';
 
+final _logger = createSdkLogger('ChangeCameraButton');
+
 class ChangeCameraButton extends StatelessWidget {
   const ChangeCameraButton({
     super.key,
@@ -32,7 +34,7 @@ class ChangeCameraButton extends StatelessWidget {
                 isMounted: isMounted,
               );
               if (newIndex != null) {
-                logger.info('Setting new camera index: $newIndex');
+                _logger.i('Setting new camera index: $newIndex');
                 setCameraIndex(newIndex);
               }
             }

@@ -6,6 +6,8 @@ import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/data/enums/camera_exception_reason.dart';
 import 'package:mala_front/data/errors/failed_to_change_camera.dart';
 
+final _logger = createSdkLogger('changeCamera');
+
 Future<int?> changeCamera({
   required CameraController controller,
   required int selectedIndex,
@@ -25,15 +27,15 @@ Future<int?> changeCamera({
   }
 
   var desiredIndex = getDesiredIndex();
-  logger.info('Desired index: $desiredIndex');
+  _logger.i('Desired index: $desiredIndex');
   var camera = cameras[desiredIndex];
-  logger.info('New camera: ${camera.name}');
+  _logger.i('New camera: ${camera.name}');
 
   int? cameraId;
   if (Platform.isWindows) {
     // Disposing old camera.
     var oldCameraId = controller.camera_id;
-    logger.info('Disposing of old camera: $oldCameraId');
+    _logger.i('Disposing of old camera: $oldCameraId');
     await controller.camera_windows.dispose(oldCameraId);
 
     var con = controller.camera_windows;
@@ -41,7 +43,7 @@ Future<int?> changeCamera({
       camera,
       camera_package.ResolutionPreset.max,
     );
-    logger.info('New camera id: $cameraId');
+    _logger.i('New camera id: $cameraId');
     await controller.initializeCameraById(
       camera_id: cameraId,
       setState: setState,

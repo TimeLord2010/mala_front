@@ -29,6 +29,8 @@ class _PatientTileState extends State<PatientTile> {
   Future<Uint8List?> pictureData = Future.value(null);
   StreamSubscription<Patient>? subscription;
 
+  final _logger = createSdkLogger('PatientTile');
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +53,7 @@ class _PatientTileState extends State<PatientTile> {
     )
         .then((ranTask) {
       if (!ranTask) {
-        logger.warn('Picture load and save aborted for $patientId');
+        _logger.w('Picture load and save aborted for $patientId');
       }
     }));
 
@@ -64,7 +66,7 @@ class _PatientTileState extends State<PatientTile> {
         if (remoteId == null) {
           return;
         }
-        logger.info('Received uploaded patient notification');
+        _logger.i('Received uploaded patient notification');
         if (uploadedPatient.id == widget.patient.id) {
           widget.patient.remoteId = remoteId;
           if (mounted) {

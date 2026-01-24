@@ -33,6 +33,7 @@ class ProfilePictureTaker extends StatefulWidget {
 }
 
 class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
+  final _logger = createSdkLogger('ProfilePictureTaker');
   final cameraController = CameraController();
   int camerasCount = -1;
   int selectedIndex = 0;
@@ -56,7 +57,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
 
   @override
   void initState() {
-    logger.info('Init state profile picture');
+    _logger.i('Init state profile picture');
     super.initState();
     unawaited(task());
   }
@@ -72,7 +73,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         setState(() {
           this.camerasCount = 0;
         });
-        logger.warn('No cameras found');
+        _logger.w('No cameras found');
         return;
       }
 
@@ -87,26 +88,26 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         mounted: () => mounted,
       );
 
-      logger.info('Camera count: $camerasCount');
+      _logger.i('Camera count: $camerasCount');
       setState(() {
         this.camerasCount = camerasCount;
       });
     } on camera_package.CameraException catch (e) {
-      logger.error('Internal camera exception: (${e.code}) ${e.description}');
+      _logger.e('Internal camera exception: (${e.code}) ${e.description}');
     } on model.CameraException catch (e) {
-      logger.error('Camera exception: $e');
+      _logger.e('Camera exception: $e');
     } on Exception catch (e) {
-      logger.error(getErrorMessage(e) ?? 'Camera initialization error');
+      _logger.e(getErrorMessage(e) ?? 'Camera initialization error');
     }
   }
 
   @override
   void dispose() {
-    logger.info('[PictureTaker] dispose');
+    _logger.i('[PictureTaker] dispose');
     if (Platform.isWindows) {
       var cameraId = cameraController.camera_id;
       if (cameraId != 0) {
-        logger.info('Disposing of camereId $cameraId');
+        _logger.i('Disposing of camereId $cameraId');
         unawaited(cameraController.camera_windows.dispose(cameraId));
       }
     }

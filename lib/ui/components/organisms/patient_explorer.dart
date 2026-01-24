@@ -27,6 +27,7 @@ class PatientExplorer extends StatefulWidget {
 }
 
 class _PatientExplorerState extends State<PatientExplorer> {
+  final _logger = createSdkLogger('PatientExplorer');
   Future<List<Patient>> _patientsFuture = Future.value([]);
   Future<List<Patient>> get patientsFuture => _patientsFuture;
   set patientsFuture(Future<List<Patient>> value) {
@@ -223,14 +224,14 @@ class _PatientExplorerState extends State<PatientExplorer> {
   }
 
   void _search(int page, bool shouldCount) async {
-    logger.info('Searching. Page: $page, ShouldCount: $shouldCount');
+    _logger.i('Searching. Page: $page, ShouldCount: $shouldCount');
     currentPage = page;
     var patientQuery = query;
     if (shouldCount) {
       var count = await MalaApi.patient.count(patientQuery);
       //pages = count ~/ pageSize;
       this.count = count;
-      logger.info('Count: $count, Pages: $pages');
+      _logger.i('Count: $count, Pages: $pages');
     }
     patientsFuture = MalaApi.patient.list(
       query: patientQuery,

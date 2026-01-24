@@ -6,6 +6,8 @@ import 'package:mala_front/data/errors/failed_to_take_picture.dart';
 
 import '../../../theme/colors.dart';
 
+final _logger = createSdkLogger('PictureButton');
+
 class PictureButton extends StatelessWidget {
   const PictureButton({
     super.key,
@@ -40,12 +42,12 @@ class PictureButton extends StatelessWidget {
               throw FailedToTakePicture(CameraExceptionReason.canceled);
             }
             var name = result.name;
-            logger.info('Name: $name');
+            _logger.i('Name: $name');
             var path = result.path;
-            logger.info('Path: $path');
+            _logger.i('Path: $path');
             onPictureTaken(path);
           } on Exception catch (e) {
-            logger.error('Failed to take picture: ${e.toString()}');
+            _logger.e('Failed to take picture: ${e.toString()}');
           }
         },
         child: Container(

@@ -14,6 +14,8 @@ import '../components/organisms/patient_explorer.dart';
 class MainPage extends StatelessWidget {
   const MainPage._();
 
+  static final _logger = createSdkLogger('MainPage');
+
   static Widget create() {
     return ChangeNotifierProvider(
       create: (context) => MainPageController(context),
@@ -23,7 +25,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.info('Refreshed main page');
+    _logger.i('Refreshed main page');
     return MalaApp(
       child: LayoutBuilder(
         builder: (context, constraints) {

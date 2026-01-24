@@ -8,7 +8,7 @@ class ProcessingPictureOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned.fill(
       child: Container(
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

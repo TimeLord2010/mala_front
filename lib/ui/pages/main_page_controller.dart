@@ -3,6 +3,7 @@ import 'package:mala_api/mala_api.dart';
 
 class MainPageController extends ChangeNotifier {
   final BuildContext context;
+  final _logger = createSdkLogger('MainPageController');
   MainPageController(this.context) {
     _refreshAuthentication(context);
   }
@@ -35,10 +36,10 @@ class MainPageController extends ChangeNotifier {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       bool canProceed() {
         if (didLogOut) {
-          logger.warn('LOGED OUT, CANNOT PROCEED');
+          _logger.w('LOGED OUT, CANNOT PROCEED');
           return false;
         }
-        logger.info('CAN PROCEED');
+        _logger.i('CAN PROCEED');
         return true;
       }
 

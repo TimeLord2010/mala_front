@@ -23,6 +23,7 @@ class LoginFields extends StatefulWidget {
 }
 
 class _LoginFieldsState extends State<LoginFields> {
+  final _logger = createSdkLogger('LoginFields');
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -194,7 +195,7 @@ class _LoginFieldsState extends State<LoginFields> {
     try {
       await widget.onLogin(email, password);
     } catch (e) {
-      logger.info('errored at login: ${e.toString()}');
+      _logger.i('errored at login: ${e.toString()}');
       errorMessage = getErrorMessage(e);
     } finally {
       isLoading = false;

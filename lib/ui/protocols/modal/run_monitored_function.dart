@@ -5,6 +5,8 @@ import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/index.dart';
 import 'package:mala_front/ui/protocols/modal/show_modal.dart';
 
+final _logger = createSdkLogger('runMonitoredFunction');
+
 /// Executes the given function [func] and if it errors, an modal is shown.
 Future<bool> runMonitoredFunction({
   required BuildContext context,
@@ -16,7 +18,7 @@ Future<bool> runMonitoredFunction({
     return true;
   } catch (e, stack) {
     var msg = getErrorMessage(e) ?? 'Erro desconhecido';
-    logger.error(msg);
+    _logger.e(msg);
     unawaited(insertRemoteLog(
       message: msg,
       context: errorModalTitle,

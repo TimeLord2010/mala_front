@@ -11,6 +11,7 @@ class ImportPatients extends StatefulWidget {
 }
 
 class _ImportPatientsState extends State<ImportPatients> {
+  final _logger = createSdkLogger('ImportPatients');
   String? _path;
   String? get path => _path;
   set path(String? value) {
@@ -67,7 +68,7 @@ class _ImportPatientsState extends State<ImportPatients> {
     var added = await MalaApi.file.import(
       path!,
       onProgress: (progress) {
-        logger.info('Import progress: $progress');
+        _logger.i('Import progress: $progress');
       },
     );
     setState(() {

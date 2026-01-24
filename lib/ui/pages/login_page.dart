@@ -38,6 +38,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _logger = createSdkLogger('LoginPage');
   bool hasCheckedLogin = false;
 
   void _checkAuthentication(BuildContext context) {
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.only(bottom: bottomPadding),
                       child: LoginFields(
                         onLogin: (email, password) async {
-                          logger.info('Login');
+                          _logger.i('Login');
                           await MalaApi.user.login(email, password);
                           await context.navigator
                               .pushMaterial(MainPage.create());

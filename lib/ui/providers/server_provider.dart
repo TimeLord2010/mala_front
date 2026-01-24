@@ -6,19 +6,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerProvider {
   final _sp = GetIt.I.get<SharedPreferences>();
+  final _logger = createSdkLogger('ServerProvider');
 
   String? _ip;
   String get ip {
     // Chaching the old value from this getter
     if (_ip != null) {
-      logger.info('Found cached ip: $_ip');
+      _logger.i('Found cached ip: $_ip');
       return _ip!;
     }
     String generateValue() {
       // Fetch saved value from storage
       var saved = _sp.getString('server');
       if (saved != null) {
-        logger.info('Found saved ip: $saved');
+        _logger.i('Found saved ip: $saved');
         return saved;
       }
 
@@ -27,7 +28,7 @@ class ServerProvider {
           'https://aj18h1vzgh.execute-api.us-east-1.amazonaws.com/Prod/';
       var address = lambdaAddress;
       // var address = kDebugMode ? 'http://localhost:49152' : lambdaAddress;
-      logger.info('Assumed ip: $address');
+      _logger.i('Assumed ip: $address');
       return address;
     }
 
@@ -38,7 +39,7 @@ class ServerProvider {
 
   void refreshHttpClient(String value) {
     value = value.trim();
-    logger.info('Refreshed http client: $value');
+    _logger.i('Refreshed http client: $value');
     Configuration.updateUrl(value);
   }
 
