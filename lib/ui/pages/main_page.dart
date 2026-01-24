@@ -32,7 +32,7 @@ class MainPage extends StatelessWidget {
           var width = constraints.maxWidth;
           return _content(
             context,
-            isHorizontal: width > 600,
+            isHorizontal: width > 650,
             explorer: PatientExplorer(
               modalContext: context,
               updateExposer: (updater) {
@@ -59,9 +59,7 @@ class MainPage extends StatelessWidget {
         title: loadingDescription == null ? const Text('Mala') : null,
         leading: Padding(
           padding: const EdgeInsets.all(4),
-          child: Center(
-            child: Image.asset('assets/logo-icon.png'),
-          ),
+          child: Center(child: Image.asset('assets/logo-icon.png')),
         ),
         actions: loadingDescription != null
             ? Row(
@@ -76,11 +74,10 @@ class MainPage extends StatelessWidget {
             : null,
       ),
       pane: NavigationPane(
-        displayMode:
-            isHorizontal ? PaneDisplayMode.open : PaneDisplayMode.minimal,
-        size: const NavigationPaneSize(
-          openMaxWidth: 200,
-        ),
+        displayMode: isHorizontal
+            ? PaneDisplayMode.open
+            : PaneDisplayMode.minimal,
+        size: const NavigationPaneSize(openMaxWidth: 200),
         selected: selectedIndex,
         onChanged: (index) {
           var provider = context.read<MainPageController>();

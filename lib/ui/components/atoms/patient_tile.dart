@@ -35,31 +35,33 @@ class _PatientTileState extends State<PatientTile> {
   void initState() {
     super.initState();
     int patientId = widget.patient.id;
-    unawaited(MalaApi.patient.semaphore
-        .lockWhile(
-      patientId: patientId,
-      task: PatientTask.pictureLoad,
-      func: () async {
-        await MalaApi.patient.loadPicture(
-          widget.patient,
-          onDataLoad: (data) {
-            if (!mounted) return;
-            setState(() {
-              pictureData = data;
-            });
-          },
-        );
-      },
-    )
-        .then((ranTask) {
-      if (!ranTask) {
-        _logger.w('Picture load and save aborted for $patientId');
-      }
-    }));
+    unawaited(
+      MalaApi.patient.semaphore
+          .lockWhile(
+            patientId: patientId,
+            task: PatientTask.pictureLoad,
+            func: () async {
+              await MalaApi.patient.loadPicture(
+                widget.patient,
+                onDataLoad: (data) {
+                  if (!mounted) return;
+                  setState(() {
+                    pictureData = data;
+                  });
+                },
+              );
+            },
+          )
+          .then((ranTask) {
+            if (!ranTask) {
+              _logger.w('Picture load and save aborted for $patientId');
+            }
+          }),
+    );
 
     if (widget.patient.remoteId == null) {
-      var stream =
-          PatientModule.patientUploadController.stream.asBroadcastStream();
+      var stream = PatientModule.patientUploadController.stream
+          .asBroadcastStream();
       subscription = stream.listen(null);
       subscription?.onData((uploadedPatient) async {
         var remoteId = uploadedPatient.remoteId;
@@ -91,16 +93,48 @@ class _PatientTileState extends State<PatientTile> {
     var phones = widget.patient.phones ?? [];
     int? years = widget.patient.years;
     return ListTile(
-      title: Tooltip(
-        message: name,
-        child: AutoSizeText(
-          name,
-          maxLines: 1,
-          minFontSize: 12,
-          overflow: TextOverflow.ellipsis,
-        ),
+      title: _name(name),
+      leading: _picture(),
+      onPressed: widget.onPressed,
+      subtitle: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: (phones.take(2).map((x) {
+              return Text(x);
+            }).toList()).separatedBy(const Text(' | ')),
+          ),
+          if (years != null)
+            Row(
+              children: [
+                Text('$years anos'),
+                const SizedBox(width: 5),
+                if (widget.patient.hasBirthDayThisMonth) const Text('🎂'),
+                const SizedBox(width: 5),
+                if (widget.patient.isBirthdayToday) const Text('🎁'),
+              ],
+            ),
+        ],
       ),
-      leading: Builder(builder: (context) {
+    );
+  }
+
+  Tooltip _name(String name) {
+    return Tooltip(
+      message: name,
+      child: AutoSizeText(
+        name,
+        maxLines: 1,
+        minFontSize: 13,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Builder _picture() {
+    return Builder(
+      builder: (context) {
         var simpleFutureBuilder = SimpleFutureBuilder(
           future: pictureData,
           builder: (value) {
@@ -124,30 +158,7 @@ class _PatientTileState extends State<PatientTile> {
           );
         }
         return simpleFutureBuilder;
-      }),
-      onPressed: widget.onPressed,
-      subtitle: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: (phones.take(2).map((x) {
-              return Text(x);
-            }).toList())
-                .separatedBy(const Text(' | ')),
-          ),
-          if (years != null)
-            Row(
-              children: [
-                Text('$years anos'),
-                const SizedBox(width: 5),
-                if (widget.patient.hasBirthDayThisMonth) const Text('🎂'),
-                const SizedBox(width: 5),
-                if (widget.patient.isBirthdayToday) const Text('🎁'),
-              ],
-            ),
-        ],
-      ),
+      },
     );
   }
 }

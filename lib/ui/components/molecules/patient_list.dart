@@ -18,29 +18,34 @@ class PatientList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Wrap(
-        children: patients.map((x) {
-          return SizedBox(
-            width: 350,
-            child: PatientTile(
-              modalContext: modalContext,
-              key: ValueKey(x.id),
-              patient: x,
-              onPressed: onEdit != null
-                  ? () async {
-                      var page = PatientRegistration(
-                        patient: x,
-                        modalContext: modalContext,
-                      );
-                      await context.navigator.pushMaterial(page);
-                      onEdit!(x);
-                    }
-                  : null,
-            ),
-          );
-        }).toList(),
-      ),
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      var maxWidth = constraints.maxWidth;
+      double tileWidth =
+          switch (maxWidth) { < 600 && > 400 => (maxWidth / 2) - 10, _ => 300 };
+      return SingleChildScrollView(
+        child: Wrap(
+          children: patients.map((x) {
+            return SizedBox(
+              width: tileWidth,
+              child: PatientTile(
+                modalContext: modalContext,
+                key: ValueKey(x.id),
+                patient: x,
+                onPressed: onEdit != null
+                    ? () async {
+                        var page = PatientRegistration(
+                          patient: x,
+                          modalContext: modalContext,
+                        );
+                        await context.navigator.pushMaterial(page);
+                        onEdit!(x);
+                      }
+                    : null,
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    });
   }
 }
