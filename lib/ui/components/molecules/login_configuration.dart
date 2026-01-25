@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:gap/gap.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/labeled_text_box.dart';
 import 'package:mala_front/ui/providers/server_provider.dart';
@@ -15,6 +16,8 @@ class LoginConfiguration extends StatefulWidget {
 class _LoginConfigurationState extends State<LoginConfiguration> {
   final serverController = TextEditingController();
 
+  String? currentAddress;
+
   bool _deletingCache = false;
   bool get deletingCache => _deletingCache;
   set deletingCache(bool value) {
@@ -26,7 +29,8 @@ class _LoginConfigurationState extends State<LoginConfiguration> {
   @override
   void initState() {
     super.initState();
-    serverController.text = _serverProvider.ip;
+    currentAddress = _serverProvider.address;
+    serverController.text = _serverProvider.address;
   }
 
   @override
@@ -42,27 +46,61 @@ class _LoginConfigurationState extends State<LoginConfiguration> {
       children: [
         _clearCacheButton(),
         const SizedBox(height: 10),
+        LabeledTextBox(
+          label: 'Endereço do servidor',
+          controller: serverController,
+        ),
+        const Gap(10),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Expanded(
-              child: LabeledTextBox(
-                label: 'Endereço do servidor',
-                controller: serverController,
-                useMaterial: true,
+              child: Row(
+                spacing: 10,
+                children: [
+                  FilledButton(
+                    onPressed: () {
+                      serverController.text = ApiAddreess.dev.address;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Colors.orange),
+                    ),
+                    child: const Text('Dev'),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      serverController.text = ApiAddreess.prod.address;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Colors.green),
+                    ),
+                    child: const Text('Prod'),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 5),
-            FilledButton(
-              child: const Text('Atualizar'),
-              onPressed: () {
-                var address = serverController.text;
-                _serverProvider.updateServer(address);
-              },
-            ),
+            _updateServerButton(),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _updateServerButton() {
+    return ValueListenableBuilder(
+      valueListenable: serverController,
+      builder: (context, value, child) {
+        return FilledButton(
+          onPressed: value.text != currentAddress
+              ? () {
+                  var address = serverController.text;
+                  _serverProvider.updateServer(address);
+                  currentAddress = address;
+                  setState(() {});
+                }
+              : null,
+          child: const Text('Atualizar'),
+        );
+      },
     );
   }
 

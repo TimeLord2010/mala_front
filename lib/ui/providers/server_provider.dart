@@ -8,12 +8,12 @@ class ServerProvider {
   final _sp = GetIt.I.get<SharedPreferences>();
   final _logger = createSdkLogger('ServerProvider');
 
-  String? _ip;
-  String get ip {
-    // Chaching the old value from this getter
-    if (_ip != null) {
-      _logger.i('Found cached ip: $_ip');
-      return _ip!;
+  String? _address;
+  String get address {
+    // Caching the old value from this getter
+    if (_address != null) {
+      _logger.i('Found cached ip: $_address');
+      return _address!;
     }
     String generateValue() {
       // Fetch saved value from storage
@@ -24,16 +24,14 @@ class ServerProvider {
       }
 
       // Assume default values
-      var lambdaAddress =
-          'https://aj18h1vzgh.execute-api.us-east-1.amazonaws.com/Prod/';
+      var lambdaAddress = ApiAddreess.prod.address;
       var address = lambdaAddress;
-      // var address = kDebugMode ? 'http://localhost:49152' : lambdaAddress;
-      _logger.i('Assumed ip: $address');
+      _logger.i('Assumed address: $address');
       return address;
     }
 
     final value = generateValue();
-    _ip = value;
+    _address = value;
     return value;
   }
 
@@ -46,6 +44,22 @@ class ServerProvider {
   void updateServer(String address) {
     refreshHttpClient(address);
     unawaited(_sp.setString('server', address));
-    _ip = address;
+    _address = address;
+  }
+}
+
+enum ApiAddreess {
+  prod,
+  dev;
+
+  String get awsId {
+    return switch (this) {
+      prod => 'aj18h1vzgh',
+      dev => 'qt3ytu5rh4',
+    };
+  }
+
+  String get address {
+    return 'https://$awsId.execute-api.us-east-1.amazonaws.com/Prod/';
   }
 }

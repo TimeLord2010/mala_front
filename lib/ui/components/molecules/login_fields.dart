@@ -11,10 +11,7 @@ import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
 
 class LoginFields extends StatefulWidget {
-  const LoginFields({
-    super.key,
-    required this.onLogin,
-  });
+  const LoginFields({super.key, required this.onLogin});
 
   final FutureOr<void> Function(String email, String password) onLogin;
 
@@ -122,12 +119,11 @@ class _LoginFieldsState extends State<LoginFields> {
               return ContentDialog(
                 title: const Text('Opções'),
                 content: const LoginConfiguration(),
+                constraints: const BoxConstraints.tightFor(width: 500),
                 actions: [
                   Button(
                     child: const Text('Fechar'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ],
               );
@@ -150,8 +146,9 @@ class _LoginFieldsState extends State<LoginFields> {
 
   AnimatedCrossFade _password() {
     return AnimatedCrossFade(
-      crossFadeState:
-          enteredEmail ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      crossFadeState: enteredEmail
+          ? CrossFadeState.showFirst
+          : CrossFadeState.showSecond,
       duration: const Duration(milliseconds: 400),
       firstChild: LabeledTextBox(
         label: 'Senha',
@@ -174,17 +171,11 @@ class _LoginFieldsState extends State<LoginFields> {
         return const LoadProgressIndicator();
       }
       return Center(
-        child: FilledButton(
-          onPressed: _login,
-          child: const Text('Logar'),
-        ),
+        child: FilledButton(onPressed: _login, child: const Text('Logar')),
       );
     }
 
-    return SizedBox(
-      height: 50,
-      child: content(),
-    );
+    return SizedBox(height: 50, child: content());
   }
 
   void _login() async {

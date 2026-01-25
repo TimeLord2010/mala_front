@@ -9,6 +9,6 @@ void main(List<String> args) async {
   var sp = await SharedPreferences.getInstance();
   GetIt.I.registerSingleton(sp);
   var instance = ServerProvider();
-  instance.refreshHttpClient(instance.ip);
+  instance.refreshHttpClient(instance.address);
   runApp(const LoginPage());
 }
