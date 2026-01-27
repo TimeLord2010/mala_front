@@ -126,7 +126,7 @@ class _PatientTileState extends State<PatientTile> {
       child: AutoSizeText(
         name,
         maxLines: 1,
-        minFontSize: 13,
+        minFontSize: 12,
         overflow: TextOverflow.ellipsis,
       ),
     );
