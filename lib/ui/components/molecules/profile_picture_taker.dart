@@ -14,6 +14,7 @@ import 'package:mala_front/ui/protocols/camera/get_camera_count.dart';
 import 'package:mala_front/ui/protocols/invert_axis.dart';
 import 'package:mala_front/ui/theme/text_styles/error_text_style.dart';
 import 'package:mala_front/usecase/file/compress_image.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../theme/colors.dart';
 import '../atoms/index.dart';
@@ -64,6 +65,19 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
 
   Future<void> task() async {
     try {
+      // Request camera permission
+      var cameraStatus = await Permission.camera.status;
+      if (!cameraStatus.isGranted) {
+        cameraStatus = await Permission.camera.request();
+        if (!cameraStatus.isGranted) {
+          _logger.w('Camera permission denied');
+          setState(() {
+            camerasCount = 0;
+          });
+          return;
+        }
+      }
+
       // Get available cameras
       await cameraController.initializeCameras();
 
