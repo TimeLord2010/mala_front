@@ -20,10 +20,7 @@ import '../../theme/colors.dart';
 import '../atoms/index.dart';
 
 class ProfilePictureTaker extends StatefulWidget {
-  const ProfilePictureTaker({
-    super.key,
-    required this.onPick,
-  });
+  const ProfilePictureTaker({super.key, required this.onPick});
 
   final void Function(Uint8List? bytes) onPick;
 
@@ -72,7 +69,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
         if (!cameraStatus.isGranted) {
           _logger.w('Camera permission denied');
           setState(() {
-            camerasCount = 0;
+            this.camerasCount = 0;
           });
           return;
         }
@@ -92,9 +89,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
       }
 
       // Select fist camera
-      await cameraController.initializeCamera(
-        setState: setState,
-      );
+      await cameraController.initializeCamera(setState: setState);
 
       // Initialize selected camera
       await cameraController.activateCamera(
@@ -133,60 +128,62 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white,
-      body: LayoutBuilder(builder: (context, constraints) {
-        var width = constraints.maxWidth;
-        var direction = width > 600 ? Axis.horizontal : Axis.vertical;
-        double controlPanelSize = 60;
-        return Flex(
-          direction: direction,
-          children: [
-            Expanded(child: _cameraFrame()),
-            SizedBox(
-              width: direction == Axis.horizontal ? controlPanelSize : null,
-              height: direction == Axis.vertical ? controlPanelSize : null,
-              child: PictureTakerControlPanel(
-                direction: invertAxis(direction),
-                cameraController: cameraController,
-                isMounted: () => mounted,
-                updateUI: setState,
-                selectedIndex: selectedIndex,
-                setCameraIndex: (index) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                onPictureTaken: (path) async {
-                  if (isTakingPicture) return;
-                  isTakingPicture = true;
-                  try {
-                    if (path == null) {
-                      widget.onPick(null);
-                      return;
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          var width = constraints.maxWidth;
+          var direction = width > 600 ? Axis.horizontal : Axis.vertical;
+          double controlPanelSize = 60;
+          return Flex(
+            direction: direction,
+            children: [
+              Expanded(child: _cameraFrame()),
+              SizedBox(
+                width: direction == Axis.horizontal ? controlPanelSize : null,
+                height: direction == Axis.vertical ? controlPanelSize : null,
+                child: PictureTakerControlPanel(
+                  direction: invertAxis(direction),
+                  cameraController: cameraController,
+                  isMounted: () => mounted,
+                  updateUI: setState,
+                  selectedIndex: selectedIndex,
+                  setCameraIndex: (index) {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  },
+                  onPictureTaken: (path) async {
+                    if (isTakingPicture) return;
+                    isTakingPicture = true;
+                    try {
+                      if (path == null) {
+                        widget.onPick(null);
+                        return;
+                      }
+                      var file = File(path);
+                      var compressed = await compressImage(
+                        file,
+                        quality: 10,
+                        minimumSizeInKb: 64,
+                      );
+                      if (!compressed.compressed) {
+                        debugPrint('did not compress');
+                      } else {
+                        var bytes = compressed.output.lengthInBytes ~/ 1024;
+                        var originalSize = compressed.originalSize ~/ 1024;
+                        debugPrint('compresssed: $bytes / $originalSize kb');
+                      }
+                      widget.onPick(compressed.output);
+                      context.navigator.pop();
+                    } finally {
+                      isTakingPicture = false;
                     }
-                    var file = File(path);
-                    var compressed = await compressImage(
-                      file,
-                      quality: 10,
-                      minimumSizeInKb: 64,
-                    );
-                    if (!compressed.compressed) {
-                      debugPrint('did not compress');
-                    } else {
-                      var bytes = compressed.output.lengthInBytes ~/ 1024;
-                      var originalSize = compressed.originalSize ~/ 1024;
-                      debugPrint('compresssed: $bytes / $originalSize kb');
-                    }
-                    widget.onPick(compressed.output);
-                    context.navigator.pop();
-                  } finally {
-                    isTakingPicture = false;
-                  }
-                },
+                  },
+                ),
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -195,10 +192,7 @@ class _ProfilePictureTakerState extends State<ProfilePictureTaker> {
       fit: BoxFit.scaleDown,
       child: MalaText(
         message,
-        style: const TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
