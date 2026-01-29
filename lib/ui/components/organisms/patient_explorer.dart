@@ -64,7 +64,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
 
   int count = 0;
   int get pages {
-    return count ~/ pageSize;
+    return (count / pageSize).ceil();
   }
 
   int pageSize = 60;
@@ -100,7 +100,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               var width = constraints.maxWidth;
-              return _commandBar(context, width < 400);
+              return _commandBar(context, width < 500);
             },
           ),
         ),
@@ -178,10 +178,12 @@ class _PatientExplorerState extends State<PatientExplorer> {
           icon: const Icon(FluentIcons.add),
           label: const Text('Cadastrar'),
           onPressed: () async {
-            await context.navigator.pushMaterial(PatientRegistration(
-              patient: null,
-              modalContext: widget.modalContext,
-            ));
+            await context.navigator.pushMaterial(
+              PatientRegistration(
+                patient: null,
+                modalContext: widget.modalContext,
+              ),
+            );
             _search(currentPage, true);
           },
         ),
@@ -201,9 +203,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
               limit: 5000,
             );
             var tags = patients.map(PatientTag.fromPatient);
-            await MalaApi.pdf.printTags(
-              tags: tags,
-            );
+            await MalaApi.pdf.printTags(tags: tags);
           },
         ),
         CommandBarButton(
@@ -214,9 +214,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
               query: query,
               limit: 5000,
             );
-            await MalaApi.pdf.printInfo(
-              patients: patients,
-            );
+            await MalaApi.pdf.printInfo(patients: patients);
           },
         ),
       ],
