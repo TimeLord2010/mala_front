@@ -159,8 +159,15 @@ class _PatientExplorerState extends State<PatientExplorer> {
                             : null,
                       ),
                     ),
+                    Container(
+                      height: 1,
+                      color: Color.fromARGB(151, 206, 206, 206),
+                    ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
                       child: Text('$count resultados'),
                     ),
                   ],
