@@ -92,6 +92,7 @@ class _PatientTileState extends State<PatientTile> {
     var name = widget.patient.name ?? '';
     var phones = widget.patient.phones ?? [];
     int? years = widget.patient.years;
+    final ageText = _ageText(years);
     return ListTile(
       title: _name(name),
       leading: _picture(),
@@ -105,10 +106,10 @@ class _PatientTileState extends State<PatientTile> {
               return Text(x);
             }).toList()).separatedBy(const Text(' | ')),
           ),
-          if (years != null)
+          if (ageText != null)
             Row(
               children: [
-                Text('$years anos'),
+                Text(ageText),
                 const SizedBox(width: 5),
                 if (widget.patient.hasBirthDayThisMonth) const Text('🎂'),
                 const SizedBox(width: 5),
@@ -120,13 +121,32 @@ class _PatientTileState extends State<PatientTile> {
     );
   }
 
+  String? _ageText(int? years) {
+    final birthDate = widget.patient.birthDate;
+    if (birthDate == null) return null;
+    final now = DateTime.now();
+    final totalMonths = (now.year - birthDate.year) * 12 + now.month - birthDate.month;
+    if (years == null || years < 1) {
+      return '$totalMonths ${totalMonths == 1 ? 'mês' : 'meses'}';
+    }
+    if (years < 5) {
+      final remainingMonths = totalMonths % 12;
+      if (remainingMonths > 0) {
+        return '$years anos e $remainingMonths ${remainingMonths == 1 ? 'mês' : 'meses'}';
+      }
+      return '$years anos';
+    }
+    return '$years anos';
+  }
+
   Tooltip _name(String name) {
+    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
     return Tooltip(
       message: name,
       child: AutoSizeText(
         name,
         maxLines: 1,
-        minFontSize: 12,
+        minFontSize: pixelRatio >= 2 ? 10 : 12,
         overflow: TextOverflow.ellipsis,
       ),
     );
