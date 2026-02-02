@@ -1,10 +1,8 @@
 import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_api/mala_api.dart';
-import 'package:mala_front/ui/components/molecules/page_selector.dart';
 import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
-import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
 
@@ -28,13 +26,13 @@ class PatientExplorer extends StatefulWidget {
 
 class _PatientExplorerState extends State<PatientExplorer> {
   final _logger = createSdkLogger('PatientExplorer');
-  Future<List<Patient>> _patientsFuture = Future.value([]);
-  Future<List<Patient>> get patientsFuture => _patientsFuture;
-  set patientsFuture(Future<List<Patient>> value) {
-    setState(() {
-      _patientsFuture = value;
-    });
-  }
+  final _scrollController = ScrollController();
+
+  List<Patient> _patients = [];
+  bool _isLoading = false;
+  bool _hasMore = true;
+  bool _hasError = false;
+  int _searchGeneration = 0;
 
   int? _minAge;
   int? get minAge => _minAge;
@@ -55,19 +53,12 @@ class _PatientExplorerState extends State<PatientExplorer> {
   }
 
   int _currentPage = 0;
-  int get currentPage => _currentPage;
-  set currentPage(int value) {
-    setState(() => _currentPage = value);
-  }
 
   Set<Activities> activities = {};
 
   int count = 0;
-  int get pages {
-    return (count / pageSize).ceil();
-  }
 
-  int pageSize = 60;
+  int pageSize = 40;
 
   PatientQuery get query {
     return PatientQuery(
@@ -84,10 +75,26 @@ class _PatientExplorerState extends State<PatientExplorer> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     widget.updateExposer(() {
-      _search(0, true);
+      _search(reset: true);
     });
-    _search(currentPage, true);
+    _search(reset: true);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isLoading || !_hasMore) return;
+    var pos = _scrollController.position;
+    if (pos.pixels >= pos.maxScrollExtent - 200) {
+      _loadMore();
+    }
   }
 
   @override
@@ -123,46 +130,41 @@ class _PatientExplorerState extends State<PatientExplorer> {
               onMonthBirthDayChange: (value) => monthBirthDay = value,
               clear: _clearSearch,
               search: () {
-                _search(0, true);
+                _search(reset: true);
               },
             ),
           ),
         ),
         Expanded(
-          child: SimpleFutureBuilder(
-            future: patientsFuture,
-            builder: (patients) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: PatientList(
-                      patients: patients,
-                      modalContext: widget.modalContext,
-                      onEdit: (patient) {
-                        _search(currentPage, true);
-                      },
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: PageSelector(
-                          index: currentPage,
-                          pages: pages,
-                          onSelected: (index) {
-                            _search(index, false);
-                          },
-                        ),
+          child: _hasError && _patients.isEmpty
+              ? const Center(child: Text('Falha na listagem de pacientes'))
+              : _patients.isEmpty && _isLoading
+              ? const Center(child: ProgressRing())
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: PatientList(
+                        patients: _patients,
+                        modalContext: widget.modalContext,
+                        controller: _scrollController,
+                        onEdit: (patient) {
+                          _search(reset: true);
+                        },
+                        footer: _isLoading
+                            ? const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Center(child: ProgressRing()),
+                              )
+                            : null,
                       ),
-                      Text('$count resultados '),
-                    ],
-                  ),
-                ],
-              );
-            },
-            contextMessage: 'Falha na listagem de pacientes',
-          ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('$count resultados'),
+                    ),
+                  ],
+                ),
         ),
       ],
     );
@@ -184,7 +186,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
                 modalContext: widget.modalContext,
               ),
             );
-            _search(currentPage, true);
+            _search(reset: true);
           },
         ),
         CommandBarButton(
@@ -221,21 +223,63 @@ class _PatientExplorerState extends State<PatientExplorer> {
     );
   }
 
-  void _search(int page, bool shouldCount) async {
-    _logger.i('Searching. Page: $page, ShouldCount: $shouldCount');
-    currentPage = page;
-    var patientQuery = query;
-    if (shouldCount) {
-      var count = await MalaApi.patient.count(patientQuery);
-      //pages = count ~/ pageSize;
-      this.count = count;
-      _logger.i('Count: $count, Pages: $pages');
+  void _search({required bool reset}) async {
+    if (reset) {
+      _searchGeneration++;
+      _currentPage = 0;
+      _patients = [];
+      _hasMore = true;
+      _hasError = false;
     }
-    patientsFuture = MalaApi.patient.list(
-      query: patientQuery,
-      skip: currentPage * pageSize,
-      limit: pageSize,
-    );
+
+    var generation = _searchGeneration;
+    setState(() => _isLoading = true);
+
+    try {
+      var patientQuery = query;
+      if (reset) {
+        var c = await MalaApi.patient.count(patientQuery);
+        if (generation != _searchGeneration) return;
+        count = c;
+        _logger.i('Count: $count');
+      }
+      var result = await MalaApi.patient.list(
+        query: patientQuery,
+        skip: _currentPage * pageSize,
+        limit: pageSize,
+      );
+      if (generation != _searchGeneration) return;
+      setState(() {
+        _patients = [..._patients, ...result];
+        _hasMore = result.length >= pageSize;
+        _isLoading = false;
+      });
+      _loadMoreIfNeeded();
+    } catch (e) {
+      if (generation != _searchGeneration) return;
+      _logger.e('Search failed: $e');
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _loadMoreIfNeeded() {
+    if (_isLoading || !_hasMore) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      var pos = _scrollController.position;
+      if (pos.maxScrollExtent <= 0 || pos.pixels >= pos.maxScrollExtent - 200) {
+        _currentPage++;
+        _search(reset: false);
+      }
+    });
+  }
+
+  void _loadMore() {
+    _currentPage++;
+    _search(reset: false);
   }
 
   void _clearSearch() {
@@ -246,6 +290,6 @@ class _PatientExplorerState extends State<PatientExplorer> {
     _maxAge = null;
     _monthBirthDay = false;
     activities.clear();
-    _search(0, true);
+    _search(reset: true);
   }
 }

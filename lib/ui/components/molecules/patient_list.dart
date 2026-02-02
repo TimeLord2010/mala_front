@@ -10,11 +10,15 @@ class PatientList extends StatelessWidget {
     required this.patients,
     this.onEdit,
     required this.modalContext,
+    this.controller,
+    this.footer,
   });
 
   final List<Patient> patients;
   final BuildContext modalContext;
   final void Function(Patient patient)? onEdit;
+  final ScrollController? controller;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -26,27 +30,33 @@ class PatientList extends StatelessWidget {
           _ => 300,
         };
         return SingleChildScrollView(
-          child: Wrap(
-            children: patients.map((x) {
-              return SizedBox(
-                width: tileWidth,
-                child: PatientTile(
-                  modalContext: modalContext,
-                  key: ValueKey(x.id),
-                  patient: x,
-                  onPressed: onEdit != null
-                      ? () async {
-                          var page = PatientRegistration(
-                            patient: x,
-                            modalContext: modalContext,
-                          );
-                          await context.navigator.pushMaterial(page);
-                          onEdit!(x);
-                        }
-                      : null,
-                ),
-              );
-            }).toList(),
+          controller: controller,
+          child: Column(
+            children: [
+              Wrap(
+                children: patients.map((x) {
+                  return SizedBox(
+                    width: tileWidth,
+                    child: PatientTile(
+                      modalContext: modalContext,
+                      key: ValueKey(x.id),
+                      patient: x,
+                      onPressed: onEdit != null
+                          ? () async {
+                              var page = PatientRegistration(
+                                patient: x,
+                                modalContext: modalContext,
+                              );
+                              await context.navigator.pushMaterial(page);
+                              onEdit!(x);
+                            }
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+              if (footer != null) footer!,
+            ],
           ),
         );
       },
