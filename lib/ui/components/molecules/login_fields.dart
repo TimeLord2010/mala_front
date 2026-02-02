@@ -96,7 +96,9 @@ class _LoginFieldsState extends State<LoginFields> {
                 Button(
                   child: const Text('Continuar sem login'),
                   onPressed: () async {
-                    await context.navigator.pushMaterial(MainPage.create());
+                    await context.navigator.pushReplacement(FluentPageRoute(
+                      builder: (_) => MainPage.create(),
+                    ));
                   },
                 ),
               ],

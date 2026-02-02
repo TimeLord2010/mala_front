@@ -25,10 +25,9 @@ Future<void> askSignOut(
               Navigator.pop(con, 'User deleted file');
               await MalaApi.user.logout();
               if (onSignOut != null) onSignOut();
-              context.navigator.pop();
-              if (!context.navigator.canPop()) {
-                await context.navigator.pushMaterial(const LoginPage());
-              }
+              await context.navigator.pushReplacement(FluentPageRoute(
+                builder: (_) => const LoginPage(),
+              ));
             },
           ),
         ],

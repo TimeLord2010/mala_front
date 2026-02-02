@@ -47,7 +47,9 @@ class _LoginPageState extends State<LoginPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var authed = MalaApi.user.isLogged;
       if (authed) {
-        unawaited(context.navigator.pushMaterial(MainPage.create()));
+        unawaited(context.navigator.pushReplacement(FluentPageRoute(
+          builder: (_) => MainPage.create(),
+        )));
       }
     });
   }
@@ -76,8 +78,10 @@ class _LoginPageState extends State<LoginPage> {
                         onLogin: (email, password) async {
                           _logger.i('Login');
                           await MalaApi.user.login(email, password);
-                          await context.navigator
-                              .pushMaterial(MainPage.create());
+                          await context.navigator.pushReplacement(
+                              FluentPageRoute(
+                                builder: (_) => MainPage.create(),
+                              ));
                         },
                       ),
                     ),
