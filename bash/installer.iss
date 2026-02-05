@@ -12,8 +12,11 @@ AppId={{8F3B4D2E-9A1C-4B5E-8D2F-7C6A9B4E1F3D}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={autopf64}\{#MyAppName}
 DefaultGroupName={#MyAppName}
+; 64-bit mode
+ArchitecturesInstallIn64BitMode=x64
+ArchitecturesAllowed=x64
 ; Output settings
 OutputDir=.
 OutputBaseFilename=Mala-Setup-{#MyAppVersion}
