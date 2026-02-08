@@ -4,10 +4,10 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
+import 'package:mala_front/ui/components/atoms/mala_logo.dart';
 import 'package:mala_front/ui/components/molecules/login_configuration.dart';
 
 import '../../pages/main_page.dart';
-import '../atoms/mala_logo.dart';
 import 'labeled_text_box.dart';
 
 class LoginFields extends StatefulWidget {
@@ -74,7 +74,7 @@ class _LoginFieldsState extends State<LoginFields> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (height > 500) const MalaLogo(),
+                if (height > 500) _logo(),
                 _optionsButton(context),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 10),
@@ -96,9 +96,9 @@ class _LoginFieldsState extends State<LoginFields> {
                 Button(
                   child: const Text('Continuar sem login'),
                   onPressed: () async {
-                    await context.navigator.pushReplacement(FluentPageRoute(
-                      builder: (_) => MainPage.create(),
-                    ));
+                    await context.navigator.pushReplacement(
+                      FluentPageRoute(builder: (_) => MainPage.create()),
+                    );
                   },
                 ),
               ],
@@ -107,6 +107,10 @@ class _LoginFieldsState extends State<LoginFields> {
         ),
       ),
     );
+  }
+
+  Widget _logo() {
+    return const MalaLogo(key: ValueKey('Logo'));
   }
 
   Align _optionsButton(BuildContext context) {

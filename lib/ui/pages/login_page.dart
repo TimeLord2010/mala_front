@@ -4,10 +4,12 @@ import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/login_fields.dart';
+import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
 import 'package:mala_front/ui/pages/main_page.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
+import '../../usecase/platform/get_app_version.dart';
 import '../components/atoms/mala_app.dart';
 
 const _backgroundColor = Color.fromARGB(255, 253, 253, 253);
@@ -18,17 +20,9 @@ const _colors = [
   Color.fromARGB(255, 123, 166, 197),
 ];
 
-var _durations = [
-  25,
-  20,
-  15,
-].map((x) => x * 1000).toList();
+var _durations = [25, 20, 15].map((x) => x * 1000).toList();
 
-const _heightPercentages = [
-  0.15,
-  0.45,
-  0.75,
-];
+const _heightPercentages = [0.15, 0.45, 0.75];
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,15 +35,19 @@ class _LoginPageState extends State<LoginPage> {
   final _logger = createSdkLogger('LoginPage');
   bool hasCheckedLogin = false;
 
+  Future<String> versionFuture = getAppVersion();
+
   void _checkAuthentication(BuildContext context) {
     if (hasCheckedLogin) return;
     hasCheckedLogin = true;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var authed = MalaApi.user.isLogged;
       if (authed) {
-        unawaited(context.navigator.pushReplacement(FluentPageRoute(
-          builder: (_) => MainPage.create(),
-        )));
+        unawaited(
+          context.navigator.pushReplacement(
+            FluentPageRoute(builder: (_) => MainPage.create()),
+          ),
+        );
       }
     });
   }
@@ -70,27 +68,39 @@ class _LoginPageState extends State<LoginPage> {
                 Positioned.fill(
                   child: SingleChildScrollView(
                     child: Container(
-                      constraints: BoxConstraints(
-                        maxHeight: height,
-                      ),
+                      constraints: BoxConstraints(maxHeight: height),
                       padding: EdgeInsets.only(bottom: bottomPadding),
                       child: LoginFields(
                         onLogin: (email, password) async {
                           _logger.i('Login');
                           await MalaApi.user.login(email, password);
                           await context.navigator.pushReplacement(
-                              FluentPageRoute(
-                                builder: (_) => MainPage.create(),
-                              ));
+                            FluentPageRoute(builder: (_) => MainPage.create()),
+                          );
                         },
                       ),
                     ),
                   ),
                 ),
+                _version(),
               ],
             );
           },
         ),
+      ),
+    );
+  }
+
+  Positioned _version() {
+    return Positioned(
+      bottom: 10,
+      right: 10,
+      child: SimpleFutureBuilder(
+        future: versionFuture,
+        contextMessage: 'Versão',
+        builder: (value) {
+          return Text(value);
+        },
       ),
     );
   }
