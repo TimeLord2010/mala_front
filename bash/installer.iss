@@ -2,7 +2,7 @@
 ; https://jrsoftware.org/isinfo.php
 
 #define MyAppName "Mala"
-#define MyAppVersion "1.4.1"
+#define MyAppVersion "2.0.0"
 #define MyAppPublisher "VIT"
 #define MyAppExeName "mala_front.exe"
 

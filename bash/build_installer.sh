@@ -26,4 +26,3 @@ cd ..
 
 echo ""
 echo "Installer created successfully!"
-echo "Location: bash/Mala-Setup-1.4.1.exe"
