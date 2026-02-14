@@ -5,7 +5,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/login_fields.dart';
 import 'package:mala_front/ui/components/molecules/simple_future_builder.dart';
-import 'package:mala_front/ui/pages/main_page.dart';
+import 'package:mala_front/ui/pages/main_page/main_page.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 

@@ -7,7 +7,7 @@ import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/atoms/mala_logo.dart';
 import 'package:mala_front/ui/components/molecules/login_configuration.dart';
 
-import '../../pages/main_page.dart';
+import '../../pages/main_page/main_page.dart';
 import 'labeled_text_box.dart';
 
 class LoginFields extends StatefulWidget {

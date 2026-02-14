@@ -5,11 +5,11 @@ import 'package:mala_front/ui/components/atoms/load_progress_indicator.dart';
 import 'package:mala_front/ui/components/molecules/mala_info.dart';
 import 'package:mala_front/ui/components/organisms/import_patients.dart';
 import 'package:mala_front/ui/components/organisms/settings_pane.dart';
-import 'package:mala_front/ui/pages/main_page_controller.dart';
+import 'package:mala_front/ui/pages/main_page/main_page_controller.dart';
 import 'package:provider/provider.dart';
 
-import '../components/atoms/mala_app.dart';
-import '../components/organisms/patient_explorer.dart';
+import '../../components/atoms/mala_app.dart';
+import 'patient_explorer/patient_explorer.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage._();
