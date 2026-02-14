@@ -6,6 +6,13 @@ import 'package:mala_front/ui/components/molecules/patient_list.dart';
 import 'package:mala_front/ui/pages/patient_registration.dart';
 import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
 
+/// Main patient search and management screen.
+///
+/// Displays:
+/// - Command bar: Register, Export, Print Tags, Print List actions
+/// - Filter panel: Search by name, district, street, age, birthday, activities
+/// - Patient list: Paginated results with infinite scroll
+/// - Result counter: Shows total matching patients
 class PatientExplorer extends StatefulWidget {
   PatientExplorer({
     super.key,
@@ -161,7 +168,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
                     ),
                     Container(
                       height: 1,
-                      color: Color.fromARGB(151, 206, 206, 206),
+                      color: const Color.fromARGB(151, 206, 206, 206),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
