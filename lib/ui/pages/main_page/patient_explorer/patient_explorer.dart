@@ -1,10 +1,9 @@
-import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mala_api/mala_api.dart';
 import 'package:mala_front/ui/components/molecules/patient_filter_pane.dart';
 import 'package:mala_front/ui/components/molecules/patient_list.dart';
-import 'package:mala_front/ui/pages/patient_registration.dart';
-import 'package:mala_front/ui/protocols/modal/export_patients_modal.dart';
+
+import 'explorer_action_bar.dart';
 
 /// Main patient search and management screen.
 ///
@@ -114,7 +113,12 @@ class _PatientExplorerState extends State<PatientExplorer> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               var width = constraints.maxWidth;
-              return _commandBar(context, width < 500);
+              return ExplorerActionBar(
+                compact: width < 500,
+                modalContext: widget.modalContext,
+                onSearch: _search,
+                query: query,
+              );
             },
           ),
         ),
@@ -179,59 +183,6 @@ class _PatientExplorerState extends State<PatientExplorer> {
                     ),
                   ],
                 ),
-        ),
-      ],
-    );
-  }
-
-  CommandBar _commandBar(BuildContext context, bool compact) {
-    return CommandBar(
-      mainAxisAlignment: MainAxisAlignment.end,
-      overflowBehavior: CommandBarOverflowBehavior.wrap,
-      isCompact: compact,
-      primaryItems: [
-        CommandBarButton(
-          icon: const Icon(FluentIcons.add),
-          label: const Text('Cadastrar'),
-          onPressed: () async {
-            await context.navigator.pushMaterial(
-              PatientRegistration(
-                patient: null,
-                modalContext: widget.modalContext,
-              ),
-            );
-            _search(reset: true);
-          },
-        ),
-        CommandBarButton(
-          icon: const Icon(FluentIcons.save),
-          label: const Text('Exportar'),
-          onPressed: () async {
-            await exportPatientsModal(context, query);
-          },
-        ),
-        CommandBarButton(
-          icon: const Icon(FluentIcons.tag),
-          label: const Text('Etiquetas'),
-          onPressed: () async {
-            var patients = await MalaApi.patient.list(
-              query: query,
-              limit: 5000,
-            );
-            var tags = patients.map(PatientTag.fromPatient);
-            await MalaApi.pdf.printTags(tags: tags);
-          },
-        ),
-        CommandBarButton(
-          icon: const Icon(FluentIcons.print),
-          label: const Text('Lista de pacientes'),
-          onPressed: () async {
-            var patients = await MalaApi.patient.list(
-              query: query,
-              limit: 5000,
-            );
-            await MalaApi.pdf.printInfo(patients: patients);
-          },
         ),
       ],
     );
