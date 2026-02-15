@@ -5,6 +5,13 @@ import 'package:mala_api/mala_api.dart';
 import '../../../protocols/modal/export_patients_modal.dart';
 import '../../patient_registration.dart';
 
+/// Displays the main actions for the patient explorer.
+///
+/// This widget provides buttons for:
+/// - Registering a new patient.
+/// - Exporting the patient list.
+/// - Printing patient tags.
+/// - Printing the list of patients.
 class ExplorerActionBar extends StatelessWidget {
   const ExplorerActionBar({
     super.key,
