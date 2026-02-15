@@ -109,7 +109,7 @@ class _PatientExplorerState extends State<PatientExplorer> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: LayoutBuilder(
             builder: (context, constraints) {
               var width = constraints.maxWidth;
@@ -123,11 +123,13 @@ class _PatientExplorerState extends State<PatientExplorer> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
           child: Expander(
             header: const Text('Filtros'),
             animationCurve: Curves.easeOut,
             animationDuration: const Duration(milliseconds: 300),
+            contentPadding: const .fromLTRB(10, 2, 10, 10),
+            leading: const WindowsIcon(FluentIcons.filter),
             content: PatientFilterPane(
               nameController: widget.nameController,
               streetController: widget.streetController,

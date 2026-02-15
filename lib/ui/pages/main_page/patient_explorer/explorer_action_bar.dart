@@ -43,13 +43,8 @@ class ExplorerActionBar extends StatelessWidget {
             onSearch(reset: true);
           },
         ),
-        CommandBarButton(
-          icon: const Icon(FluentIcons.save),
-          label: const Text('Exportar'),
-          onPressed: () async {
-            await exportPatientsModal(context, query);
-          },
-        ),
+        const CommandBarSeparator(thickness: 10, color: Colors.transparent),
+
         CommandBarButton(
           icon: const Icon(FluentIcons.tag),
           label: const Text('Etiquetas'),
@@ -62,6 +57,7 @@ class ExplorerActionBar extends StatelessWidget {
             await MalaApi.pdf.printTags(tags: tags);
           },
         ),
+        const CommandBarSeparator(thickness: 10, color: Colors.transparent),
         CommandBarButton(
           icon: const Icon(FluentIcons.print),
           label: const Text('Lista de pacientes'),
@@ -71,6 +67,16 @@ class ExplorerActionBar extends StatelessWidget {
               limit: 5000,
             );
             await MalaApi.pdf.printInfo(patients: patients);
+          },
+        ),
+        const CommandBarSeparator(thickness: 10, color: Colors.transparent),
+      ],
+      secondaryItems: [
+        CommandBarButton(
+          icon: const Icon(FluentIcons.save),
+          label: const Text('Exportar'),
+          onPressed: () async {
+            await exportPatientsModal(context, query);
           },
         ),
       ],
