@@ -20,9 +20,7 @@ class MalaInfo extends StatelessWidget {
           } else {
             return Row(
               children: [
-                const Expanded(
-                  child: MalaLogo(),
-                ),
+                const Expanded(child: MalaLogo()),
                 _info(),
               ],
             );
@@ -36,9 +34,7 @@ class MalaInfo extends StatelessWidget {
     return Column(
       children: [
         const MalaLogo(),
-        Expanded(
-          child: _info(),
-        ),
+        Expanded(child: _info()),
       ],
     );
   }
@@ -49,10 +45,7 @@ class MalaInfo extends StatelessWidget {
       children: [
         const Text(
           'Mala',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
         const Text('Aplicação de gerência de pacientes.'),
         Padding(

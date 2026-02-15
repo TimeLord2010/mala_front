@@ -54,7 +54,6 @@ class _PatientFilterPaneState extends State<PatientFilterPane> {
       builder: (context, constraints) {
         var maxWidth = constraints.maxWidth;
         var bgColor = WidgetStateColor.resolveWith((states) {
-          debugPrint('states: $states');
           if (states.isEmpty) return const .fromARGB(255, 235, 235, 235);
           return switch (states.first) {
             .selected => const .fromARGB(255, 169, 205, 255),
