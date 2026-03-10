@@ -117,14 +117,14 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   Widget build(BuildContext context) {
     return MalaApp(
       child: NavigationView(
-        appBar: NavigationAppBar(
-          leading: IconButton(
+        titleBar: TitleBar(
+          backButton: IconButton(
             icon: const Icon(FluentIcons.back),
             onPressed: () {
               context.navigator.pop();
             },
           ),
-          actions: Center(
+          endHeader: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,

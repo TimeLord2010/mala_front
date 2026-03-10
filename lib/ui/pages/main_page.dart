@@ -55,13 +55,13 @@ class MainPage extends StatelessWidget {
     var loadingDescription = provider.loadingDescription;
     var selectedIndex = provider.selectedIndex;
     return NavigationView(
-      appBar: NavigationAppBar(
+      titleBar: TitleBar(
         title: loadingDescription == null ? const Text('Mala') : null,
-        leading: Padding(
+        icon: Padding(
           padding: const EdgeInsets.all(4),
           child: Center(child: Image.asset('assets/logo-icon.png')),
         ),
-        actions: loadingDescription != null
+        endHeader: loadingDescription != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -75,7 +75,7 @@ class MainPage extends StatelessWidget {
       ),
       pane: NavigationPane(
         displayMode: isHorizontal
-            ? PaneDisplayMode.open
+            ? PaneDisplayMode.expanded
             : PaneDisplayMode.minimal,
         size: const NavigationPaneSize(openMaxWidth: 200),
         selected: selectedIndex,
