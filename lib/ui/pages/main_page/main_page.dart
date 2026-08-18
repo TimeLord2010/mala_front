@@ -86,12 +86,12 @@ class MainPage extends StatelessWidget {
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.user_window),
-            title: const Text('Lista de pacientes'),
+            title: const Text('Lista'),
             body: explorer,
           ),
           PaneItem(
             icon: const Icon(FluentIcons.download),
-            title: const Text('Importar pacientes'),
+            title: const Text('Importar'),
             body: const ImportPatients(),
           ),
         ],

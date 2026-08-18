@@ -64,7 +64,7 @@ class ExplorerActionBar extends StatelessWidget {
           onPressed: () async {
             var patients = await MalaApi.patient.list(
               query: query,
-              limit: 5000,
+              limit: 100000,
             );
             await MalaApi.pdf.printInfo(patients: patients);
           },
