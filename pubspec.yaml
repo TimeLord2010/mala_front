@@ -1,7 +1,7 @@
 name: mala_front
 description: A new Flutter project.
 publish_to: 'none'
-version: 2.0.1+12
+version: 2.0.2+12
 
 environment:
   sdk: '>=3.10.1 <4.0.0'
@@ -33,7 +33,9 @@ dependencies:
   vit_logger: ^2.0.1
   wave: ^0.2.2
   mala_api:
-    path: ../mala_api
+    git:
+      url: https://github.com/TimeLord2010/mala_api.git
+      ref: main
   image_compression: ^1.0.5
   file_picker: ^8.3.3
   gap: ^3.0.1

@@ -585,9 +585,11 @@ packages:
   mala_api:
     dependency: "direct main"
     description:
-      path: "../mala_api"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "17db135c25139d5c24b90a875d296d5be15b33e3"
+      url: "https://github.com/TimeLord2010/mala_api.git"
+    source: git
     version: "1.0.0"
   mask:
     dependency: "direct main"

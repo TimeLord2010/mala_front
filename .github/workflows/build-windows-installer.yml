@@ -9,16 +9,6 @@ jobs:
     steps:
       - name: Checkout mala_front
         uses: actions/checkout@v4
-        with:
-          path: mala_front
-
-      # mala_api is referenced from mala_front's pubspec as ../mala_api.
-      # Both repos go inside the workspace so the relative path resolves.
-      - name: Checkout mala_api (path dependency ../mala_api)
-        uses: actions/checkout@v4
-        with:
-          repository: TimeLord2010/mala_api
-          path: mala_api
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -35,12 +25,11 @@ jobs:
 
       - name: Run build_installer.sh
         shell: bash
-        working-directory: mala_front
         run: bash bash/build_installer.sh
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: Mala-Setup
-          path: mala_front/bash/Mala-Setup-*.exe
+          path: bash/Mala-Setup-*.exe
           if-no-files-found: error
